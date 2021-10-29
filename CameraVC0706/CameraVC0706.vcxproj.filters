@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Dev">
+      <UniqueIdentifier>{1426ef94-4bf5-442f-9778-cdcc5de6e47e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib.Utils">
+      <UniqueIdentifier>{8c0c56f6-6955-4920-b465-71651bbc6931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib.Module">
+      <UniqueIdentifier>{1bddf180-93bc-47eb-8a70-8af8c52eeed3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Dev\devLog.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Dev\devCamera.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devCamera_ModCamera.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devCamera_ModCamera_Board.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_Packet.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_Packet_Test.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateConfig.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageIdle.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateReset.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp">
+      <Filter>Lib.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsLog.cpp">
+      <Filter>Lib.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsShell.cpp">
+      <Filter>Lib.Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="libConfig.h" />
+    <ClInclude Include="devConfig.h" />
+    <ClInclude Include="Dev\devLog.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devCamera.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Module\modCameraVC0706.h">
+      <Filter>Lib.Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Module\modCameraVC0706_Attribute.h">
+      <Filter>Lib.Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Module\modCameraVC0706_Packet.h">
+      <Filter>Lib.Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsBase.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsLog.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsShell.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsCRC.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPacket.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsSerialPort.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CameraVC0706.exe.ini" />
+    <None Include="..\LIB.Module\modCameraVC0706_States.vsd">
+      <Filter>Lib.Module</Filter>
+    </None>
+    <None Include="..\LIB.Utils\!Refresh.bat">
+      <Filter>Lib.Utils</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Readme.txt" />
+  </ItemGroup>
+</Project>
