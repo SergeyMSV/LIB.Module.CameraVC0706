@@ -1,23 +1,25 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// ModGnssTest
-//
-// Created by Sergey Maslennikov
-// Tel.:   +7-916-540-09-19
-// E-mail: maslennikovserge@yandex.ru
-//
-// |   version  |    release    | Description
-// |------------|---------------|---------------------------------
-// |      1     |   2016 09 16  |
-// |      2     |   2016 11 15  |
-// |            |               |
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef DEV_CONFIG_H
-#define DEV_CONFIG_H
-///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#include <windows.h>
+#include <utilsBase.h>
 
-#define DEBUG_DEVICE
+#include <atomic>
+#include <mutex>
+#include <string>
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#endif//DEV_CONFIG_H
+struct tDataSetMainControl
+{
+	enum class tStateCAM
+	{
+		Nothing,
+		Halt,
+		Start,
+		Restart,
+		Exit,
+		UserTaskScriptStart,
+	};
+
+	std::atomic<tStateCAM> Thread_CAM_State{ tStateCAM::Halt };
+
+	mutable std::mutex Thread_CAM_State_UserTaskScriptIDMtx;
+	std::string Thread_CAM_State_UserTaskScriptID;
+};

@@ -5,8 +5,7 @@
 //
 // |   version  |    release    | Description
 // |------------|---------------|---------------------------------
-// |     ...    |   2014 09 24  |
-// |      1     |   2019 08 18  |
+// |            |   2014 09 24  |
 // |            |               | 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
@@ -86,7 +85,7 @@ typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type Read(Iter
 {
 	char Str[N];//[#] and +/- and 0x00
 
-	unsigned int StrIndex = 0;
+	std::size_t StrIndex = 0;
 
 	for (; first != last && StrIndex < sizeof(Str) - 1; ++first)
 	{
@@ -135,7 +134,7 @@ typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type Reverse(T
 namespace type
 {
 
-template <unsigned int size>
+template <std::size_t size>
 struct tArray1
 {
 	enum { Size = size };
@@ -164,7 +163,7 @@ struct tArray1
 	}
 };
 
-template <unsigned int size>
+template <std::size_t size>
 struct tArray2 : public tArray1<size>
 {
 	tArray2()
@@ -193,7 +192,7 @@ protected:
 //char FromBCD(char dataBCD); [TBD]
 //char ToBCD(char dataBCD); [TBD]
 
-enum class tGNSSCode : uint8_t
+enum class tGNSSCode : std::uint8_t
 {
 	Unknown = 0,
 	GLONASS,

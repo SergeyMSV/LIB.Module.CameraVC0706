@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// modCameraVC0706_Attribute
+// modCameraVC0706_Attribute.h
 //
 // Created by Sergey Maslennikov
 // Tel.:   +7-916-540-09-19
@@ -16,7 +16,7 @@
 
 namespace mod
 {
-
+	/*
 union tCameraVC0706Settings
 {
 	struct
@@ -77,6 +77,6 @@ enum tCameraVC0706Error
 	//tCameraVC0706Error_StateRestart_ErrTimer,
 
 	tCameraVC0706Error_Unknown = 0xFF,
-};
+};*/
 
 }

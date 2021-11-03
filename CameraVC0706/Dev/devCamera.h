@@ -1,58 +1,69 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// tCamera
+// devCamera.h
 //
-// Created by Sergey Maslennikov
-// Tel.:   +7-916-540-09-19
-// E-mail: maslennikovserge@yandex.ru
+// Standard ISO/IEC 114882, C++11
 //
 // |   version  |    release    | Description
 // |------------|---------------|---------------------------------
 // |      1     |   2017 01 31  |
 // |            |               |
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef DEV_MODULE_CAMERA_H
-#define DEV_MODULE_CAMERA_H
-/*
-#include <devConfig.h>
+#pragma once
 
+#include <devConfig.h>
 #include <devLog.h>
 
 #include <modCameraVC0706.h>
 
-#include <board_ModCamera.h>
+#include <utilsSerialPort.h>
+
+#include <future>
+
+#include <boost/asio.hpp>
 
 namespace dev
 {
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
 class tCamera
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tModCamera : public mod::tCameraVC0706
 	{
-///////////////////////////////////////////////////////////////////////////////////////////////////
-		class tBoard : public board::tBoard_ModCamera
+		class tBoard : public utils::serial_port::tSerialPort<>
 		{
-			tModCamera* p_obj;
+			tModCamera* m_pObj = nullptr;
 
 		public:
-			tBoard(tModCamera* obj);
+			tBoard(tModCamera* obj, boost::asio::io_context& io);
 			virtual ~tBoard();
 
 		protected:
-			virtual void OnReceived(std::vector<char>& data);
+			void OnReceived(utils::tVectorUInt8& data) override;
 		};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-		tCamera* p_obj;
+		tCamera* m_pObj = nullptr;
 
-		tBoard* m_Board;
-
-		//tModCamera() { }
+		tBoard m_Board;
 
 	public:
-		tModCamera(tCamera* obj, mod::tCameraVC0706Settings settings);
+		explicit tModCamera(tCamera* obj);
 		virtual ~tModCamera();
 
-		virtual void Control();
+	protected:
+		//mod::tGnssTaskScript GetTaskScript(const std::string& id, bool userTaskScript) override;
+		//mod::tGnssSettingsNMEA GetSettingsNMEA() override;
+
+		//void OnChanged(const mod::tGnssDataSet& value) override;
+
+		void Board_PowerSupply(bool state) override;
+		void Board_Reset(bool state) override;
+
+		bool Board_Send(const utils::tVectorUInt8& data) override;
+		void OnReceived(utils::tVectorUInt8& data);
+
+		/////////------------------------
+
+/*		virtual void Control();
 
 	protected:
 		virtual void Board_PowerSupply(bool state);
@@ -77,21 +88,49 @@ class tCamera
 #ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
 		virtual void OnGetConfig(std::vector<char>& data);
 		virtual void OnSetConfig();
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-	friend class tModCamera;
+	/*friend class tModCamera;
 
 	utils::log::tLog *p_log;
 
 	tModCamera *m_ModCamera;
+*/
+
+	utils::tLog* m_pLog = nullptr;
+
+	boost::asio::io_context* m_pIO = nullptr;
+
+	tModCamera* m_pModFSMachine = nullptr;
+
+	bool m_StartAuto = true;
 
 public:
-	tCamera();
-
+	tCamera() = delete;
+	tCamera(utils::tLog* log, boost::asio::io_context& io);
+	tCamera(const tCamera&) = delete;
+	tCamera(tCamera&&) = delete;
 	~tCamera();
 
-	void Tick10ms();
+	tCamera& operator=(const tCamera&) = delete;
+	tCamera& operator=(tCamera&&) = delete;
+	void operator()();
+
+	void Start();
+	void Restart();
+	void Halt();
+	void Exit();
+
+	//bool StartUserTaskScript(const std::string& taskScriptID);
+
+	mod::tCameraStatus GetStatus() const;
+	std::string GetLastErrorMsg() const;
+
+//	tCamera();
+//	~tCamera();
+
+/*	void Tick10ms();
 
 	void Control();
 
@@ -105,9 +144,7 @@ public:
 #ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
 	bool GetConfig(mod::CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return m_ModCamera->GetConfig(memory, address, size); }
 	bool SetConfig(mod::CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return m_ModCamera->SetConfig(memory, address, data); }
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
 };
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
-*/
-#endif//DEV_MODULE_CAMERA_H

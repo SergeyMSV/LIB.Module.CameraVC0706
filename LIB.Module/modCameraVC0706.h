@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// modCameraVC0706
+// modCameraVC0706.h
 //
 // Standard ISO/IEC 114882, C++11
 //
@@ -9,6 +9,22 @@
 // |            |               |
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
+
+#include <devConfig.h>
+#include <devDataSet.h>
+#include <devLog.h>
+
+#include "modCamera.h"
+
+#include <utilsBase.h>
+
+//#include <atomic>
+#include <chrono>
+//#include <mutex>
+#include <queue>
+#include <sstream>
+//#include <thread>
+
 /*
 //"ProjectName.[MAIN].[ATTRIBUTE]"
 #define LIB_MODULE_CAMERA_VC0706_VERSION "modCameraVC0706.5.1"
@@ -22,61 +38,135 @@
 
 #include <string>
 #include <vector>
-
+*/
 namespace mod
 {
 
 class tCameraVC0706
 {
-	using tClock = std::chrono::high_resolution_clock;//C++11
+	using tClock = std::chrono::high_resolution_clock;
 
 	class tState
 	{
-	protected:
-		tCameraVC0706 *p_obj = nullptr;
+		/*class tCmd
+		{
+		protected:
+			tState* m_pObjState = nullptr;
 
-		//utils::tTimer m_ErrTimer;
+			std::unique_ptr<tGnssTaskScriptCmd> m_Cmd;
 
-		//utils::tTimer m_Timer;
-		std::chrono::time_point<tClock> m_StartTime;
+			std::chrono::time_point<tClock> m_StartTime;
 
-		unsigned char m_Step = 0;
+		public:
+			tCmd() = delete;
+			tCmd(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd) :m_pObjState(objState), m_Cmd(std::move(cmd)) {}
+			tCmd(const tCmd&) = delete;
+			tCmd(tCmd&&) = delete;
+			virtual ~tCmd() = default;
+
+			tCmd& operator=(const tCmd&) = delete;
+			tCmd& operator=(tCmd&&) = delete;
+
+			virtual bool operator()() = 0;
+			virtual bool OnReceived(const tPacketNMEA_Template& value) { return false; };
+		};
+
+		class tCmdGPI :public tCmd
+		{
+		public:
+			tCmdGPI(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
+
+			bool operator()() override;
+		};
+
+		class tCmdGPO :public tCmd
+		{
+			enum class tStep : std::uint8_t
+			{
+				SetGPO,
+				Pause,
+			};
+
+			tStep m_Step = tStep::SetGPO;
+
+			int m_WaitTime_us = 0;
+
+		public:
+			tCmdGPO(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
+
+			bool operator()() override;
+		};
+
+		class tCmdREQ :public tCmd
+		{
+			enum class tStep : std::uint8_t
+			{
+				SendMsg,
+				WaitRsp,
+				PauseSet,
+				PauseWait,
+			};
+
+			tStep m_Step = tStep::SendMsg;
+
+			int m_WaitTime_us = 0;
+
+		public:
+			tCmdREQ(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
+
+			bool operator()() override;
+			bool OnReceived(const tPacketNMEA_Template& value) override;
+		};
+
+		tGnssTaskScript m_TaskScript;*/
+
+		std::string m_OnCmdTaskScriptIDLast;
 
 		utils::tVectorUInt8 m_ReceivedData;
+		bool m_ReceivedData_Parsed = false;
+
+	protected:
+		tCameraVC0706 * m_pObj = nullptr;
+
+		std::chrono::time_point<tClock> m_StartTime;
+
+	
+		//unsigned char m_Step = 0;
 
 		tState() = delete;
 
 	public:
 		explicit tState(tCameraVC0706 *obj);
-		virtual ~tState() { }
+		tState(tCameraVC0706* obj, const std::string& taskScriptID);
+		virtual ~tState();
 
-		//virtual void Tick10ms();
-		//virtual void Tick100ms();
+		bool operator()();
 
-		virtual void Control() { }
+		virtual bool Start() { return false; }
+		virtual bool Halt();
 
-		virtual void Start() { }
-		virtual void Halt();
+		virtual tCameraStatus GetStatus() = 0;
 
-		virtual bool IsReady() { return false; }
-
-		virtual bool GetImageReady() { return false; }//[srg]2017-02-02 Start
-		virtual bool GetImageChunk(int chunkSize) { return false; }//[srg]2017-02-03
-
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return false; }
-		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return false; }
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-
-		virtual void Receive(std::vector<char>& data);
-
+//		virtual bool GetImageReady() { return false; }//[srg]2017-02-02 Start
+//		virtual bool GetImageChunk(int chunkSize) { return false; }//[srg]2017-02-03
+//
+////#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
+////		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return false; }
+////		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return false; }
+////#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+//
+//		virtual void Receive(std::vector<char>& data);
+//
 	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data) { }//ChangeState
+//		virtual void OnReceivedMsg(std::vector<char>& data) { }//ChangeState
 
-		void ChangeState(tState *state);
+		virtual bool Go() { return true; }//ChangeState
+		//virtual void OnReceived(const tPacketNMEA_Template& value);// {}//ChangeState
+
+		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateInitialize : public tState//and wait for the device as well
+/*	class tStateInitialize : public tState//and wait for the device as well
 	{
 #ifdef LIB_MODULE_CAMERA_VC0706_INITIALIZE_CONFIG
 		CameraVC0706::Packet::tMemoryDevice m_Memory;
@@ -296,32 +386,82 @@ class tCameraVC0706
 
 	protected:
 		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
+	};*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tStateHalt : public tState
 	{
-		bool m_Halted;
+		const bool m_Error = false;
 
 	public:
-		tStateHalt(tCameraVC0706 *obj, bool halted);
-		virtual ~tStateHalt() { }
+		tStateHalt(tCameraVC0706* obj, const std::string& value);
+		tStateHalt(tCameraVC0706* obj, const std::string& value, bool error);
 
-		static tState* Instance(tCameraVC0706 *obj, bool halted = false) { return new tStateHalt(obj, halted); }
+		bool Start() override { return false; }
+		bool Halt() override { return true; }
 
-		virtual void Control();
+		tCameraStatus GetStatus() override { return tCameraStatus::Halted; }
 
-		virtual void Start();
-		virtual void Halt() { }
+	protected:
+		bool Go() override;
 	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	friend class tState;
 
-	utils::log::tLog *p_log;
+	class tStateStart :public tState
+	{
+		bool m_NextState_Stop = false;
+
+	public:
+		tStateStart(tCameraVC0706* obj, const std::string& value);
+
+		tCameraStatus GetStatus() override { return tCameraStatus::Init; }
+
+	protected:
+		//void OnTaskScriptDone() override;
+		//void OnTaskScriptFailed(const std::string& msg) override;
+	};
+
+/*	friend class tState;
+
+	utils::log::tLog* p_log;
 
 	tState *p_State;
 
 	tCameraVC0706Settings m_Settings;
+*/
+	utils::tLog* m_pLog = nullptr;
 
+	tState* m_pState = nullptr;
+
+	std::atomic_bool m_Control_Operation{ false };
+	std::atomic_bool m_Control_Restart{ false };
+	std::atomic_bool m_Control_Exit{ false };
+	std::atomic_bool m_Control_ExitOnError{ false };
+
+	mutable std::mutex m_MtxReceivedData;
+	std::queue<utils::tVectorUInt8> m_ReceivedData;
+
+	std::string m_LastErrorMsg;
+
+public:
+	tCameraVC0706() = delete;
+	explicit tCameraVC0706(utils::tLog* log);
+	tCameraVC0706(const tCameraVC0706&) = delete;
+	tCameraVC0706(tCameraVC0706&&) = delete;
+	virtual ~tCameraVC0706() {}
+	
+	void operator()();
+	
+	void Start();
+	void Start(bool exitOnError);
+	void Restart();
+	void Halt();
+	void Exit();
+
+	//bool StartUserTaskScript(const std::string& taskScriptID);
+
+	tCameraStatus GetStatus() const;
+	std::string GetLastErrorMsg() const;
+
+/*
 	tCameraVC0706() { }
 
 public:
@@ -345,16 +485,16 @@ public:
 	bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
 	bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
 #endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-
+*/
 protected:
 	virtual void Board_PowerSupply(bool state) = 0;
 	virtual void Board_Reset(bool state) = 0;
 
-	virtual void Board_SetSerialPort(int baudrate) { }
+	//virtual void Board_SetSerialPort(int baudrate) { }
 
-	virtual bool Board_Send(std::vector<char>& data) = 0;
-	virtual void Board_OnReceived(std::vector<char>& data);
-
+	virtual bool Board_Send(const utils::tVectorUInt8& data) = 0;
+	void Board_OnReceived(utils::tVectorUInt8& data);
+/*
 	virtual void OnChanged(tCameraVC0706Property value) { }
 
 	virtual void OnStart() = 0;
@@ -371,10 +511,21 @@ protected:
 	virtual void OnGetConfig(std::vector<char>& data) = 0;
 	virtual void OnSetConfig() = 0;
 #endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-
+*/
 private:
+	bool IsReceivedData() const;
+	utils::tVectorUInt8 GetReceivedDataChunk();
+	bool IsControlOperation() { return m_Control_Operation && !m_Control_Restart; }
+	//bool IsControlStop() { return !m_Control_Operation && m_Control_Restart; }
+	bool IsControlRestart() { return m_Control_Restart; }
+	bool IsControlHalt() { return !m_Control_Operation; }
+
+	void ClearReceivedData();
+
+//	void SetStrTimePeriod(std::stringstream& stream, const std::chrono::time_point<tClock>& timePoint) const;
+//	void SetStrBaudrate(std::stringstream& stream, const std::chrono::time_point<tClock>& timePoint, std::size_t sizeBytes) const;
+
 	void ChangeState(tState *state);
 };
 
 }
-*/

@@ -1,4 +1,180 @@
-#include <process.h>
+#include <devConfig.h>
+
+#include <devCamera.h>
+#include <devLog.h>
+#include <devSettings.h>
+#include <devShell.h>
+
+#include <utilsBase.h>
+
+#include <atomic>
+#include <chrono>
+#include <functional>
+#include <future>
+#include <iostream>
+#include <mutex>
+
+#include <boost/asio.hpp>
+#include <boost/filesystem.hpp>
+
+namespace dev
+{
+	void ThreadFunShell();
+}
+
+tDataSetMainControl g_DataSetMainControl;
+
+void Thread_CAM_Handler(std::promise<bool>& promise)
+{
+	dev::tLog Log(dev::tLog::tID::CAM, "CAM");
+
+	Log.LogSettings.Field.CAM = 1;
+
+	boost::asio::io_context IO;
+
+	try
+	{
+		dev::tCamera Dev(&Log, IO);
+
+		std::thread Thread_IO([&]() { IO.run(); });
+
+		bool Thread_Dev_Exists = true;
+		bool Thread_Dev_ExistOnError = false;
+		std::thread Thread_Dev([&]()
+			{
+				try
+				{
+					//if (g_DataSetMainControl.Thread_CAM_State == tDataSetMainControl::tStateCAM::Exit)//[TBD] TEST
+					//	Thread_Dev_Exists = false;
+					Dev();
+					Thread_Dev_Exists = false;
+					const std::string ErrMsg = Dev.GetLastErrorMsg();
+					if (!ErrMsg.empty())
+					{
+						std::cerr << ErrMsg << "\n";
+						Thread_Dev_ExistOnError = true;
+					}
+				}
+				catch (...)
+				{
+					Thread_Dev_Exists = false;
+					promise.set_exception(std::current_exception());
+				}
+			});
+
+		tDataSetMainControl::tStateCAM StateGNSSPrev = g_DataSetMainControl.Thread_CAM_State;
+
+		while (true)
+		{
+			if (!Thread_Dev_Exists)
+				break;
+
+			if (g_DataSetMainControl.Thread_CAM_State != tDataSetMainControl::tStateCAM::Nothing)
+			{
+				//switch (g_DataSetMainControl.Thread_CAM_State)
+				//{
+				//case tDataSetMainControl::tStateCAM::Start: Dev.Start(); break;
+				//case tDataSetMainControl::tStateCAM::Halt: Dev.Halt(); break;
+				//case tDataSetMainControl::tStateCAM::Restart: Dev.Restart(); break;
+				//case tDataSetMainControl::tStateCAM::Exit: Dev.Exit(); break;
+				//case tDataSetMainControl::tStateCAM::UserTaskScriptStart:
+				//{
+				//	std::lock_guard<std::mutex> Lock(g_DataSetMainControl.Thread_CAM_State_UserTaskScriptIDMtx);
+
+				//	if (!g_DataSetMainControl.Thread_CAM_State_UserTaskScriptID.empty())
+				//	{
+				//		Dev.StartUserTaskScript(g_DataSetMainControl.Thread_CAM_State_UserTaskScriptID);
+
+				//		g_DataSetMainControl.Thread_CAM_State_UserTaskScriptID.clear();
+				//	}
+				//	break;
+				//}
+				//}
+
+				if (g_DataSetMainControl.Thread_CAM_State == tDataSetMainControl::tStateCAM::Exit)
+					break;
+
+				g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::Nothing;
+			}
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		}
+
+		Thread_Dev.join();
+
+		IO.stop();
+
+		Thread_IO.join();
+
+		if (!Thread_Dev_Exists)
+			promise.set_value(Thread_Dev_ExistOnError);
+	}
+	catch (...)
+	{
+		promise.set_exception(std::current_exception());
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	const bool ShellEnabled = argc >= 2 && !strcmp(argv[1], "shell");
+
+	dev::tLog::LogSettings.Value = 0;
+	dev::tLog::LogSettings.Field.Enabled = ShellEnabled ? 1 : 0;
+
+	try
+	{
+		const boost::filesystem::path Path{ argv[0] };
+		boost::filesystem::path PathFile = Path.filename();
+		if (PathFile.has_extension())
+			PathFile.replace_extension();
+
+		const std::string FileNameConf = PathFile.string() + ".conf";
+		dev::g_Settings = dev::tSettings(FileNameConf);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+
+		return static_cast<int>(utils::tExitCode::EX_CONFIG);
+	}
+
+	utils::tExitCode CErr = utils::tExitCode::EX_OK;
+	////////////////////////////////
+	std::thread Thread_Shell;
+
+	if (ShellEnabled)
+		Thread_Shell = std::thread(dev::ThreadFunShell);
+	////////////////////////////////
+
+	std::promise<bool> Thread_CAM_Promise;
+	auto Thread_CAM_Future = Thread_CAM_Promise.get_future();
+
+	std::thread Thread_CAM(Thread_CAM_Handler, std::ref(Thread_CAM_Promise));//C++11
+
+	try
+	{
+		if (Thread_CAM_Future.get())
+			CErr = utils::tExitCode::EX_NOINPUT;
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+
+		g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::Exit;
+
+		CErr = utils::tExitCode::EX_IOERR;
+	}
+
+	Thread_CAM.join();
+
+	if (ShellEnabled)
+		Thread_Shell.detach();
+
+	return static_cast<int>(CErr);
+}
+
+/*#include <process.h>
 #include <windows.h>
 #include <winbase.h>
 
@@ -12,17 +188,6 @@
 
 //#define LIB_MODULE_CAMERA_VC0706_CONFIG_TEST_1
 
-namespace mod
-{
-	namespace CameraVC0706
-	{
-		namespace Packet
-		{
-			void UnitTests();
-		}
-	}
-}
-
 std::pair<std::string, int> g_DefaultSettings_SerialPort;
 std::string g_DefaultSettings_Files_ImageFileName;
 
@@ -30,7 +195,7 @@ bool g_WriteToFileImage;
 
 HANDLE g_ModCameraUIEvent;
 HANDLE g_ModCameraMutex;
-/*
+
 unsigned __stdcall Tick10ms(void* data)
 {
 	dev::tCamera* Entity = (dev::tCamera*)data;
@@ -47,14 +212,13 @@ unsigned __stdcall Tick10ms(void* data)
 	}
 
 	return 0;
-}*/
+}
 
 unsigned __stdcall UserInterface(void* data);
 
 void main(int argc, char **argv)
 {
-	mod::CameraVC0706::Packet::UnitTests();
-/*
+
 	std::string CfgFileName = "App.ini";
 
 	if (argc > 0)
@@ -126,13 +290,13 @@ void main(int argc, char **argv)
 	}
 
 	CloseHandle(ThreadTick10ms);
-	*/
+	
 	system("pause");
 }
 
 unsigned __stdcall UserInterface(void* data)
 {
-	/*dev::tCamera* Entity = (dev::tCamera*)data;
+	dev::tCamera* Entity = (dev::tCamera*)data;
 
 	int m_ImageChunkSize = 0;
 	
@@ -458,7 +622,7 @@ unsigned __stdcall UserInterface(void* data)
 
 			WaitForSingleObject(g_ModCameraUIEvent, INFINITE);
 		}
-	}*/
+	}
 
 	return 0;
 }
@@ -500,4 +664,4 @@ void OnModFailed()
 	g_WriteToFileImage = false;
 
 	SetEvent(g_ModCameraUIEvent);
-}
+}*/

@@ -5,14 +5,7 @@
 //
 // |   version  |    release    | Description
 // |------------|---------------|---------------------------------
-// |      1     |   2018 02 09  |
-// |      2     |   2019 02 25  | Corrected tShell::Board_OnReceived(char data)
-// |      3     |   2019 03 22  | Corrected tShell::Board_OnReceived(char data)
-// |            |               | Corrrected OnReceivedCmd(std::vector<std::string>& data)
-// |            |               | Corrrected OnReceivedCmd(std::vector<std::string> data)
-// |            |               | Added tShellCommandList
-// |      4     |   2019 05 14  | Updated
-// |      5     |   2019 09 19  | Corrected tShell::Board_OnReceived(char data) in ECHO_OFF mode
+// |            |   2018 02 09  |
 // |            |               | 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once

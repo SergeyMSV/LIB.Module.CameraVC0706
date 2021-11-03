@@ -18,13 +18,13 @@ class tSerialPort
 {
     boost::asio::serial_port m_Port;
 
-    uint8_t m_Data[DataSizeRecv];
+	std::uint8_t m_Data[DataSizeRecv];
 
 	mutable std::mutex m_Mtx;//[TBD] maybe scoped_mutex
-	std::queue<std::vector<uint8_t>> m_DataSent;
+	std::queue<std::vector<std::uint8_t>> m_DataSent;
 
 public:
-	tSerialPort(boost::asio::io_context& io, const std::string& id, uint32_t portBR, tCharSize charSize, tStopBits stopBits, tParity parity, tFlowControl flowControl)
+	tSerialPort(boost::asio::io_context& io, const std::string& id, std::uint32_t portBR, tCharSize charSize, tStopBits stopBits, tParity parity, tFlowControl flowControl)
         : m_Port(io)
     {
         m_Port.open(id);
@@ -41,12 +41,12 @@ public:
         Receive();
     }
 
-	tSerialPort(boost::asio::io_context& io, const std::string& id, uint32_t portBR)
+	tSerialPort(boost::asio::io_context& io, const std::string& id, std::uint32_t portBR)
 		:tSerialPort(io, id, portBR, tCharSize(8), tStopBits::one, tParity::none, tFlowControl::none)
 	{
 	}
 
-	bool Send(const std::vector<uint8_t>& data)
+	bool Send(const std::vector<std::uint8_t>& data)
 	{
 		std::lock_guard<std::mutex> Lock(m_Mtx);
 
@@ -70,7 +70,7 @@ private:
             {
                 if (!ec && bytes_recvd > 0)
                 {
-					std::vector<uint8_t> Data(m_Data, m_Data + bytes_recvd);
+					std::vector<std::uint8_t> Data(m_Data, m_Data + bytes_recvd);
 					OnReceived(Data);
                 }
                 //else
@@ -82,7 +82,7 @@ private:
     }
 
 protected:
-    virtual void OnReceived(std::vector<uint8_t>& data) = 0;
+    virtual void OnReceived(std::vector<std::uint8_t>& data) = 0;
 
 	void Send()
 	{

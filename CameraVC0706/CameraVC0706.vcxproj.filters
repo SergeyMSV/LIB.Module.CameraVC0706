@@ -28,12 +28,6 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_Packet.cpp">
-      <Filter>Lib.Module</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_Packet_Test.cpp">
-      <Filter>Lib.Module</Filter>
-    </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
@@ -76,6 +70,18 @@
     <ClCompile Include="..\LIB.Utils\utilsShell.cpp">
       <Filter>Lib.Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp">
+      <Filter>Lib.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devSettings.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devShell.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devDataSet.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libConfig.h" />
@@ -92,9 +98,6 @@
     <ClInclude Include="..\LIB.Module\modCameraVC0706_Attribute.h">
       <Filter>Lib.Module</Filter>
     </ClInclude>
-    <ClInclude Include="..\LIB.Module\modCameraVC0706_Packet.h">
-      <Filter>Lib.Module</Filter>
-    </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsBase.h">
       <Filter>Lib.Utils</Filter>
     </ClInclude>
@@ -104,18 +107,30 @@
     <ClInclude Include="..\LIB.Utils\utilsShell.h">
       <Filter>Lib.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\LIB.Utils\utilsCRC.h">
-      <Filter>Lib.Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsPacket.h">
       <Filter>Lib.Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsSerialPort.h">
       <Filter>Lib.Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h">
+      <Filter>Lib.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devSettings.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devShell.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devDataSet.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Module\modCamera.h">
+      <Filter>Lib.Module</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CameraVC0706.exe.ini" />
+    <None Include="CameraVC0706.conf" />
     <None Include="..\LIB.Module\modCameraVC0706_States.vsd">
       <Filter>Lib.Module</Filter>
     </None>

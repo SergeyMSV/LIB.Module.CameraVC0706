@@ -1,64 +1,59 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// LOG
+// devLog.h
 //
-// Created by Sergey Maslennikov
-// Tel.:   +7-916-540-09-19
-// E-mail: maslennikovserge@yandex.ru
+// Standard ISO/IEC 114882, C++14
 //
 // |   version  |    release    | Description
 // |------------|---------------|---------------------------------
-// |      1     |   long ago    |
-// |      2     |   2016 05 20  | Refactored
-// |      3     |   2016 06 02  | Changed owner's identification (added m_Id)
-// |            |               | Added WriteLog(std::string msg, bool timestamp, bool error);
-// |      3c    |   2016 06 27  |
-// |            |               |
+// |      1     |   2020 01 15  |
+// |            |               | 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef DEV_LOG_H
-#define DEV_LOG_H
-/*
-#include <devConfig.h>
+#pragma once
 
 #include <utilsLog.h>
 
-#include <string>
+#include <cstdint>
 
 namespace dev
 {
 
-class tLog : public utils::log::tLog
+class tLog : public utils::tLog
 {
 public:
-	static const unsigned int LogId_Board_ModCamera      = (1 << 0);
-	static const unsigned int LogId_Dev_ModCamera        = (1 << 1);
-	//...
+	enum class tID : std::uint32_t
+	{
+		NoID = 0,
+		Enabled = (1 << 0),
+		CAM = (1 << 1),
+	};
 
 	union tSettings
 	{
 		struct
 		{
-			unsigned int Board_ModCamera      : 1;
-			unsigned int Dev_ModCamera        : 1;
-			unsigned int : 30;
+			std::uint32_t Enabled : 1;//if it's equal to 0 no logs are shown
+			std::uint32_t CAM     : 1;
+			std::uint32_t         : 29;
 		}Field;
 
-		unsigned int Value;
+		std::uint32_t Value = 0;
 	};
 
-private:
-	unsigned int m_Id;
+	static tSettings LogSettings;
 
-	tLog() { }
+private:
+	tID m_ID = tID::NoID;
+	const char* m_Sign = nullptr;
+
+	tLog() = delete;
 
 public:
-	tLog(unsigned int id);
-
-	virtual ~tLog() { }
+	tLog(tLog::tID id, const char* sign);
 
 protected:
-	virtual void WriteLog(const std::string& msg, bool timestamp, bool showAlways);
+	const char* GetSign() const override;
+
+	void WriteLog(const std::string& msg) override;
 };
 
 }
-*/
-#endif//DEV_LOG_H

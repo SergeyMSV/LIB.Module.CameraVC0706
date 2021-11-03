@@ -1,8 +1,97 @@
 #include "devCamera.h"
-/*
+
 namespace dev
 {
 
+tCamera::tCamera(utils::tLog* log, boost::asio::io_context& io)
+	:m_pLog(log), m_pIO(&io)
+{
+	m_pModFSMachine = new tModCamera(this);
+}
+
+tCamera::~tCamera()
+{
+	delete m_pModFSMachine;
+}
+
+void tCamera::operator()()
+{
+	if (m_pModFSMachine)
+	{
+		if (m_StartAuto)
+		{
+			m_StartAuto = false;
+
+			m_pModFSMachine->Start(true);
+		}
+
+		(*m_pModFSMachine)();
+	}
+}
+
+void tCamera::Start()
+{
+	if (m_pModFSMachine)
+	{
+		m_pModFSMachine->Start();
+	}
+}
+
+void tCamera::Restart()
+{
+	if (m_pModFSMachine)
+	{
+		m_pModFSMachine->Restart();
+	}
+}
+
+void tCamera::Halt()
+{
+	if (m_pModFSMachine)
+	{
+		m_pModFSMachine->Halt();
+	}
+}
+
+void tCamera::Exit()
+{
+	if (m_pModFSMachine)
+	{
+		m_pModFSMachine->Exit();
+	}
+}
+
+//bool tCamera::StartUserTaskScript(const std::string& taskScriptID)
+//{
+//	if (m_pModFSMachine)
+//	{
+//		return m_pModFSMachine->StartUserTaskScript(taskScriptID);
+//	}
+//
+//	return false;
+//}
+
+mod::tCameraStatus tCamera::GetStatus() const
+{
+	if (m_pModFSMachine)
+	{
+		return m_pModFSMachine->GetStatus();
+	}
+
+	return mod::tCameraStatus::Unknown;
+}
+
+std::string tCamera::GetLastErrorMsg() const
+{
+	if (m_pModFSMachine)
+	{
+		return m_pModFSMachine->GetLastErrorMsg();
+	}
+
+	return {};
+}
+
+/*
 tCamera::tCamera()
 {
 	p_log = new tLog(tLog::LogId_Dev_ModCamera);
@@ -49,6 +138,5 @@ void tCamera::Halt()
 {
 	m_ModCamera->Halt();
 }
-
-}
 */
+}

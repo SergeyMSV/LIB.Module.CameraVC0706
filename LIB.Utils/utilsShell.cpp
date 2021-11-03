@@ -49,7 +49,7 @@ void tShell::Board_OnReceived(char data)
 		{
 			std::string SubString;
 
-			for (unsigned int i = 0; i < m_CharQueue.size(); ++i)
+			for (std::size_t i = 0; i < m_CharQueue.size(); ++i)
 			{
 				if (m_CharQueue[i] != ' ')
 				{
@@ -91,7 +91,7 @@ void tShell::Board_OnReceived(char data)
 
 void tShell::Board_OnReceived(const std::vector<char>& data)
 {
-	for (size_t i = 0; i < data.size(); ++i)
+	for (std::size_t i = 0; i < data.size(); ++i)
 	{
 		Board_OnReceived(data[i]);
 	}

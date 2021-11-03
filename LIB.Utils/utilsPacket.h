@@ -6,8 +6,6 @@
 // |   version  |    release    | Description
 // |------------|---------------|---------------------------------
 // |      1     |   2019 06 20  |
-// |      2     |   2020 03 26  | std::size_t Find(tVectorUInt8& receivedData, tPacket& packet) instead of bool Find(tVectorUInt8& receivedData, tPacket& packet)
-// |      3     |   2020 06 10  | Added typedef typename TPayload payload_type;
 // |            |               | 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
@@ -32,13 +30,13 @@ public:
 	typedef TPayload payload_type;
 	typedef typename TPayload::value_type payload_value_type;
 
-	tPacket() { }
+	tPacket() = default;
 	explicit tPacket(const payload_value_type& value)
 	{
 		TPayload::Data = value;
 	}
 
-	static std::size_t Find(tVectorUInt8& receivedData, tPacket& packet)
+	static size_t Find(tVectorUInt8& receivedData, tPacket& packet)
 	{
 		tVectorUInt8::const_iterator Begin = receivedData.cbegin();
 
@@ -57,7 +55,7 @@ public:
 			{
 				if (TFormat<TPayload>::TryParse(PacketVector, packet))
 				{
-					std::size_t EraseSize = std::distance(receivedData.cbegin(), Begin);
+					size_t EraseSize = std::distance(receivedData.cbegin(), Begin);
 
 					EraseSize += PacketVector.size();
 

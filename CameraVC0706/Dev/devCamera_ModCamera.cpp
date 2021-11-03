@@ -1,4 +1,5 @@
 #include "devCamera.h"
+#include "devSettings.h"
 /*
 void WriteToFileImage(std::vector<char>& data);//TEST
 void WriteToFileImageComplete();//TEST
@@ -7,42 +8,74 @@ void OnModHalt();
 void OnModFailed();
 
 extern std::pair<std::string, int> g_DefaultSettings_SerialPort;
-
+*/
 namespace dev
 {
 
-tCamera::tModCamera::tModCamera(tCamera* obj, mod::tCameraVC0706Settings settings)
-	:mod::tCameraVC0706(obj->p_log, settings), p_obj(obj)
+tCamera::tModCamera::tModCamera(tCamera* obj)
+	:mod::tCameraVC0706(obj->m_pLog), m_pObj(obj), m_Board(this, *obj->m_pIO)
 {
-	m_Board = 0;
+
 }
 
 tCamera::tModCamera::~tModCamera()
 {
-	if (m_Board)
-		delete m_Board;
+
 }
 
-void tCamera::tModCamera::Control()
-{
-	if (m_Board)
-		m_Board->Control();
-
-	mod::tCameraVC0706::Control();
-}
+//mod::tGnssTaskScript tGNSS::tModGnssReceiver::GetTaskScript(const std::string& id, bool userTaskScript)
+//{
+//	return g_Settings.GetTaskScript(id, userTaskScript);
+//}
+//
+//mod::tGnssSettingsNMEA tGNSS::tModGnssReceiver::GetSettingsNMEA()
+//{
+//	return g_Settings.GetSettingsNMEA();
+//}
+//
+//void tCamera::tModCamera::OnChanged(const mod::tGnssDataSet& value)
+//{
+//	const std::string FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
+//	const std::string FileNameTemp = FileName + ".tmp";
+//	std::fstream File = std::fstream(FileNameTemp, std::ios::out);
+//	if (File.is_open())
+//	{
+//		File << value.ToJSON();
+//		File.close();
+//	}
+//	std::remove(FileName.c_str());
+//	std::rename(FileNameTemp.c_str(), FileName.c_str());
+//
+//	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightYellow, value.ToJSON());
+//}
 
 void tCamera::tModCamera::Board_PowerSupply(bool state)
 {
-	if (m_Board)
-		m_Board->PowerSupply(state);
+	std::stringstream SStream;
+	SStream << "Board_PowerSupply: " << state;
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightMagenta, SStream.str());
 }
 
 void tCamera::tModCamera::Board_Reset(bool state)
 {
-	if (m_Board)
-		m_Board->Reset(state);
+	std::stringstream SStream;
+	SStream << "Board_Reset:       " << state;
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightMagenta, SStream.str());
 }
 
+bool tCamera::tModCamera::Board_Send(const utils::tVectorUInt8& data)
+{
+	return m_Board.Send(data);
+}
+
+void tCamera::tModCamera::OnReceived(utils::tVectorUInt8& data)
+{
+	Board_OnReceived(data);
+}
+
+
+
+/*
 void tCamera::tModCamera::Board_SetSerialPort(int value)
 {
 	p_obj->p_log->WriteLine("Board_SetSerialPort: " + utils::ToString(value, utils::tRadix_10));
@@ -62,21 +95,9 @@ void tCamera::tModCamera::Board_SetSerialPort(int value)
 		m_Board = Board;
 	}
 }
+*/
 
-bool tCamera::tModCamera::Board_Send(std::vector<char>& data)
-{
-	if (m_Board)
-		return m_Board->Send(data);
-
-	return false;
-}
-
-void tCamera::tModCamera::OnReceived(std::vector<char>& data)
-{
-	Board_OnReceived(data);
-}
-
-void tCamera::tModCamera::OnStart()
+/*void tCamera::tModCamera::OnStart()
 {
 	p_obj->p_log->WriteLine("OnStart");
 
@@ -160,6 +181,5 @@ void tCamera::tModCamera::OnSetConfig()
 	p_obj->p_log->WriteLine("OnSetConfig");
 }
 #endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-
-}
 */
+}
