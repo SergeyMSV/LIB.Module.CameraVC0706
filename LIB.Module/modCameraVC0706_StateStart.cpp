@@ -1,14 +1,14 @@
 #include "modCameraVC0706.h"
 
+#include "utilsPacketCameraVC0706.h"
+
 namespace mod
 {
 
-tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj, const std::string& value)
+tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
 	:tState(obj, "StateStart")
 {
-	std::stringstream SStr;
-	SStr << "tStateStart: " << value;
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, SStr.str());
+	//m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, SStr.str());
 
 	if (m_pObj->IsControlRestart())
 	{
@@ -16,27 +16,38 @@ tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj, const std::string& v
 	}
 }
 
-//void tCameraVC0706::tStateStart::OnTaskScriptDone()
-//{
-//	m_pObj->m_pLog->WriteLine(false, utils::tLogColour::LightYellow, "OnTaskScriptDone");
-//
-//	if (m_NextState_Stop)
-//	{
-//		ChangeState(new tStateStop(m_pObj, "start single"));
-//		return;
-//	}
-//
-//	ChangeState(new tStateOperation(m_pObj));
-//	return;
-//}
-//
-//void tCameraVC0706::tStateStart::OnTaskScriptFailed(const std::string& msg)
-//{
-//	m_pObj->m_pLog->WriteLine(false, utils::tLogColour::LightYellow, "OnTaskScriptFailed: " + msg);
-//
-//	ChangeState(new tStateError(m_pObj, "start"));
-//	return;
-//}
+bool tCameraVC0706::tStateStart::Go()
+{
+	using tPacketCmd = utils::packet_CameraVC0706::tPacketCmd;
+	using tPacketRet = utils::packet_CameraVC0706::tPacketRet;
+
+	using tPayloadCmd = utils::packet_CameraVC0706::tPayloadCmd;
+	using tPayloadRet = utils::packet_CameraVC0706::tPayloadRet;
+
+	if (!m_pObj->IsControlOperation())
+		return false;
+
+	tPacketCmd Packet = tPacketCmd(tPayloadCmd::MakeGetVersion(0x00));//[#]SN
+
+	utils::tVectorUInt8 Data = Packet.ToVector();
+
+		//if (m_pObj->IsControlOperation())
+		//{
+		//	ChangeState(new tStateStart(m_pObj, "start...s"));
+		//	return true;
+		//}*/
+
+
+	//p_obj->OnStart();
+
+	//p_obj->Board_Reset(false);
+	//p_obj->Board_PowerSupply(true);
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	// p_obj->OnFailed(tCameraVC0706Error_StateStart_ErrTimer);
+	return true;
+}
+
 
 }
 

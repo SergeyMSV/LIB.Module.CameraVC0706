@@ -9,10 +9,10 @@ tCameraVC0706::tState::tState(tCameraVC0706* obj)
 	m_pObj->ClearReceivedData();
 }
 
-tCameraVC0706::tState::tState(tCameraVC0706* obj, const std::string& taskScriptID)
+tCameraVC0706::tState::tState(tCameraVC0706* obj, const std::string& strState)
 	:tState(obj)
 {
-	//m_TaskScript = m_pObj->GetTaskScript(taskScriptID, false);
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, strState);
 }
 
 tCameraVC0706::tState::~tState()
@@ -22,7 +22,8 @@ tCameraVC0706::tState::~tState()
 
 bool tCameraVC0706::tState::operator()()
 {
-/*	if (m_pCmd && (*m_pCmd)())
+	/*
+	if (m_pCmd && (*m_pCmd)())
 		return true;
 
 	if (m_pObj->IsReceivedData())

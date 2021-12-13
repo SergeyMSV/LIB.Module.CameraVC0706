@@ -48,79 +48,7 @@ class tCameraVC0706
 
 	class tState
 	{
-		/*class tCmd
-		{
-		protected:
-			tState* m_pObjState = nullptr;
-
-			std::unique_ptr<tGnssTaskScriptCmd> m_Cmd;
-
-			std::chrono::time_point<tClock> m_StartTime;
-
-		public:
-			tCmd() = delete;
-			tCmd(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd) :m_pObjState(objState), m_Cmd(std::move(cmd)) {}
-			tCmd(const tCmd&) = delete;
-			tCmd(tCmd&&) = delete;
-			virtual ~tCmd() = default;
-
-			tCmd& operator=(const tCmd&) = delete;
-			tCmd& operator=(tCmd&&) = delete;
-
-			virtual bool operator()() = 0;
-			virtual bool OnReceived(const tPacketNMEA_Template& value) { return false; };
-		};
-
-		class tCmdGPI :public tCmd
-		{
-		public:
-			tCmdGPI(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
-
-			bool operator()() override;
-		};
-
-		class tCmdGPO :public tCmd
-		{
-			enum class tStep : std::uint8_t
-			{
-				SetGPO,
-				Pause,
-			};
-
-			tStep m_Step = tStep::SetGPO;
-
-			int m_WaitTime_us = 0;
-
-		public:
-			tCmdGPO(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
-
-			bool operator()() override;
-		};
-
-		class tCmdREQ :public tCmd
-		{
-			enum class tStep : std::uint8_t
-			{
-				SendMsg,
-				WaitRsp,
-				PauseSet,
-				PauseWait,
-			};
-
-			tStep m_Step = tStep::SendMsg;
-
-			int m_WaitTime_us = 0;
-
-		public:
-			tCmdREQ(tState* objState, std::unique_ptr<tGnssTaskScriptCmd> cmd);
-
-			bool operator()() override;
-			bool OnReceived(const tPacketNMEA_Template& value) override;
-		};
-
-		tGnssTaskScript m_TaskScript;*/
-
-		std::string m_OnCmdTaskScriptIDLast;
+		//std::string m_OnCmdTaskScriptIDLast;
 
 		utils::tVectorUInt8 m_ReceivedData;
 		bool m_ReceivedData_Parsed = false;
@@ -130,8 +58,7 @@ class tCameraVC0706
 
 		std::chrono::time_point<tClock> m_StartTime;
 
-	
-		//unsigned char m_Step = 0;
+		unsigned char m_Step = 0;
 
 		tState() = delete;
 
@@ -410,13 +337,15 @@ class tCameraVC0706
 		bool m_NextState_Stop = false;
 
 	public:
-		tStateStart(tCameraVC0706* obj, const std::string& value);
+		tStateStart(tCameraVC0706* obj);
 
 		tCameraStatus GetStatus() override { return tCameraStatus::Init; }
 
 	protected:
-		//void OnTaskScriptDone() override;
-		//void OnTaskScriptFailed(const std::string& msg) override;
+		//virtual void OnReceivedMsg(std::vector<char>& data); - get rid of it
+
+		bool Go() override;
+		//virtual void OnReceived(const tPacketNMEA_Template& value);// {}//ChangeState
 	};
 
 /*	friend class tState;
@@ -455,8 +384,6 @@ public:
 	void Restart();
 	void Halt();
 	void Exit();
-
-	//bool StartUserTaskScript(const std::string& taskScriptID);
 
 	tCameraStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
