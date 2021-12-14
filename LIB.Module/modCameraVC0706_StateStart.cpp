@@ -18,16 +18,17 @@ tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
 
 bool tCameraVC0706::tStateStart::Go()
 {
-	using tPacketCmd = utils::packet_CameraVC0706::tPacketCmd;
-	using tPacketRet = utils::packet_CameraVC0706::tPacketRet;
+	using namespace utils::packet_CameraVC0706;
+	//using tPacketCmd = utils::packet_CameraVC0706::tPacketCmd;
+	//using tPacketRet = utils::packet_CameraVC0706::tPacketRet;
 
-	using tPayloadCmd = utils::packet_CameraVC0706::tPayloadCmd;
-	using tPayloadRet = utils::packet_CameraVC0706::tPayloadRet;
+	//using tPayloadCmd = utils::packet_CameraVC0706::tPayloadCmd;
+	//using tPayloadRet = utils::packet_CameraVC0706::tPayloadRet;
 
 	if (!m_pObj->IsControlOperation())
 		return false;
 
-	tPacketCmd Packet = tPacketCmd(tPayloadCmd::MakeGetVersion(0x00));//[#]SN
+	tPacketCmd Packet = tPacketCmd::MakeGetVersion(0x00);//[#]SN
 
 	utils::tVectorUInt8 Data = Packet.ToVector();
 

@@ -82,7 +82,7 @@ public:
 		return static_cast<TPayload>(*this);
 	}
 
-	tVectorUInt8 ToVector()
+	tVectorUInt8 ToVector() const
 	{
 		tVectorUInt8 PacketVector;
 
@@ -150,10 +150,6 @@ struct tPayload
 	value_type Value{};
 
 	tPayload() = default;
-
-	//explicit tPayload(const value_type& value)
-	//	:Value(value)
-	//{}
 
 	tPayload(tVectorUInt8::const_iterator cbegin, tVectorUInt8::const_iterator cend)
 		:Value(cbegin, cend)

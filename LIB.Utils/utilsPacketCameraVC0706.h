@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // utilsPacketCameraVC0706.h
 // 2017-02-01
-// Standard ISO/IEC 114882, C++17
+// Standard ISO/IEC 114882, C++20
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -230,17 +230,8 @@ struct tDataCmd
 		return Payload[index - 3];//ContainerCmdHeaderSize
 	}
 
-	bool operator == (const tDataCmd& val) const
-	{
-		return
-			SerialNumber == val.SerialNumber &&
-			MsgId == val.MsgId &&
-			Payload == val.Payload;
-	}
-	bool operator != (const tDataCmd& val) const
-	{
-		return !(*this == val);
-	}
+	bool operator == (const tDataCmd& val) const = default;
+	bool operator != (const tDataCmd& val) const = default;
 };
 
 struct tDataRet
@@ -289,18 +280,8 @@ struct tDataRet
 		return Payload[index - 4];//ContainerRetHeaderSize
 	}
 
-	bool operator == (const tDataRet& val) const
-	{
-		return
-			SerialNumber == val.SerialNumber &&
-			MsgId == val.MsgId &&
-			MsgStatus == val.MsgStatus &&
-			Payload == val.Payload;
-	}
-	bool operator != (const tDataRet& val) const
-	{
-		return !(*this == val);
-	}
+	bool operator == (const tDataRet& val) const = default;
+	bool operator != (const tDataRet& val) const = default;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,36 +342,6 @@ struct tPayloadCmd : public packet::tPayload<tDataCmd>
 	tPayloadCmd(tVectorUInt8::const_iterator cbegin, tVectorUInt8::const_iterator cend)
 		:tPayload(cbegin, cend)
 	{}
-
-	static tPayloadCmd MakeGetVersion(std::uint8_t sn);
-	static tPayloadCmd MakeSetSerialNumber(std::uint8_t sn, std::uint8_t value);
-	static tPayloadCmd MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate);
-	static tPayloadCmd MakeSetPortUARTHS(std::uint8_t sn, tUARTHSBaudrate baudrate);
-	static tPayloadCmd MakeSystemReset(std::uint8_t sn);
-
-	static tPayloadCmd MakeReadDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg);
-	static tPayloadCmd MakeReadDataReg_Port(tMemoryDataReg memory, std::uint8_t sn);
-	static tPayloadCmd MakeReadDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn);
-	static tPayloadCmd MakeReadDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn);
-	static tPayloadCmd MakeReadDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn);
-	static tPayloadCmd MakeReadDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
-
-	static tPayloadCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data);
-	static tPayloadCmd MakeWriteDataReg_Port(tMemoryDataReg memory, std::uint8_t sn, tPort port);
-	static tPayloadCmd MakeWriteDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate);
-	static tPayloadCmd MakeWriteDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
-	static tPayloadCmd MakeWriteDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution);
-	//static tPayloadCmd MakeWriteDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
-
-	static tPayloadCmd MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
-	//static tPayloadCmd MakeReadFBufNext(std::uint8_t sn);
-	static tPayloadCmd MakeGetFBufLenCurrent(std::uint8_t sn);
-	static tPayloadCmd MakeGetFBufLenNext(std::uint8_t sn);
-	//static tPayloadCmd MakeSetFBufLen(std::uint8_t sn);
-	static tPayloadCmd MakeFBufCtrlStopCurrentFrame(std::uint8_t sn);
-	//static tPayloadCmd MakeFBufCtrlStopNextFrame(std::uint8_t sn);
-	static tPayloadCmd MakeFBufCtrlResumeFrame(std::uint8_t sn);
-	//static tPayloadCmd MakeFBufCtrlStepFrame(std::uint8_t sn);
 };
 
 struct tPayloadRet : public packet::tPayload<tDataRet>
@@ -399,12 +350,71 @@ struct tPayloadRet : public packet::tPayload<tDataRet>
 	tPayloadRet(tVectorUInt8::const_iterator cbegin, tVectorUInt8::const_iterator cend)
 		:tPayload(cbegin, cend)
 	{}
+};
+
+class tPacketCmd : public packet::tPacket<tFormatCmd, tPayloadCmd>
+{
+	explicit tPacketCmd(const payload_value_type & payloadValue)
+		: tPacket(payloadValue)
+	{}
+
+public:
+	tPacketCmd() = default;
+
+	tMsgId GetMsgId() const
+	{
+		return GetPayloadValue().MsgId;
+	}
+
+	static tPacketCmd MakeGetVersion(std::uint8_t sn);
+	static tPacketCmd MakeSetSerialNumber(std::uint8_t sn, std::uint8_t value);
+	static tPacketCmd MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate);
+	static tPacketCmd MakeSetPortUARTHS(std::uint8_t sn, tUARTHSBaudrate baudrate);
+	static tPacketCmd MakeSystemReset(std::uint8_t sn);
+
+	static tPacketCmd MakeReadDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg);
+	static tPacketCmd MakeReadDataReg_Port(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
+
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data);
+	static tPacketCmd MakeWriteDataReg_Port(tMemoryDataReg memory, std::uint8_t sn, tPort port);
+	static tPacketCmd MakeWriteDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate);
+	static tPacketCmd MakeWriteDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
+	static tPacketCmd MakeWriteDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution);
+	//static tPacketCmd MakeWriteDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
+
+	static tPacketCmd MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
+	//static tPacketCmd MakeReadFBufNext(std::uint8_t sn);
+	static tPacketCmd MakeGetFBufLenCurrent(std::uint8_t sn);
+	static tPacketCmd MakeGetFBufLenNext(std::uint8_t sn);
+	//static tPacketCmd MakeSetFBufLen(std::uint8_t sn);
+	static tPacketCmd MakeFBufCtrlStopCurrentFrame(std::uint8_t sn);
+	//static tPacketCmd MakeFBufCtrlStopNextFrame(std::uint8_t sn);
+	static tPacketCmd MakeFBufCtrlResumeFrame(std::uint8_t sn);
+	//static tPacketCmd MakeFBufCtrlStepFrame(std::uint8_t sn);
+};
+
+class tPacketRet : public packet::tPacket<tFormatRet, tPayloadRet>
+{
+public:
+	tMsgId GetMsgId() const
+	{
+		return GetPayloadValue().MsgId;
+	}
+
+	tMsgStatus GetMsgStatus() const
+	{
+		return GetPayloadValue().MsgStatus;
+	}
 
 	//static tVectorUInt8 Parse(const tPayloadRet& data, std::uint8_t& sn, tMsgId& msgId, tMsgStatus& cerr);
-	static tMsgStatus ParseReadDataReg_Port(const tPayloadRet& payload, tPort& port);
-	static tMsgStatus ParseReadDataReg_PortUART(const tPayloadRet& payload, tUARTBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_PortUARTHS(const tPayloadRet& payload, tUARTHSBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_VideoResolution(const tPayloadRet& payload, tVideoResolution& resolution);
+	static tMsgStatus ParseReadDataReg_Port(const tPacketRet& payload, tPort& port);
+	static tMsgStatus ParseReadDataReg_PortUART(const tPacketRet& payload, tUARTBaudrate& baudrate);
+	static tMsgStatus ParseReadDataReg_PortUARTHS(const tPacketRet& payload, tUARTHSBaudrate& baudrate);
+	static tMsgStatus ParseReadDataReg_VideoResolution(const tPacketRet& payload, tVideoResolution& resolution);
 	// 
 	//static tPort ParseReadDataReg_Port(const tPayloadRet& data);
 	//static tUARTBaudrate ParseWriteDataReg_PortUART(const tPayloadRet& data);
@@ -412,155 +422,8 @@ struct tPayloadRet : public packet::tPayload<tDataRet>
 	//static tVideoResolution ParseWriteDataReg_VideoResolution(const tPayloadRet& data);
 
 private:
-	static tMsgStatus Check(const tPayloadRet& payload, tMsgId msgId, std::size_t dataSize);
+	static tMsgStatus Check(const tPacketRet& packet, tMsgId msgId, std::size_t dataSize);
 };
-
-using tPacketCmd = packet::tPacket<tFormatCmd, tPayloadCmd>;
-using tPacketRet = packet::tPacket<tFormatRet, tPayloadRet>;
-
-/// <summary>
-/// ////////////////
-/// </summary>
-/*
-struct tPacketCmd
-{
-	unsigned char SerialNumber;
-	unsigned char MsgId;//Command
-
-	std::vector<char> Payload;
-
-	tPacketCmd()
-	{
-		SerialNumber = 0;
-		MsgId = 0;
-	}
-
-	static bool TryParse(std::vector<char>& receivedPacket, tPacketCmd& packet);
-
-	std::vector<char> ToVector();//MakePacket in previous versions
-};
-
-struct tPacketRet
-{
-	unsigned char SerialNumber;
-	unsigned char MsgId;//Command
-	unsigned char Status;
-
-	std::vector<char> Payload;
-
-	tPacketRet()
-	{
-		SerialNumber = 0;
-		MsgId = 0;
-		Status = 0;
-	}
-
-	static bool TryParse(std::vector<char>& receivedPacket, tPacketRet& packet);
-
-	std::vector<char> ToVector();//MakePacket in previous versions
-};
-
-enum tSerialCommInterface
-{
-	tSerialCommInterface_UART   = 1,
-	tSerialCommInterface_HSUART = 2,
-	tSerialCommInterface_SPI    = 3,
-};
-
-struct tSerialCommUartBaudrate
-{
-	char S1RELH;
-	char S1RELL;	
-};
-
-const tSerialCommUartBaudrate SerialCommUartBaudrate_115200 = {	(char)0x0D, (char)0xA6 };
-
-//const tSerialCommUartBaudrate SerialCommUartBaudrate[] =
-//{
-//	{0x0D, 0xA6},
-//};
-//const unsigned short SerialCommUartBaudrate[] =
-//{
-//	0xAEC8,//9600
-//	0x56E4,//19200
-//	0xA2F2,//38400
-//	0x1C4C,//57600
-//	0x0DA6,//115200
-//};
-
-//const unsigned short SerialCommUartBaudrate = 0x0DA6;//115200
-////const unsigned short SerialCommUartBaudrate[] =
-////{
-////	0xAEC8,//9600
-////	0x56E4,//19200
-////	0xA2F2,//38400
-////	0x1C4C,//57600
-////	0x0DA6,//115200
-////};
-
-enum tMemoryDevice
-{
-	tMemoryDevice_Chip_Reg    = 1,
-	tMemoryDevice_Sensor_Reg  = 2,
-	tMemoryDevice_CCIR656_Reg = 3,
-	tMemoryDevice_I2C_EEPROM  = 4,
-	tMemoryDevice_SPI_EEPROM  = 5,
-	tMemoryDevice_SPI_Flash   = 6,
-};
-
-enum tVideoResolution
-{
-	tVideoResolution_640x480 = 0x00,
-	tVideoResolution_320x240 = 0x11,
-	tVideoResolution_160x120 = 0x22,
-};
-
-union tPayload_READ_FBUF_ControlMode
-{
-	struct
-	{
-		char TRANSFER_MODE : 1;//0 - MCU, 1 - DMA
-		char NONAME_1      : 2;//1
-		char NONAME_2      : 1;//1
-		char               : 4;
-	}Field;
-
-	char Value;
-};
-
-union tPayload_WRITE_FBUF_ControlMode
-{
-	struct
-	{
-		char TRANSFER_MODE : 1;//0 - MCU, 1 - DMA
-		char NONAME_1      : 2;//1
-		char NONAME_2      : 1;//1
-		char FIRST_WRITE   : 1;//0 - no, 1 - yes
-		char               : 3;
-	}Field;
-
-	char Value;
-};
-
-enum tPayload_FBUF_CTRL_ControlFlag
-{
-	tPayload_FBUF_CTRL_ControlFlag_StopCurrentFrame = 0,
-	tPayload_FBUF_CTRL_ControlFlag_StopNextFrame    = 1,
-	tPayload_FBUF_CTRL_ControlFlag_ResumeFrame      = 2,
-	tPayload_FBUF_CTRL_ControlFlag_StepFrame        = 3,
-};*/
-//{
-//	struct
-//	{
-//		char TRANSFER_MODE : 1;//0 - MCU, 1 - DMA
-//		char NONAME_HI1 : 1;
-//		char NONAME_HI2 : 1;
-//		char NONAME_HI3 : 1;
-//		char : 4;
-//	}Field;
-//
-//	char Value;
-//};
 
 	}
 }
