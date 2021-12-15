@@ -59,26 +59,20 @@ class tCamera
 		void Board_Reset(bool state) override;
 
 		bool Board_Send(const utils::tVectorUInt8& data) override;
-		void OnReceived(utils::tVectorUInt8& data);
-
-		/////////------------------------
-
-/*		virtual void Control();
 
 	protected:
-		virtual void Board_PowerSupply(bool state);
-		virtual void Board_Reset(bool state);
+		void OnReceived(utils::tVectorUInt8& data);
 
-		virtual void Board_SetSerialPort(int baudrate);
+/*		virtual void Board_SetSerialPort(int baudrate);
 
 		virtual bool Board_Send(std::vector<char>& data);
 
 		void OnReceived(std::vector<char>& data);
-
+*/
 		virtual void OnStart();
 		virtual void OnReady();
 		virtual void OnHalt();
-		virtual void OnRestart();
+/*		virtual void OnRestart();
 		virtual void OnFailed(mod::tCameraVC0706Error cerr);
 
 		virtual void OnImageReady();

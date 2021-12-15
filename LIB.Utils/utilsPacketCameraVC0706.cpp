@@ -240,30 +240,6 @@ tPacketCmd tPacketCmd::MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t addres
 	return tPacketCmd(Cmd);
 }
 
-
-/*
-CameraVC0706::Packet::tPayload_READ_FBUF_ControlMode ControlMode;
-ControlMode.Value = 0;
-//ControlMode.Field.TRANSFER_MODE = 1;//DMA
-ControlMode.Field.TRANSFER_MODE = 0;//MCU
-ControlMode.Field.NONAME_1 = 1;
-ControlMode.Field.NONAME_2 = 1;
-*/
-
-/*union tFBufControlModeWrite
-{
-	struct
-	{
-		std::uint8_t TRANSFER_MODE : 1;//tFBufTransferMode
-		std::uint8_t NONAME_1 : 2;
-		std::uint8_t NONAME_2 : 1;
-		std::uint8_t FIRST_WRITE : 1;//0 - no, 1 - yes
-		std::uint8_t : 3;
-	}Field;
-
-	std::uint8_t Value;
-};*/
-
 tPacketCmd tPacketCmd::MakeGetFBufLenCurrent(std::uint8_t sn)
 {
 	tPayloadCmd::value_type Cmd;
@@ -309,9 +285,34 @@ tPacketCmd tPacketCmd::MakeFBufCtrlResumeFrame(std::uint8_t sn)
 }
 
 
+tMsgId tPacketRet::GetMsgId() const
+{
+	return GetPayloadValue().MsgId;
+}
+
+tMsgStatus tPacketRet::GetMsgStatus() const
+{
+	return GetPayloadValue().MsgStatus;
+}
+
+tMsgStatus tPacketRet::ParseGetVersion(const tPacketRet& packet, std::string& version)
+{
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::GetVersion);
+	if (Status != tMsgStatus::None)
+		return Status;
+
+	version = std::string(PayloadValue.Payload.cbegin(), PayloadValue.Payload.cend());
+
+	return tMsgStatus::None;
+}
+
 tMsgStatus tPacketRet::ParseReadDataReg_Port(const tPacketRet& packet, tPort& port)
 {
-	tMsgStatus Status = Check(packet, tMsgId::ReadDataReg, 1);
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 1);
 	if (Status != tMsgStatus::None)
 		return Status;
 
@@ -322,13 +323,15 @@ tMsgStatus tPacketRet::ParseReadDataReg_Port(const tPacketRet& packet, tPort& po
 
 tMsgStatus tPacketRet::ParseReadDataReg_PortUART(const tPacketRet& packet, tUARTBaudrate& baudrate)
 {
-	tMsgStatus Status = Check(packet, tMsgId::ReadDataReg, 2);
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 2);
 	if (Status != tMsgStatus::None)
 		return Status;
 
 	tSetPortUART_BR Data;
-	Data.S1RELH = packet.GetPayloadValue().Payload[0];
-	Data.S1RELL = packet.GetPayloadValue().Payload[1];
+	Data.S1RELH = PayloadValue.Payload[0];
+	Data.S1RELL = PayloadValue.Payload[1];
 
 	int BrIndex = 0;
 	for (auto& i : SetPortUART_BR)
@@ -346,15 +349,17 @@ tMsgStatus tPacketRet::ParseReadDataReg_PortUART(const tPacketRet& packet, tUART
 
 tMsgStatus tPacketRet::ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUARTHSBaudrate& baudrate)
 {
-	tMsgStatus Status = Check(packet, tMsgId::ReadDataReg, 4);
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 4);
 	if (Status != tMsgStatus::None)
 		return Status;
 
 	tSetPortUARTHS_BR Data;
-	Data.S1RELHH = packet.GetPayloadValue().Payload[0];
-	Data.S1RELHL = packet.GetPayloadValue().Payload[1];
-	Data.S1RELLH = packet.GetPayloadValue().Payload[2];
-	Data.S1RELLL = packet.GetPayloadValue().Payload[3];
+	Data.S1RELHH = PayloadValue.Payload[0];
+	Data.S1RELHL = PayloadValue.Payload[1];
+	Data.S1RELLH = PayloadValue.Payload[2];
+	Data.S1RELLL = PayloadValue.Payload[3];
 
 	int BrIndex = 0;
 	for (auto& i : SetPortUARTHS_BR)
@@ -372,24 +377,38 @@ tMsgStatus tPacketRet::ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUA
 
 tMsgStatus tPacketRet::ParseReadDataReg_VideoResolution(const tPacketRet& packet, tVideoResolution& resolution)
 {
-	tMsgStatus Status = Check(packet, tMsgId::ReadDataReg, 1);
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 1);
 	if (Status != tMsgStatus::None)
 		return Status;
 
-	resolution = static_cast<tVideoResolution>(packet.GetPayloadValue().Payload[0]);
+	resolution = static_cast<tVideoResolution>(PayloadValue.Payload[0]);
 
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::Check(const tPacketRet& packet, tMsgId msgId, std::size_t dataSize)
+tMsgStatus tPacketRet::Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId)
 {
-	if (packet.GetMsgId() != msgId)
+	if (payloadValue.MsgId != msgId)
 		return tMsgStatus::WrongPacket;
 
-	if (packet.GetMsgStatus() != tMsgStatus::None)
-		return packet.GetMsgStatus();
+	if (payloadValue.MsgStatus != tMsgStatus::None)
+		return payloadValue.MsgStatus;
 
-	if (packet.GetPayloadValue().Payload.size() != dataSize)
+	if (payloadValue.Payload.size() > ContainerPayloadSizeMax)
+		return tMsgStatus::WrongDataSize;
+
+	return tMsgStatus::None;
+}
+
+tMsgStatus tPacketRet::Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId, std::size_t dataSize)
+{
+	const tMsgStatus Status = Check(payloadValue, msgId);
+	if (Status != tMsgStatus::None)
+		return Status;
+
+	if (payloadValue.Payload.size() != dataSize)
 		return tMsgStatus::WrongDataSize;
 
 	return tMsgStatus::None;

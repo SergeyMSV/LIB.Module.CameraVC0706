@@ -97,39 +97,25 @@ void tCamera::tModCamera::Board_SetSerialPort(int value)
 }
 */
 
-/*void tCamera::tModCamera::OnStart()
+void tCamera::tModCamera::OnStart()
 {
-	p_obj->p_log->WriteLine("OnStart");
-
-	if (m_Board == 0)
-	{
-		m_Board = new tBoard(this);
-	}
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, "OnStart");
 }
 
 void tCamera::tModCamera::OnReady()
 {
-	p_obj->p_log->WriteLine("OnReady");
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, "OnReady");
 
-	OnModReady();
+	//OnModReady();
 }
 
 void tCamera::tModCamera::OnHalt()
 {
-	p_obj->p_log->WriteLine("OnHalt");
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, "OnHalt");
 
-	if (m_Board)
-	{
-		tBoard *Board = m_Board;
-
-		m_Board = 0;
-
-		delete Board;
-	}
-
-	OnModHalt();
+	//OnModHalt();
 }
-
+/*
 void tCamera::tModCamera::OnRestart()
 {
 	p_obj->p_log->WriteLine("OnRestart");

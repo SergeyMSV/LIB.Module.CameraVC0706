@@ -361,11 +361,6 @@ class tPacketCmd : public packet::tPacket<tFormatCmd, tPayloadCmd>
 public:
 	tPacketCmd() = default;
 
-	tMsgId GetMsgId() const
-	{
-		return GetPayloadValue().MsgId;
-	}
-
 	static tPacketCmd MakeGetVersion(std::uint8_t sn);
 	static tPacketCmd MakeSetSerialNumber(std::uint8_t sn, std::uint8_t value);
 	static tPacketCmd MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate);
@@ -400,29 +395,18 @@ public:
 class tPacketRet : public packet::tPacket<tFormatRet, tPayloadRet>
 {
 public:
-	tMsgId GetMsgId() const
-	{
-		return GetPayloadValue().MsgId;
-	}
+	tMsgId GetMsgId() const;
+	tMsgStatus GetMsgStatus() const;
 
-	tMsgStatus GetMsgStatus() const
-	{
-		return GetPayloadValue().MsgStatus;
-	}
-
-	//static tVectorUInt8 Parse(const tPayloadRet& data, std::uint8_t& sn, tMsgId& msgId, tMsgStatus& cerr);
-	static tMsgStatus ParseReadDataReg_Port(const tPacketRet& payload, tPort& port);
-	static tMsgStatus ParseReadDataReg_PortUART(const tPacketRet& payload, tUARTBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_PortUARTHS(const tPacketRet& payload, tUARTHSBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_VideoResolution(const tPacketRet& payload, tVideoResolution& resolution);
-	// 
-	//static tPort ParseReadDataReg_Port(const tPayloadRet& data);
-	//static tUARTBaudrate ParseWriteDataReg_PortUART(const tPayloadRet& data);
-	//static tUARTHSBaudrate ParseWriteDataReg_PortUARTHS(const tPayloadRet& data);
-	//static tVideoResolution ParseWriteDataReg_VideoResolution(const tPayloadRet& data);
+	static tMsgStatus ParseGetVersion(const tPacketRet& packet, std::string& version);
+	static tMsgStatus ParseReadDataReg_Port(const tPacketRet& packet, tPort& port);
+	static tMsgStatus ParseReadDataReg_PortUART(const tPacketRet& packet, tUARTBaudrate& baudrate);
+	static tMsgStatus ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUARTHSBaudrate& baudrate);
+	static tMsgStatus ParseReadDataReg_VideoResolution(const tPacketRet& packet, tVideoResolution& resolution);
 
 private:
-	static tMsgStatus Check(const tPacketRet& packet, tMsgId msgId, std::size_t dataSize);
+	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId);
+	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId, std::size_t dataSize);
 };
 
 	}

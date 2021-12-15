@@ -70,6 +70,28 @@ void tCameraVC0706::Board_OnReceived(utils::tVectorUInt8& data)
 	m_ReceivedData.push(data);
 }
 
+//bool tCameraVC0706::WaitForReceivedData(std::uint32_t wait_ms) const
+//{
+//	std::chrono::time_point<tClock> StartTime = tClock::now();
+//
+//	while (true)
+//	{
+//		{
+//			std::lock_guard<std::mutex> Lock(m_MtxReceivedData);
+//			if (m_ReceivedData.size() > 0)
+//				return true;
+//		}
+//
+//		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+//
+//		const auto Duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(tClock::now() - StartTime).count();
+//		if (wait_ms < Duration_ms)
+//			return false;
+//	}
+//
+//	return false;
+//}
+
 bool tCameraVC0706::IsReceivedData() const
 {
 	std::lock_guard<std::mutex> Lock(m_MtxReceivedData);

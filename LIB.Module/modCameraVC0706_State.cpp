@@ -72,6 +72,29 @@ bool tCameraVC0706::tState::Halt()
 	return true;
 }
 
+bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
+{
+	std::chrono::time_point<tClock> StartTime = tClock::now();
+
+	while (true)
+	{
+		if (m_pObj->IsReceivedData())
+		{
+			const utils::tVectorUInt8 Data = m_pObj->GetReceivedDataChunk();
+			m_ReceivedData.insert(m_ReceivedData.end(), Data.cbegin(), Data.cend());
+			return true;
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+		const auto Duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(tClock::now() - StartTime).count();
+		if (wait_ms < Duration_ms)
+			return false;
+	}
+
+	return false;
+}
+
 //void tCameraVC0706::tState::TaskScript()
 //{
 //	if (m_pCmd == nullptr && !m_TaskScript.empty())

@@ -22,7 +22,6 @@ template
 class tPacket : private TFormat<TPayload>, private TPayload
 {
 public:
-	typedef TPayload payload_type;
 	typedef typename TPayload::value_type payload_value_type;
 
 	tPacket() = default;
@@ -72,16 +71,13 @@ public:
 		return 0;
 	}
 
-	payload_value_type GetPayloadValue() const
+protected:
+	const payload_value_type& GetPayloadValue() const
 	{
 		return TPayload::Value;
 	}
 
-	TPayload GetPayload() const
-	{
-		return static_cast<TPayload>(*this);
-	}
-
+public:
 	tVectorUInt8 ToVector() const
 	{
 		tVectorUInt8 PacketVector;

@@ -45,15 +45,17 @@ class tCameraVC0706
 	{
 		//std::string m_OnCmdTaskScriptIDLast;
 
-		utils::tVectorUInt8 m_ReceivedData;
-		bool m_ReceivedData_Parsed = false;
+		//utils::tVectorUInt8 m_ReceivedData;
+		//bool m_ReceivedData_Parsed = false;
 
 	protected:
-		tCameraVC0706 * m_pObj = nullptr;
+		tCameraVC0706* m_pObj = nullptr;
 
 		std::chrono::time_point<tClock> m_StartTime;
 
-		unsigned char m_Step = 0;
+		//unsigned char m_Step = 0;
+
+		utils::tVectorUInt8 m_ReceivedData;
 
 		tState() = delete;
 
@@ -80,6 +82,24 @@ class tCameraVC0706
 //		virtual void Receive(std::vector<char>& data);
 //
 	protected:
+		bool WaitForReceivedData(std::uint32_t wait_ms);
+
+		//template<typename T>
+		//bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, const T& response, std::uint32_t wait_ms)
+		//{
+		//	m_pObj->Board_Send(packet.ToVector());
+
+		//	if (!WaitForReceivedData(wait_ms))
+		//		return false;
+
+		//	tPacketRet Rsp;
+		//	if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == tMsgId::GetVersion)//dataStored
+		//	{
+		//		return Rsp;
+		//	}
+		//}
+
+
 //		virtual void OnReceivedMsg(std::vector<char>& data) { }//ChangeState
 
 		virtual bool Go() { return true; }//ChangeState
@@ -138,26 +158,26 @@ class tCameraVC0706
 	protected:
 		virtual void OnReceivedMsg(std::vector<char>& data);
 	};
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tStateIdle : public tState
 	{
-		enum tTask
-		{
-			tTask_None,
-			tTask_GetImageReady,
-			tTask_GetConfig,
-			tTask_SetConfig,
-		};
+		//enum tTask
+		//{
+		//	tTask_None,
+		//	tTask_GetImageReady,
+		//	tTask_GetConfig,
+		//	tTask_SetConfig,
+		//};
 
-		tTask m_Task;
+		//tTask m_Task;
 
-		CameraVC0706::Packet::tMemoryDevice m_ConfigMemory;
-		int m_ConfigAddress;
-		int m_ConfigSize;
-		std::vector<char> m_ConfigData;
+		//CameraVC0706::Packet::tMemoryDevice m_ConfigMemory;
+		//int m_ConfigAddress;
+		//int m_ConfigSize;
+		//std::vector<char> m_ConfigData;
 
-		bool m_CheckConnect;
+		//bool m_CheckConnect;
 
 	public:
 		tStateIdle(tCameraVC0706 *obj);
@@ -165,22 +185,23 @@ class tCameraVC0706
 
 		static tState* Instance(tCameraVC0706 *obj) { return new tStateIdle(obj); }
 
-		virtual void Control();
+//		virtual void Control();
 
-		virtual bool IsReady() { return true; }
+		tCameraStatus GetStatus() override { return tCameraStatus::Operation; }
+		//virtual bool IsReady() { return true; }
 
-		virtual bool GetImageReady();
+		//virtual bool GetImageReady();
 
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
-		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+//#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
+//		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
+//		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
+///#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
 		
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
+//	protected:
+//		virtual void OnReceivedMsg(std::vector<char>& data);
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateGetImageStart : public tState
+/*	class tStateGetImageStart : public tState
 	{
 		char m_ImageFrame;
 		int m_FBufSize;
@@ -363,6 +384,8 @@ class tCameraVC0706
 	mutable std::mutex m_MtxReceivedData;
 	std::queue<utils::tVectorUInt8> m_ReceivedData;
 
+	//std::uint8_t m_SerialNumber = 0;
+
 	std::string m_LastErrorMsg;
 
 public:
@@ -418,24 +441,25 @@ protected:
 	void Board_OnReceived(utils::tVectorUInt8& data);
 /*
 	virtual void OnChanged(tCameraVC0706Property value) { }
-
+*/
 	virtual void OnStart() = 0;
 	virtual void OnReady() = 0;
 	virtual void OnHalt() = 0;
-	virtual void OnRestart() = 0;
+/*	virtual void OnRestart() = 0;
 	virtual void OnFailed(tCameraVC0706Error cerr) = 0;
 
 	virtual void OnImageReady() = 0;
 	virtual void OnImageChunk(std::vector<char>& data) = 0;
-	virtual void OnImageComplete() = 0;
-
+	virtual void OnImageComplete() = 0;*/
+/*
 #ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
 	virtual void OnGetConfig(std::vector<char>& data) = 0;
 	virtual void OnSetConfig() = 0;
 #endif//LIB_MODULE_CAMERA_VC0706_CONFIG
 */
 private:
-	bool IsReceivedData() const;
+	//bool WaitForReceivedData(std::uint32_t wait_ms) const;
+	bool IsReceivedData() const;//[TBD] deprecated might be
 	utils::tVectorUInt8 GetReceivedDataChunk();
 	bool IsControlOperation() { return m_Control_Operation && !m_Control_Restart; }
 	//bool IsControlStop() { return !m_Control_Operation && m_Control_Restart; }
