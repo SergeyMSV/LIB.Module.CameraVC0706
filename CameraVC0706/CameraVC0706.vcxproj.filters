@@ -31,7 +31,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateConfig.cpp">
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp">
@@ -55,7 +55,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateReset.cpp">
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp">
       <Filter>Lib.Module</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp">

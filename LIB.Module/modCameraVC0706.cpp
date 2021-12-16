@@ -49,7 +49,7 @@ void tCameraVC0706::Exit()
 //	return m_pState->SetUserTaskScript(taskScriptID);
 //}
 
-tCameraStatus tCameraVC0706::GetStatus() const
+utils::tDevStatus tCameraVC0706::GetStatus() const
 {
 	//std::lock_guard<std::mutex> Lock(m_MtxState);
 

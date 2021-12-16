@@ -12,18 +12,22 @@ tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& val
 tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& value, bool error)
 	:tState(obj), m_Error(error)
 {
-	std::stringstream SStr;
-	SStr << "tStateHalt: " << value;
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, SStr.str());
-
-/*	if (m_pObj->IsControlRestart())
+	if (m_pObj->IsControlRestart())
 	{
 		m_pObj->m_Control_Restart = false;
-	}*/
+	}
 }
 
-bool tCameraVC0706::tStateHalt::Go()
+bool tCameraVC0706::tStateHalt::operator()()
 {
+	if (!m_Off)
+	{
+		m_Off = true;
+		m_pObj->Board_PowerSupply(false);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));//[TBD] from settings
+		m_pObj->Board_Reset(false);
+	}
+
 	if (m_pObj->m_Control_Exit)
 		return false;
 

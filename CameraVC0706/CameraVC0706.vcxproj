@@ -137,7 +137,7 @@
   <ItemGroup>
     <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateConfig.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageIdle.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp" />
@@ -145,7 +145,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateReset.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />

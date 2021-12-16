@@ -361,10 +361,12 @@ class tPacketCmd : public packet::tPacket<tFormatCmd, tPayloadCmd>
 public:
 	tPacketCmd() = default;
 
+	tMsgId GetMsgId() const;
+
 	static tPacketCmd MakeGetVersion(std::uint8_t sn);
 	static tPacketCmd MakeSetSerialNumber(std::uint8_t sn, std::uint8_t value);
-	static tPacketCmd MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate);
-	static tPacketCmd MakeSetPortUARTHS(std::uint8_t sn, tUARTHSBaudrate baudrate);
+	static tPacketCmd MakeSetPort(std::uint8_t sn, tUARTBaudrate baudrate);
+	static tPacketCmd MakeSetPort(std::uint8_t sn, tUARTHSBaudrate baudrate);
 	static tPacketCmd MakeSystemReset(std::uint8_t sn);
 
 	static tPacketCmd MakeReadDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg);
@@ -375,11 +377,10 @@ public:
 	static tPacketCmd MakeReadDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
 
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data);
-	static tPacketCmd MakeWriteDataReg_Port(tMemoryDataReg memory, std::uint8_t sn, tPort port);
-	static tPacketCmd MakeWriteDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate);
-	static tPacketCmd MakeWriteDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
-	static tPacketCmd MakeWriteDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution);
-	//static tPacketCmd MakeWriteDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tPort port);
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate);
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution);
 
 	static tPacketCmd MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
 	//static tPacketCmd MakeReadFBufNext(std::uint8_t sn);
@@ -398,16 +399,21 @@ public:
 	tMsgId GetMsgId() const;
 	tMsgStatus GetMsgStatus() const;
 
-	static tMsgStatus ParseGetVersion(const tPacketRet& packet, std::string& version);
-	static tMsgStatus ParseReadDataReg_Port(const tPacketRet& packet, tPort& port);
-	static tMsgStatus ParseReadDataReg_PortUART(const tPacketRet& packet, tUARTBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUARTHSBaudrate& baudrate);
-	static tMsgStatus ParseReadDataReg_VideoResolution(const tPacketRet& packet, tVideoResolution& resolution);
+	static tMsgStatus Parse(const tPacketRet& packet, std::string& version);
+	static tMsgStatus Parse(const tPacketRet& packet, tPort& port);
+	static tMsgStatus Parse(const tPacketRet& packet, tUARTBaudrate& baudrate);
+	static tMsgStatus Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate);
+	static tMsgStatus Parse(const tPacketRet& packet, tVideoResolution& resolution);
 
 private:
 	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId);
 	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId, std::size_t dataSize);
 };
+
+std::string ToString(tPort value);
+std::string ToString(tUARTBaudrate value);
+std::string ToString(tUARTHSBaudrate value);
+std::string ToString(tVideoResolution value);
 
 	}
 }

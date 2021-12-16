@@ -12,6 +12,7 @@
 #include "modCamera.h"
 
 #include <utilsBase.h>
+#include <utilsPacketCameraVC0706.h>
 
 //#include <atomic>
 #include <chrono>
@@ -40,70 +41,98 @@ namespace mod
 class tCameraVC0706
 {
 	using tClock = std::chrono::high_resolution_clock;
+	using tDevStatus = utils::tDevStatus;
 
 	class tState
 	{
-		//std::string m_OnCmdTaskScriptIDLast;
-
-		//utils::tVectorUInt8 m_ReceivedData;
-		//bool m_ReceivedData_Parsed = false;
-
 	protected:
 		tCameraVC0706* m_pObj = nullptr;
-
-		std::chrono::time_point<tClock> m_StartTime;
-
-		//unsigned char m_Step = 0;
 
 		utils::tVectorUInt8 m_ReceivedData;
 
 		tState() = delete;
 
 	public:
-		explicit tState(tCameraVC0706 *obj);
+		explicit tState(tCameraVC0706* obj);
 		tState(tCameraVC0706* obj, const std::string& taskScriptID);
 		virtual ~tState();
 
-		bool operator()();
+		virtual bool operator()();
 
 		virtual bool Start() { return false; }
 		virtual bool Halt();
 
-		virtual tCameraStatus GetStatus() = 0;
+		virtual tDevStatus GetStatus() = 0;
 
-//		virtual bool GetImageReady() { return false; }//[srg]2017-02-02 Start
-//		virtual bool GetImageChunk(int chunkSize) { return false; }//[srg]2017-02-03
-//
-////#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-////		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return false; }
-////		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return false; }
-////#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-//
-//		virtual void Receive(std::vector<char>& data);
-//
+		//		virtual bool GetImageReady() { return false; }//[srg]2017-02-02 Start
+		//		virtual bool GetImageChunk(int chunkSize) { return false; }//[srg]2017-02-03
+		//
+		////#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
+		////		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return false; }
+		////		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return false; }
+		////#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
+		//
+		//		virtual void Receive(std::vector<char>& data);
+		//
 	protected:
 		bool WaitForReceivedData(std::uint32_t wait_ms);
 
-		//template<typename T>
-		//bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, const T& response, std::uint32_t wait_ms)
-		//{
-		//	m_pObj->Board_Send(packet.ToVector());
+		template<typename T>
+		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
+		{
+			using namespace utils::packet_CameraVC0706;
 
-		//	if (!WaitForReceivedData(wait_ms))
-		//		return false;
+			responseStatus = tMsgStatus::None;
 
-		//	tPacketRet Rsp;
-		//	if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == tMsgId::GetVersion)//dataStored
-		//	{
-		//		return Rsp;
-		//	}
-		//}
+			m_ReceivedData.clear();
+			m_pObj->Board_Send(packet.ToVector());
+			while (true)
+			{
+				if (!WaitForReceivedData(wait_ms))//[TBD] calculate according to BR and waiting for camera response
+					return false;
 
+				tPacketRet Rsp;
+				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == packet.GetMsgId())
+				{
+					responseStatus = Rsp.GetMsgStatus();
+					if (responseStatus != tMsgStatus::None)
+						return true;
 
-//		virtual void OnReceivedMsg(std::vector<char>& data) { }//ChangeState
+					tPacketRet::Parse(Rsp, response);
+					return true;
+				}
+
+				if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
+					return false;
+			}
+		}
+
+		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+		{
+			using namespace utils::packet_CameraVC0706;
+
+			responseStatus = tMsgStatus::None;
+
+			m_ReceivedData.clear();
+			m_pObj->Board_Send(packet.ToVector());
+			while (true)
+			{
+				if (!WaitForReceivedData(wait_ms))//[TBD] calculate according to BR and waiting for camera response
+					return false;
+
+				tPacketRet Rsp;
+				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == packet.GetMsgId())
+				{
+					responseStatus = Rsp.GetMsgStatus();
+					return true;
+				}
+
+				if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
+					return false;
+			}
+		}
 
 		virtual bool Go() { return true; }//ChangeState
-		//virtual void OnReceived(const tPacketNMEA_Template& value);// {}//ChangeState
 
 		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
 	};
@@ -180,25 +209,14 @@ class tCameraVC0706
 		//bool m_CheckConnect;
 
 	public:
-		tStateIdle(tCameraVC0706 *obj);
-		virtual ~tStateIdle() { }
+		explicit tStateIdle(tCameraVC0706 *obj);
 
 		static tState* Instance(tCameraVC0706 *obj) { return new tStateIdle(obj); }
 
-//		virtual void Control();
+		tDevStatus GetStatus() override { return tDevStatus::Operation; }
 
-		tCameraStatus GetStatus() override { return tCameraStatus::Operation; }
-		//virtual bool IsReady() { return true; }
-
-		//virtual bool GetImageReady();
-
-//#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-//		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
-//		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
-///#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-		
-//	protected:
-//		virtual void OnReceivedMsg(std::vector<char>& data);
+	protected:
+		bool Go() override;
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*	class tStateGetImageStart : public tState
@@ -331,37 +349,58 @@ class tCameraVC0706
 		virtual void OnReceivedMsg(std::vector<char>& data);
 	};*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+	class tStateError :public tState
+	{
+	public:
+		tStateError(tCameraVC0706* obj, const std::string& value);
+
+		bool operator()() override;
+
+		bool Halt() override { return false; }
+
+		tDevStatus GetStatus() override { return tDevStatus::Error; }
+	};
+
 	class tStateHalt : public tState
 	{
 		const bool m_Error = false;
+		bool m_Off = false;
 
 	public:
 		tStateHalt(tCameraVC0706* obj, const std::string& value);
 		tStateHalt(tCameraVC0706* obj, const std::string& value, bool error);
 
+		bool operator()() override;
+
 		bool Start() override { return false; }
 		bool Halt() override { return true; }
 
-		tCameraStatus GetStatus() override { return tCameraStatus::Halted; }
+		tDevStatus GetStatus() override { return tDevStatus::Halted; }
+	};
+
+	class tStateStart :public tState
+	{
+	public:
+		explicit tStateStart(tCameraVC0706* obj);
+
+		tDevStatus GetStatus() override { return tDevStatus::Init; }
 
 	protected:
 		bool Go() override;
 	};
 
-	class tStateStart :public tState
+	class tStateStop :public tState
 	{
-		bool m_NextState_Stop = false;
-
 	public:
-		tStateStart(tCameraVC0706* obj);
+		explicit tStateStop(tCameraVC0706* obj);
 
-		tCameraStatus GetStatus() override { return tCameraStatus::Init; }
+		bool Start() override { return false; }
+		bool Halt() override { return true; }
+
+		tDevStatus GetStatus() override { return tDevStatus::Deinit; }
 
 	protected:
-		//virtual void OnReceivedMsg(std::vector<char>& data); - get rid of it
-
 		bool Go() override;
-		//virtual void OnReceived(const tPacketNMEA_Template& value);// {}//ChangeState
 	};
 
 /*	friend class tState;
@@ -403,7 +442,7 @@ public:
 	void Halt();
 	void Exit();
 
-	tCameraStatus GetStatus() const;
+	tDevStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
 
 /*

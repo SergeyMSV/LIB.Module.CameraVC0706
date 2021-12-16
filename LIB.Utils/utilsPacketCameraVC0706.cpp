@@ -5,6 +5,11 @@ namespace utils
 	namespace packet_CameraVC0706
 	{
 
+tMsgId tPacketCmd::GetMsgId() const
+{
+	return GetPayloadValue().MsgId;
+}
+
 tPacketCmd tPacketCmd::MakeGetVersion(std::uint8_t sn)
 {
 	tPayloadCmd::value_type Cmd;
@@ -59,14 +64,14 @@ struct tSetPortUARTHS_BR
 #pragma pack(pop)
 
 constexpr tSetPortUARTHS_BR SetPortUARTHS_BR[] = {
-{ 0x00, 0x2B, 0x03, 0xC8 },//38400
-{ 0x00, 0x1D, 0x01, 0x30 },//57600
-{ 0x00, 0x0E, 0x02, 0x98 },//115200
-{ 0x00, 0x03, 0x02, 0xA6 },//460800
-{ 0x00, 0x01, 0x03, 0x53 } //921600
+{ 0x03, 0xC8, 0x00, 0x2B },//38400
+{ 0x01, 0x30, 0x00, 0x1D },//57600
+{ 0x02, 0x98, 0x00, 0x0E },//115200
+{ 0x02, 0xA6, 0x00, 0x03 },//460800
+{ 0x03, 0x53, 0x00, 0x01 } //921600
 };
 
-tPacketCmd tPacketCmd::MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate)
+tPacketCmd tPacketCmd::MakeSetPort(std::uint8_t sn, tUARTBaudrate baudrate)
 {
 	assert(static_cast<std::size_t>(baudrate) < (sizeof(SetPortUART_BR) / sizeof(tSetPortUART_BR)));
 
@@ -80,7 +85,7 @@ tPacketCmd tPacketCmd::MakeSetPortUART(std::uint8_t sn, tUARTBaudrate baudrate)
 	return tPacketCmd(Cmd);
 }
 
-tPacketCmd tPacketCmd::MakeSetPortUARTHS(std::uint8_t sn, tUARTHSBaudrate baudrate)
+tPacketCmd tPacketCmd::MakeSetPort(std::uint8_t sn, tUARTHSBaudrate baudrate)
 {
 	assert(static_cast<std::size_t>(baudrate) < (sizeof(SetPortUARTHS_BR) / sizeof(tSetPortUARTHS_BR)));
 
@@ -162,24 +167,24 @@ tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, 
 	return tPacketCmd(Cmd);
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg_Port(tMemoryDataReg memory, std::uint8_t sn, tPort port)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tPort port)
 {
 	return MakeWriteDataReg(memory, sn, DataReg_Port, { static_cast<std::uint8_t>(port) });
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate)
 {
 	assert(static_cast<std::size_t>(baudrate) < (sizeof(SetPortUART_BR) / sizeof(tSetPortUART_BR)));
 
 	return MakeWriteDataReg(memory, sn, DataReg_PortUART_BR, utils::ToVector(SetPortUART_BR[static_cast<std::size_t>(baudrate)]));
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate)
 {
 	return MakeWriteDataReg(memory, sn, DataReg_PortUARTHS_BR, utils::ToVector(SetPortUARTHS_BR[static_cast<std::size_t>(baudrate)]));
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution)
 {
 	return MakeWriteDataReg(memory, sn, DataReg_VideoResolution, {static_cast<std::uint8_t>(resolution)});
 }
@@ -295,7 +300,7 @@ tMsgStatus tPacketRet::GetMsgStatus() const
 	return GetPayloadValue().MsgStatus;
 }
 
-tMsgStatus tPacketRet::ParseGetVersion(const tPacketRet& packet, std::string& version)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, std::string& version)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -308,7 +313,7 @@ tMsgStatus tPacketRet::ParseGetVersion(const tPacketRet& packet, std::string& ve
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::ParseReadDataReg_Port(const tPacketRet& packet, tPort& port)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tPort& port)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -321,7 +326,7 @@ tMsgStatus tPacketRet::ParseReadDataReg_Port(const tPacketRet& packet, tPort& po
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::ParseReadDataReg_PortUART(const tPacketRet& packet, tUARTBaudrate& baudrate)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tUARTBaudrate& baudrate)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -347,7 +352,7 @@ tMsgStatus tPacketRet::ParseReadDataReg_PortUART(const tPacketRet& packet, tUART
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUARTHSBaudrate& baudrate)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -375,7 +380,7 @@ tMsgStatus tPacketRet::ParseReadDataReg_PortUARTHS(const tPacketRet& packet, tUA
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::ParseReadDataReg_VideoResolution(const tPacketRet& packet, tVideoResolution& resolution)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tVideoResolution& resolution)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -412,6 +417,54 @@ tMsgStatus tPacketRet::Check(const tPacketRet::payload_value_type& payloadValue,
 		return tMsgStatus::WrongDataSize;
 
 	return tMsgStatus::None;
+}
+
+std::string ToString(tPort value)
+{
+	switch (value)
+	{
+	case tPort::UART: return "UART";
+	case tPort::UARTHS: return "UARTHS";
+	//case tPort::SPI: return "SPI";
+	}
+	return {};
+}
+
+std::string ToString(tUARTBaudrate value)
+{
+	switch (value)
+	{
+	case tUARTBaudrate::BR9600: return "9600";
+	case tUARTBaudrate::BR19200: return "19200";
+	case tUARTBaudrate::BR38400: return "38400";
+	case tUARTBaudrate::BR57600: return "57600";
+	case tUARTBaudrate::BR115200: return "115200";
+	}
+	return {};
+}
+
+std::string ToString(tUARTHSBaudrate value)
+{
+	switch (value)
+	{
+	case tUARTHSBaudrate::BR38400: return "38400";
+	case tUARTHSBaudrate::BR57600: return "57600";
+	case tUARTHSBaudrate::BR115200: return "115200";
+	case tUARTHSBaudrate::BR460800: return "460800";
+	case tUARTHSBaudrate::BR921600: return "921600";
+	}
+	return {};
+}
+
+std::string ToString(tVideoResolution value)
+{
+	switch (value)
+	{
+	case tVideoResolution::VR160x120: return "160x120";
+	case tVideoResolution::VR320x240: return "320x240";
+	case tVideoResolution::VR640x480: return "640x480";
+	}
+	return {};
 }
 
 	}

@@ -71,14 +71,14 @@ void tCamera::Exit()
 //	return false;
 //}
 
-mod::tCameraStatus tCamera::GetStatus() const
+utils::tDevStatus tCamera::GetStatus() const
 {
 	if (m_pModFSMachine)
 	{
 		return m_pModFSMachine->GetStatus();
 	}
 
-	return mod::tCameraStatus::Unknown;
+	return utils::tDevStatus::Unknown;
 }
 
 std::string tCamera::GetLastErrorMsg() const

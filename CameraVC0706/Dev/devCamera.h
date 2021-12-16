@@ -118,7 +118,7 @@ public:
 
 	//bool StartUserTaskScript(const std::string& taskScriptID);
 
-	mod::tCameraStatus GetStatus() const;
+	utils::tDevStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
 
 //	tCamera();

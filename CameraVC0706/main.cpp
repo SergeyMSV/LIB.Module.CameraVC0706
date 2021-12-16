@@ -71,12 +71,12 @@ void Thread_CAM_Handler(std::promise<bool>& promise)
 
 			if (g_DataSetMainControl.Thread_CAM_State != tDataSetMainControl::tStateCAM::Nothing)
 			{
-				//switch (g_DataSetMainControl.Thread_CAM_State)
-				//{
-				//case tDataSetMainControl::tStateCAM::Start: Dev.Start(); break;
-				//case tDataSetMainControl::tStateCAM::Halt: Dev.Halt(); break;
+				switch (g_DataSetMainControl.Thread_CAM_State)
+				{
+				case tDataSetMainControl::tStateCAM::Start: Dev.Start(); break;
+				case tDataSetMainControl::tStateCAM::Halt: Dev.Halt(); break;
 				//case tDataSetMainControl::tStateCAM::Restart: Dev.Restart(); break;
-				//case tDataSetMainControl::tStateCAM::Exit: Dev.Exit(); break;
+				case tDataSetMainControl::tStateCAM::Exit: Dev.Exit(); break;
 				//case tDataSetMainControl::tStateCAM::UserTaskScriptStart:
 				//{
 				//	std::lock_guard<std::mutex> Lock(g_DataSetMainControl.Thread_CAM_State_UserTaskScriptIDMtx);
@@ -89,7 +89,7 @@ void Thread_CAM_Handler(std::promise<bool>& promise)
 				//	}
 				//	break;
 				//}
-				//}
+				}
 
 				if (g_DataSetMainControl.Thread_CAM_State == tDataSetMainControl::tStateCAM::Exit)
 					break;
