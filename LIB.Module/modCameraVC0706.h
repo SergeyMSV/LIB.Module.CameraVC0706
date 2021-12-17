@@ -208,6 +208,8 @@ class tCameraVC0706
 
 		//bool m_CheckConnect;
 
+		std::chrono::time_point<tClock> m_CheckLastTime = tClock::now();
+
 	public:
 		explicit tStateIdle(tCameraVC0706 *obj);
 

@@ -15,9 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CameraVC0706.conf" />
-    <None Include="..\LIB.Module\modCameraVC0706_States.vsd">
-      <Filter>LIB.Module</Filter>
-    </None>
     <None Include="..\LIB.Utils\!Refresh.bat">
       <Filter>LIB.Utils</Filter>
     </None>
@@ -29,9 +26,6 @@
       <Filter>LIB.Module</Filter>
     </ClInclude>
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h">
-      <Filter>LIB.Module</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LIB.Module\modCameraVC0706_Attribute.h">
       <Filter>LIB.Module</Filter>
     </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsBase.h">

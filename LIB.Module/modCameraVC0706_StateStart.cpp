@@ -1,5 +1,7 @@
 #include "modCameraVC0706.h"
 
+using namespace utils::packet_CameraVC0706;
+
 namespace mod
 {
 
@@ -14,8 +16,6 @@ tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
 
 bool tCameraVC0706::tStateStart::Go()
 {
-	using namespace utils::packet_CameraVC0706;
-
 	if (!m_pObj->IsControlOperation())
 		return false;
 
@@ -39,7 +39,7 @@ bool tCameraVC0706::tStateStart::Go()
 	tMsgStatus MsgStatus;
 
 	std::string Version;
-	if (!HandleCmd(tPacketCmd::MakeGetVersion(0x00), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || Version != "VC0703 1.00")
+	if (!HandleCmd(tPacketCmd::MakeGetVersion(0x00), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || (Version <=> "VC0703 1.00") != 0)
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense

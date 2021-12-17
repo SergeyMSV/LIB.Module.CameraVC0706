@@ -151,14 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\LIB.Module\modCameraVC0706_States.vsd" />
     <None Include="..\LIB.Utils\!Refresh.bat" />
     <None Include="CameraVC0706.conf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LIB.Module\modCamera.h" />
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />
-    <ClInclude Include="..\LIB.Module\modCameraVC0706_Attribute.h" />
     <ClInclude Include="..\LIB.Utils\utilsBase.h" />
     <ClInclude Include="..\LIB.Utils\utilsLog.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacket.h" />
