@@ -91,12 +91,6 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp">
-      <Filter>LIB.Module</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp">
-      <Filter>LIB.Module</Filter>
-    </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>

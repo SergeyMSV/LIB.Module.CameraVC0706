@@ -393,6 +393,21 @@ public:
 	//static tPacketCmd MakeFBufCtrlStepFrame(std::uint8_t sn);
 };
 
+union tFBufLen
+{
+	struct qq
+	{
+		std::uint32_t HH : 8;
+		std::uint32_t HL : 8;
+		std::uint32_t LH : 8;
+		std::uint32_t LL : 8;
+	}Field;
+
+	std::uint32_t Value = 0;
+};
+
+//using tFBufLen1 = std::uint32_t;
+
 class tPacketRet : public packet::tPacket<tFormatRet, tPayloadRet>
 {
 public:
@@ -404,6 +419,8 @@ public:
 	static tMsgStatus Parse(const tPacketRet& packet, tUARTBaudrate& baudrate);
 	static tMsgStatus Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate);
 	static tMsgStatus Parse(const tPacketRet& packet, tVideoResolution& resolution);
+	static tMsgStatus Parse(const tPacketRet& packet, tFBufLen& value);
+	//static tMsgStatus Parse(const tPacketRet& packet, tFBufLen1& value);
 
 private:
 	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId);

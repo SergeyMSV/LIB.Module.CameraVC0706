@@ -181,8 +181,6 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />

@@ -393,6 +393,27 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tVideoResolution& resolut
 	return tMsgStatus::None;
 }
 
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tFBufLen& value)
+{
+	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
+
+	tMsgStatus Status = Check(PayloadValue, tMsgId::GetFBufLength, 4);
+	if (Status != tMsgStatus::None)
+		return Status;
+
+	value.Field.HH = PayloadValue.Payload[3];
+	value.Field.HL = PayloadValue.Payload[2];
+	value.Field.LH = PayloadValue.Payload[1];
+	value.Field.LL = PayloadValue.Payload[0];
+
+	return tMsgStatus::None;
+}
+
+//tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tFBufLen1& value)
+//{
+//	return tMsgStatus::None;
+//}
+
 tMsgStatus tPacketRet::Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId)
 {
 	if (payloadValue.MsgId != msgId)

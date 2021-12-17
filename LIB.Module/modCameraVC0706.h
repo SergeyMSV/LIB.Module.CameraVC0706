@@ -137,58 +137,6 @@ class tCameraVC0706
 		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*	class tStateInitialize : public tState//and wait for the device as well
-	{
-#ifdef LIB_MODULE_CAMERA_VC0706_INITIALIZE_CONFIG
-		CameraVC0706::Packet::tMemoryDevice m_Memory;
-#endif//LIB_MODULE_CAMERA_VC0706_INITIALIZE_CONFIG
-
-		utils::tTimer m_BaudrateTimer;
-		unsigned char m_BaudrateStep;
-
-		bool m_BaudrateRequired;
-
-		bool m_ResetNeeded;
-
-	public:
-		tStateInitialize(tCameraVC0706 *obj);
-		virtual ~tStateInitialize() { }
-
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateInitialize(obj); }
-
-		virtual void Tick10ms();
-		virtual void Tick100ms();
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-	class tStateConfig : public tState//and wait for the device as well
-	{
-		CameraVC0706::Packet::tMemoryDevice m_Memory;
-
-		int m_Address;
-		int m_SizeToRead;
-		std::vector<char> m_Data;
-
-	public:
-		tStateConfig(tCameraVC0706 *obj, CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
-		tStateConfig(tCameraVC0706 *obj, CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
-		virtual ~tStateConfig() { }
-
-		static tState* Instance(tCameraVC0706 *obj, CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return new tStateConfig(obj, memory, address, size); }
-		static tState* Instance(tCameraVC0706 *obj, CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return new tStateConfig(obj, memory, address, data); }
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tStateIdle : public tState
 	{
 		//enum tTask

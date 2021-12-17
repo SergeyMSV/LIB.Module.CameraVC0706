@@ -26,7 +26,24 @@ bool tCameraVC0706::tStateIdle::Go()
 		tMsgStatus MsgStatus;
 		if (!HandleCmd(tPacketCmd::MakeGetVersion(0x00), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 			return false;
+
+		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "CheckConnection");//[TBD]makes no sense
 	}
+
+	/////////////////////TEST
+	{
+		tMsgStatus MsgStatus;
+
+		if (!HandleCmd(tPacketCmd::MakeFBufCtrlStopCurrentFrame(0x00), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+			return false;
+
+		tFBufLen FBufLen;
+		if (!HandleCmd(tPacketCmd::MakeGetFBufLenCurrent(0x00), MsgStatus, FBufLen, 100) || MsgStatus != tMsgStatus::None)
+			return false;
+
+		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "MEDVED");//[TBD]makes no sense
+	}
+	/////////////////////
 
 	return true;
 }
