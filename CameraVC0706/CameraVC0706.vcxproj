@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -19,146 +19,141 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{803DA4C0-DF4B-452F-B0A0-54D3B74D529B}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{cee043af-34e8-4837-a389-40879d7abd4f}</ProjectGuid>
+    <RootNamespace>CameraVC0706</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>copy $(TargetName).conf $(OutDir)</Command>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST);</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>copy $(TargetName).conf $(OutDir)</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(LIB_BOOST);</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LIB_BOOST)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>copy $(TargetName).conf $(OutDir)</Command>
-    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LIB_BOOST)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\Lib.Utils;..\Lib.Module;Dev;.;$(LIB_BOOST);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(LIB_BOOST);</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LIB_BOOST)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>copy $(TargetName).conf $(OutDir)</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageIdle.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
-    <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />
-    <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp" />
-    <ClCompile Include="..\LIB.Utils\utilsShell.cpp" />
-    <ClCompile Include="Dev\devDataSet.cpp" />
-    <ClCompile Include="Dev\devLog.cpp" />
-    <ClCompile Include="Dev\devCamera.cpp" />
-    <ClCompile Include="Dev\devCamera_ModCamera.cpp" />
-    <ClCompile Include="Dev\devCamera_ModCamera_Board.cpp" />
-    <ClCompile Include="Dev\devSettings.cpp" />
-    <ClCompile Include="Dev\devShell.cpp" />
-    <ClCompile Include="main.cpp" />
+    <None Include="..\LIB.Module\modCameraVC0706_States.vsd" />
+    <None Include="..\LIB.Utils\!Refresh.bat" />
+    <None Include="CameraVC0706.conf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LIB.Module\modCamera.h" />
@@ -171,20 +166,38 @@
     <ClInclude Include="..\LIB.Utils\utilsSerialPort.h" />
     <ClInclude Include="..\LIB.Utils\utilsShell.h" />
     <ClInclude Include="devConfig.h" />
+    <ClInclude Include="Dev\devCamera.h" />
     <ClInclude Include="Dev\devDataSet.h" />
     <ClInclude Include="Dev\devLog.h" />
-    <ClInclude Include="Dev\devCamera.h" />
     <ClInclude Include="Dev\devSettings.h" />
     <ClInclude Include="Dev\devShell.h" />
     <ClInclude Include="libConfig.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\LIB.Module\modCameraVC0706_States.vsd" />
-    <None Include="..\LIB.Utils\!Refresh.bat" />
-    <None Include="CameraVC0706.conf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageIdle.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateInitialize.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateRestart.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
+    <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />
+    <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp" />
+    <ClCompile Include="..\LIB.Utils\utilsShell.cpp" />
+    <ClCompile Include="Dev\devCamera.cpp" />
+    <ClCompile Include="Dev\devCamera_ModCamera.cpp" />
+    <ClCompile Include="Dev\devCamera_ModCamera_Board.cpp" />
+    <ClCompile Include="Dev\devDataSet.cpp" />
+    <ClCompile Include="Dev\devLog.cpp" />
+    <ClCompile Include="Dev\devSettings.cpp" />
+    <ClCompile Include="Dev\devShell.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,7 +8,7 @@ namespace dev
 tLog::tSettings tLog::LogSettings;
 
 tLog::tLog(tLog::tID id, const char* sign)
-	:utils::tLog(false), m_ID(id), m_Sign(sign)
+	:utils::tLog(true), m_ID(id), m_Sign(sign)
 {
 
 }
