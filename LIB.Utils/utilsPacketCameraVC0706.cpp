@@ -289,7 +289,6 @@ tPacketCmd tPacketCmd::MakeFBufCtrlResumeFrame(std::uint8_t sn)
 	return tPacketCmd(Cmd);
 }
 
-
 tMsgId tPacketRet::GetMsgId() const
 {
 	return GetPayloadValue().MsgId;
@@ -317,7 +316,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tPort& port)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
-	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 1);
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, sizeof(port));
 	if (Status != tMsgStatus::None)
 		return Status;
 
@@ -330,7 +329,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tUARTBaudrate& baudrate)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
-	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 2);
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, sizeof(tSetPortUART_BR));
 	if (Status != tMsgStatus::None)
 		return Status;
 
@@ -356,7 +355,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
-	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 4);
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, sizeof(tSetPortUARTHS_BR));
 	if (Status != tMsgStatus::None)
 		return Status;
 
@@ -384,7 +383,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tVideoResolution& resolut
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
-	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, 1);
+	tMsgStatus Status = Check(PayloadValue, tMsgId::ReadDataReg, sizeof(resolution));
 	if (Status != tMsgStatus::None)
 		return Status;
 
@@ -397,7 +396,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tFBufLen& value)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
-	tMsgStatus Status = Check(PayloadValue, tMsgId::GetFBufLength, 4);
+	tMsgStatus Status = Check(PayloadValue, tMsgId::GetFBufLength, sizeof(value));
 	if (Status != tMsgStatus::None)
 		return Status;
 

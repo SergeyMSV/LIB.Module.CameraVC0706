@@ -39,13 +39,13 @@ bool tCameraVC0706::tStateStart::Go()
 	tMsgStatus MsgStatus;
 
 	std::string Version;
-	if (!HandleCmd(tPacketCmd::MakeGetVersion(0x00), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || (Version <=> "VC0703 1.00") != 0)
+	if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || (Version <=> "VC0703 1.00") != 0)
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
 	tVideoResolution VideoResolution = tVideoResolution::VR160x120;
-	if (!HandleCmd(tPacketCmd::MakeReadDataReg_VideoResolution(tMemoryDataReg::I2C_EEPROM, 0x00), MsgStatus, VideoResolution, 100) || MsgStatus != tMsgStatus::None)
+	if (!HandleCmd(tPacketCmd::MakeReadDataReg_VideoResolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, VideoResolution, 100) || MsgStatus != tMsgStatus::None)
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "VideoResolution: " + ToString(VideoResolution));
@@ -54,20 +54,20 @@ bool tCameraVC0706::tStateStart::Go()
 
 	if (VideoResolution != SettingsVideoResolution)
 	{
-		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, 0x00, SettingsVideoResolution), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsVideoResolution), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 			return false;
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set VideoResolution: " + ToString(VideoResolution));
 	}
 
 	tUARTHSBaudrate UARTHSBaudrate = tUARTHSBaudrate::BR921600;
-	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, 0x00), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
+	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BRHS: " + ToString(UARTHSBaudrate));
 
 	tUARTBaudrate UARTBaudrate = tUARTBaudrate::BR9600;
-	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, 0x00), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)
+	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BR: " + ToString(UARTBaudrate));

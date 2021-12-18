@@ -373,7 +373,7 @@ class tCameraVC0706
 	mutable std::mutex m_MtxReceivedData;
 	std::queue<utils::tVectorUInt8> m_ReceivedData;
 
-	//std::uint8_t m_SerialNumber = 0;
+	const std::uint8_t m_SN = 0;
 
 	std::string m_LastErrorMsg;
 

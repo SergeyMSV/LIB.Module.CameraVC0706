@@ -393,6 +393,7 @@ public:
 	//static tPacketCmd MakeFBufCtrlStepFrame(std::uint8_t sn);
 };
 
+#pragma pack(push, 1)
 union tFBufLen
 {
 	struct qq
@@ -405,6 +406,7 @@ union tFBufLen
 
 	std::uint32_t Value = 0;
 };
+#pragma pack(pop)
 
 //using tFBufLen1 = std::uint32_t;
 
