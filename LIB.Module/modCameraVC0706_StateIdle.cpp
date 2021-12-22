@@ -41,7 +41,6 @@ bool tCameraVC0706::tStateIdle::Go()
 		if (!HandleCmd(tPacketCmd::MakeGetFBufLenCurrent(m_pObj->m_SN), MsgStatus, FBufLen, 100) || MsgStatus != tMsgStatus::None)
 			return false;
 
-		//MsgStatus
 		if (FBufLen.Value > 0)
 		{
 			const std::size_t ChunkSizeMax = 768;// 4096;//[TBD] from config ImageChunkSizeMax
@@ -53,21 +52,55 @@ bool tCameraVC0706::tStateIdle::Go()
 
 			std::uint32_t ChunkAddr = 0;
 
-			//utils::tVectorUInt8 Data(ChunkSizeMax);
-
 			for (std::size_t i = 0; i < ChunkQty; ++i)
 			{
 				const std::size_t DataLeft = FBufLen.Value - ChunkAddr;
 				const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
-				//Data.resize(ChunkSize);
-
 				if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 					return false;
 
-				ChunkAddr += ChunkSize;
+				utils::tVectorUInt8 Chunk;
+				Chunk.reserve(ChunkSize);
+				while (Chunk.size() != ChunkSize)
+				{
+					if (!WaitForReceivedData(1000))//[TBD] period of time for transferring data chunk
+						return false;
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(2000));//[TEST]
+					const std::size_t DataWaiting = ChunkSize - Chunk.size();
+
+					if (DataWaiting < m_ReceivedData.size())
+					{
+						Chunk.insert(Chunk.end(), m_ReceivedData.cbegin(), m_ReceivedData.cbegin() + DataWaiting);
+						m_ReceivedData.erase(m_ReceivedData.begin(), m_ReceivedData.begin() + DataWaiting);
+					}
+					else
+					{
+						Chunk.insert(Chunk.end(), m_ReceivedData.cbegin(), m_ReceivedData.cend());
+						m_ReceivedData.clear();
+					}
+				}
+
+				while (true)
+				{
+					if (!WaitForReceivedData(100))//[TBD] calculate according to BR and waiting for camera response
+						return false;
+
+					tPacketRet Rsp;
+					if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == tMsgId::ReadFBuf)//packet.GetMsgId())
+					{
+						break;
+						//responseStatus = Rsp.GetMsgStatus();
+						//return true;
+					}
+
+					if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
+						return false;
+				}
+
+				//[TBD] store the data into a file
+
+				ChunkAddr += ChunkSize;
 			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));//[TEST]
