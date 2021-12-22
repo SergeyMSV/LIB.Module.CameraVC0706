@@ -225,8 +225,8 @@ tPacketCmd tPacketCmd::MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t addres
 
 	tFBufControlModeRead ControlModeRead;
 	ControlModeRead.Value = 0;
-	ControlModeRead.Field.TRANSFER_MODE = static_cast<std::uint8_t>(tFBufTransferMode::DMA);
-	ControlModeRead.Field.NONAME_1 = 3;
+	ControlModeRead.Field.TRANSFER_MODE = static_cast<std::uint8_t>(tFBufTransferMode::MCU);
+	ControlModeRead.Field.NONAME_1 = 1;
 	ControlModeRead.Field.NONAME_2 = 1;
 	Cmd.Payload.push_back(ControlModeRead.Value);
 

@@ -44,14 +44,31 @@ bool tCameraVC0706::tStateIdle::Go()
 		//MsgStatus
 		if (FBufLen.Value > 0)
 		{
-			const std::uint32_t ChunkAddr = 0;
-			const std::uint32_t ChunkSize = 4096;//[TBD] from config ImageChunkSizeMax
-			const std::uint32_t ChunkDelay = 5000;//in 0.01ms
+			const std::size_t ChunkSizeMax = 768;// 4096;//[TBD] from config ImageChunkSizeMax
+			const std::uint32_t ChunkDelay = 5000;//in 0.01ms //[TBD] from config ImageChunkSizeMax
 
-			utils::tVectorUInt8 Data[4096];
+			std::size_t ChunkQty = FBufLen.Value / ChunkSizeMax;
+			if (FBufLen.Value % ChunkSizeMax)
+				++ChunkQty;
 
-			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
-				return false;
+			std::uint32_t ChunkAddr = 0;
+
+			//utils::tVectorUInt8 Data(ChunkSizeMax);
+
+			for (std::size_t i = 0; i < ChunkQty; ++i)
+			{
+				const std::size_t DataLeft = FBufLen.Value - ChunkAddr;
+				const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
+
+				//Data.resize(ChunkSize);
+
+				if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+					return false;
+
+				ChunkAddr += ChunkSize;
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(2000));//[TEST]
+			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));//[TEST]
 		}
