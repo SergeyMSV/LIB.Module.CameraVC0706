@@ -43,6 +43,8 @@ bool tCameraVC0706::tStateIdle::Go()
 
 		if (FBufLen.Value > 0)
 		{
+			//[TBD] make separate function - get chunk
+
 			const std::size_t ChunkSizeMax = 768;// 4096;//[TBD] from config ImageChunkSizeMax
 			const std::uint32_t ChunkDelay = 5000;//in 0.01ms //[TBD] from config ImageChunkSizeMax
 
@@ -81,22 +83,8 @@ bool tCameraVC0706::tStateIdle::Go()
 					}
 				}
 
-				while (true)
-				{
-					if (!WaitForReceivedData(100))//[TBD] calculate according to BR and waiting for camera response
-						return false;
-
-					tPacketRet Rsp;
-					if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == tMsgId::ReadFBuf)//packet.GetMsgId())
-					{
-						break;
-						//responseStatus = Rsp.GetMsgStatus();
-						//return true;
-					}
-
-					if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
-						return false;
-				}
+				if (!HandleRsp(tMsgId::ReadFBuf, MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+					return false;
 
 				//[TBD] store the data into a file
 

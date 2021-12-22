@@ -65,4 +65,37 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 	return false;
 }
 
+bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+{
+	using namespace utils::packet_CameraVC0706;
+
+	responseStatus = tMsgStatus::None;
+
+	m_ReceivedData.clear();
+	m_pObj->Board_Send(packet.ToVector());
+
+	return HandleRsp(packet.GetMsgId(), responseStatus, wait_ms);
+}
+
+bool tCameraVC0706::tState::HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+{
+	using namespace utils::packet_CameraVC0706;
+
+	while (true)
+	{
+		if (!WaitForReceivedData(wait_ms))
+			return false;
+
+		tPacketRet Rsp;
+		if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == msgId)
+		{
+			responseStatus = Rsp.GetMsgStatus();
+			return true;
+		}
+
+		if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
+			return false;
+	}
+}
+
 }

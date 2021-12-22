@@ -107,31 +107,12 @@ class tCameraVC0706
 			}
 		}
 
-		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
-		{
-			using namespace utils::packet_CameraVC0706;
+		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
-			responseStatus = tMsgStatus::None;
+	//private: [TBD] -- acute - is to be uncommented
+		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
-			m_ReceivedData.clear();
-			m_pObj->Board_Send(packet.ToVector());
-			while (true)
-			{
-				if (!WaitForReceivedData(wait_ms))//[TBD] calculate according to BR and waiting for camera response
-					return false;
-
-				tPacketRet Rsp;
-				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == packet.GetMsgId())
-				{
-					responseStatus = Rsp.GetMsgStatus();
-					return true;
-				}
-
-				if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
-					return false;
-			}
-		}
-
+	protected:
 		virtual bool Go() { return true; }//ChangeState
 
 		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
