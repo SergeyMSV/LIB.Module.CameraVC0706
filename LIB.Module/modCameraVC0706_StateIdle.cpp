@@ -89,6 +89,12 @@ bool tCameraVC0706::tStateIdle::Go()
 				//[TBD] store the data into a file
 
 				ChunkAddr += ChunkSize;
+
+				if (!m_pObj->IsControlOperation())
+				{
+					ChangeState(new tStateStop(m_pObj));
+					return true;
+				}
 			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));//[TEST]
