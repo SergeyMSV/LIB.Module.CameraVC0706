@@ -88,7 +88,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp">
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperation.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp">

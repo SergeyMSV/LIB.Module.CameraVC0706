@@ -77,7 +77,7 @@ bool tCameraVC0706::tStateStart::Go()
 
 	m_pObj->OnReady();
 
-	ChangeState(tStateIdle::Instance(m_pObj));
+	ChangeState(tStateOperation::Instance(m_pObj));
 	return true;
 }
 

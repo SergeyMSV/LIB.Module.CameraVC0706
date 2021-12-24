@@ -50,39 +50,21 @@ class tCamera
 		virtual ~tModCamera();
 
 	protected:
-		//mod::tGnssTaskScript GetTaskScript(const std::string& id, bool userTaskScript) override;
-		//mod::tGnssSettingsNMEA GetSettingsNMEA() override;
+		virtual void OnStart();
+		virtual void OnReady();
+		virtual void OnHalt();
+		/*		virtual void OnRestart();
+				virtual void OnFailed(mod::tCameraVC0706Error cerr);
 
-		//void OnChanged(const mod::tGnssDataSet& value) override;
+				virtual void OnImageReady();
+				virtual void OnImageChunk(std::vector<char>& data);
+				virtual void OnImageComplete();*/
 
 		void Board_PowerSupply(bool state) override;
 		void Board_Reset(bool state) override;
 
 		bool Board_Send(const utils::tVectorUInt8& data) override;
-
-	protected:
 		void OnReceived(utils::tVectorUInt8& data);
-
-/*		virtual void Board_SetSerialPort(int baudrate);
-
-		virtual bool Board_Send(std::vector<char>& data);
-
-		void OnReceived(std::vector<char>& data);
-*/
-		virtual void OnStart();
-		virtual void OnReady();
-		virtual void OnHalt();
-/*		virtual void OnRestart();
-		virtual void OnFailed(mod::tCameraVC0706Error cerr);
-
-		virtual void OnImageReady();
-		virtual void OnImageChunk(std::vector<char>& data);
-		virtual void OnImageComplete();
-
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-		virtual void OnGetConfig(std::vector<char>& data);
-		virtual void OnSetConfig();
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
 	};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	/*friend class tModCamera;

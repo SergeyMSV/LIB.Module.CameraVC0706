@@ -28,7 +28,7 @@ void tCameraVC0706::tStateGetImageStop::Control()
 	}
 
 	//p_obj->OnImageComplete();//TEST
-	//ChangeState(tStateIdle::Instance(p_obj));//TEST
+	//ChangeState(tStateOperation::Instance(p_obj));//TEST
 	//return;//TEST
 
 	if (m_Step % 2 == 0 && !m_Timer.GetState())
@@ -52,7 +52,7 @@ void tCameraVC0706::tStateGetImageStop::Control()
 		{
 			p_obj->OnImageComplete();
 
-			ChangeState(tStateIdle::Instance(p_obj));
+			ChangeState(tStateOperation::Instance(p_obj));
 			return;
 		}
 		}

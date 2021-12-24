@@ -180,7 +180,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp" />
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateIdle.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperation.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />
