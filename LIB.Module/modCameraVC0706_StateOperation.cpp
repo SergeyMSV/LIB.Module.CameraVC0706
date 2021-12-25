@@ -61,6 +61,8 @@ bool tCameraVC0706::tStateOperation::GetImage()
 
 	if (FBufLen.Value > 0)
 	{
+		m_pObj->OnImageReady();
+
 		//[TBD] make separate function - get chunk
 
 		const std::size_t ChunkSizeMax = 768;// 4096;//[TBD] from config ImageChunkSizeMax
@@ -104,25 +106,12 @@ bool tCameraVC0706::tStateOperation::GetImage()
 			if (!HandleRsp(tMsgId::ReadFBuf, MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 				return false;
 
-			//[TBD] store the data into a file
-
 			ChunkAddr += ChunkSize;
 
 			if (!m_pObj->IsControlOperation())
 				return true;
 
-			//const std::string FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
-			//const std::string FileNameTemp = FileName + ".tmp";
-			//std::fstream File = std::fstream(FileNameTemp, std::ios::out);
-			//if (File.is_open())
-			//{
-			//	File << value.ToJSON();
-			//	File.close();
-			//}
-			//std::remove(FileName.c_str());
-			//std::rename(FileNameTemp.c_str(), FileName.c_str());
-
-			//m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightYellow, value.ToJSON());
+			m_pObj->OnImageChunk(Chunk);
 
 			if (!m_pObj->IsControlOperation())
 				return true;
@@ -134,7 +123,8 @@ bool tCameraVC0706::tStateOperation::GetImage()
 	if (!HandleCmd(tPacketCmd::MakeFBufCtrlResumeFrame(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 		return false;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "MEDVED");//[TBD]makes no sense
+	m_pObj->OnImageComplete();
+	//m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "MEDVED");//[TBD]makes no sense
 }
 
 }

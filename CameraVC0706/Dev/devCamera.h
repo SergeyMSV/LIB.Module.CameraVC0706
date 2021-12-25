@@ -50,15 +50,15 @@ class tCamera
 		virtual ~tModCamera();
 
 	protected:
-		virtual void OnStart();
-		virtual void OnReady();
-		virtual void OnHalt();
-		/*		virtual void OnRestart();
-				virtual void OnFailed(mod::tCameraVC0706Error cerr);
+		void OnStart() override;
+		void OnReady() override;
+		void OnHalt() override;
+		//void OnRestart() override;
+		//void OnFailed(mod::tCameraVC0706Error cerr) override;
 
-				virtual void OnImageReady();
-				virtual void OnImageChunk(std::vector<char>& data);
-				virtual void OnImageComplete();*/
+		void OnImageReady() override;
+		void OnImageChunk(utils::tVectorUInt8& data) override;
+		void OnImageComplete() override;
 
 		void Board_PowerSupply(bool state) override;
 		void Board_Reset(bool state) override;

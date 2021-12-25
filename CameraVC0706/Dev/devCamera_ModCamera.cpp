@@ -56,6 +56,36 @@ void tCamera::tModCamera::OnFailed(mod::tCameraVC0706Error cerr)
 }
 */
 
+void tCamera::tModCamera::OnImageReady()
+{
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Ready");
+}
+
+void tCamera::tModCamera::OnImageChunk(utils::tVectorUInt8& data)
+{
+	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightBlue, "Image: Chunk", data);
+
+	//[TBD] write image in a file
+
+//const std::string FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
+//const std::string FileNameTemp = FileName + ".tmp";
+//std::fstream File = std::fstream(FileNameTemp, std::ios::out);
+//if (File.is_open())
+//{
+//	File << value.ToJSON();
+//	File.close();
+//}
+//std::remove(FileName.c_str());
+//std::rename(FileNameTemp.c_str(), FileName.c_str());
+
+//m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightYellow, value.ToJSON());
+}
+
+void tCamera::tModCamera::OnImageComplete()
+{
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Complete");
+}
+
 void tCamera::tModCamera::Board_PowerSupply(bool state)
 {
 	std::stringstream SStream;

@@ -394,12 +394,12 @@ protected:
 	virtual void OnStart() = 0;
 	virtual void OnReady() = 0;
 	virtual void OnHalt() = 0;
-	/*	virtual void OnRestart() = 0;
-		virtual void OnFailed(tCameraVC0706Error cerr) = 0;
+	//virtual void OnRestart() = 0;
+	//virtual void OnFailed(tCameraVC0706Error cerr) = 0;
 
-		virtual void OnImageReady() = 0;
-		virtual void OnImageChunk(std::vector<char>& data) = 0;
-		virtual void OnImageComplete() = 0;*/
+	virtual void OnImageReady() = 0;
+	virtual void OnImageChunk(utils::tVectorUInt8& data) = 0;
+	virtual void OnImageComplete() = 0;
 
 	virtual void Board_PowerSupply(bool state) = 0;
 	virtual void Board_Reset(bool state) = 0;
