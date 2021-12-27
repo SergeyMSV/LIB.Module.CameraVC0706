@@ -73,16 +73,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageChunk.cpp">
-      <Filter>LIB.Module</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageIdle.cpp">
-      <Filter>LIB.Module</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStart.cpp">
-      <Filter>LIB.Module</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateGetImageStop.cpp">
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperationImage.cpp">
       <Filter>LIB.Module</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp">

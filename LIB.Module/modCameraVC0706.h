@@ -117,11 +117,9 @@ class tCameraVC0706
 
 		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
 	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
 	class tStateOperation : public tState
 	{
-		std::chrono::time_point<tClock> m_CheckLastTime = tClock::now();
-
 	public:
 		explicit tStateOperation(tCameraVC0706 *obj);
 
@@ -131,141 +129,24 @@ class tCameraVC0706
 
 	protected:
 		bool Go() override;
-
-	private:
-		bool GetImage();
 	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*	class tStateGetImageStart : public tState
+
+	class tStateOperationImage : public tState
 	{
-		char m_ImageFrame;
-		int m_FBufSize;
+		bool m_ImageReady = false;
 
 	public:
-		tStateGetImageStart(tCameraVC0706 *obj);
-		virtual ~tStateGetImageStart() { }
+		explicit tStateOperationImage(tCameraVC0706* obj);
+		virtual ~tStateOperationImage();
 
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateGetImageStart(obj); }
+		static tState* Instance(tCameraVC0706* obj) { return new tStateOperationImage(obj); }
 
-		virtual void Control();
+		tDevStatus GetStatus() override { return tDevStatus::Operation; }
 
 	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
+		bool Go() override;
 	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateGetImageIdle : public tState
-	{
-		char m_ImageFrame;
-		int m_FBufSize;
 
-		int m_ChunkStartAddress;
-
-	public:
-		tStateGetImageIdle(tCameraVC0706 *obj, char imageFrame, int fBufSize);
-		tStateGetImageIdle(tCameraVC0706 *obj, char imageFrame, int fBufSize, int chunkStartAddress);
-		virtual ~tStateGetImageIdle() { }
-
-		static tState* Instance(tCameraVC0706 *obj, char imageFrame, int fBufSize) { return new tStateGetImageIdle(obj, imageFrame, fBufSize); }
-		static tState* Instance(tCameraVC0706 *obj, char imageFrame, int fBufSize, int chunkStartAddress) { return new tStateGetImageIdle(obj, imageFrame, fBufSize, chunkStartAddress); }
-
-		virtual void Control();
-
-		virtual bool GetImageChunk(int chunkSize);
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateGetImageChunk : public tState
-	{
-		char m_ImageFrame;
-		int m_FBufSize;
-
-		int m_ChunkStartAddress;
-		int m_ChunkSize;
-
-		unsigned char m_ChunkTransferStep;
-
-		std::vector<char> m_Chunk;
-		unsigned int m_ChunkIndex;
-
-	public:
-		tStateGetImageChunk(tCameraVC0706 *obj, char imageFrame, int fBufSize, int chunkStartAddress, int chunkSize);
-		virtual ~tStateGetImageChunk() { }
-
-		static tState* Instance(tCameraVC0706 *obj, char imageFrame, int fBufSize, int chunkStartAddress, int chunkSize)
-		{ return new tStateGetImageChunk(obj, imageFrame, fBufSize, chunkStartAddress, chunkSize); }
-
-		virtual void Control();
-
-		virtual void Receive(std::vector<char>& data);
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-
-	private:
-		void HandleReceived(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateGetImageStop : public tState
-	{
-		char m_ImageFrame;
-		int m_FBufSize;
-
-	public:
-		tStateGetImageStop(tCameraVC0706 *obj);
-		virtual ~tStateGetImageStop() { }
-
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateGetImageStop(obj); }
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateReset : public tState//and wait for the device as well
-	{
-	public:
-		tStateReset(tCameraVC0706 *obj);
-		virtual ~tStateReset() { }
-
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateReset(obj); }
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateStart : public tState//and wait for the device as well
-	{
-	public:
-		tStateStart(tCameraVC0706 *obj);
-		virtual ~tStateStart() { }
-
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateStart(obj); }
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	class tStateRestart : public tState//Restarts the device with PWR
-	{
-	public:
-		tStateRestart(tCameraVC0706 *obj);
-		virtual ~tStateRestart() { }
-
-		static tState* Instance(tCameraVC0706 *obj) { return new tStateRestart(obj); }
-
-		virtual void Control();
-
-	protected:
-		virtual void OnReceivedMsg(std::vector<char>& data);
-	};*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tStateError :public tState
 	{
 	public:
@@ -320,14 +201,6 @@ class tCameraVC0706
 		bool Go() override;
 	};
 
-/*	friend class tState;
-
-	utils::log::tLog* p_log;
-
-	tState *p_State;
-
-	tCameraVC0706Settings m_Settings;
-*/
 	utils::tLog* m_pLog = nullptr;
 
 	tState* m_pState = nullptr;
@@ -341,6 +214,9 @@ class tCameraVC0706
 	std::queue<utils::tVectorUInt8> m_ReceivedData;
 
 	const std::uint8_t m_SN = 0;
+
+	std::chrono::time_point<tClock> m_CheckLastTime{};//period for checking presence of the camera
+	std::chrono::time_point<tClock> m_ImageLastTime{};
 
 	std::string m_LastErrorMsg;
 
@@ -362,31 +238,6 @@ public:
 	tDevStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
 
-/*
-	tCameraVC0706() { }
-
-public:
-	tCameraVC0706(utils::log::tLog *log, tCameraVC0706Settings settings);
-	virtual ~tCameraVC0706();
-
-	void Tick10ms();
-	void Tick100ms();
-
-	void Control();
-
-	void Start();
-	void Halt();
-
-	bool IsReady();
-
-	bool GetImageReady();
-	bool GetImageChunk(int chunkSize);
-
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-	bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size);
-	bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data);
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-*/
 protected:
 	/*
 	virtual void OnChanged(tCameraVC0706Property value) { }
@@ -417,9 +268,6 @@ private:
 	bool IsControlHalt() { return !m_Control_Operation; }
 
 	void ClearReceivedData();
-
-//	void SetStrTimePeriod(std::stringstream& stream, const std::chrono::time_point<tClock>& timePoint) const;
-//	void SetStrBaudrate(std::stringstream& stream, const std::chrono::time_point<tClock>& timePoint, std::size_t sizeBytes) const;
 
 	void ChangeState(tState *state);
 };
