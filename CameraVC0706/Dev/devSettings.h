@@ -12,7 +12,7 @@
 
 #include <devConfig.h>
 
-//#include <modGnss.h>
+#include <modCameraVC0706.h>
 
 #include <utilsBase.h>
 
@@ -40,6 +40,10 @@ struct tSettings
 		std::string Path;
 		std::string FileName;
 	}Output;
+
+	//StateOparation
+	//mod::tCameraVC0706::tStateOperation::tSettings StateOperation;
+	//mod::tCameraVC0706::tStateOperation::tSettings StateOperation;
 
 private:
 	std::string m_ConfigFileName;
