@@ -38,6 +38,16 @@
 namespace mod
 {
 
+class tCameraVC0706Settings
+{
+	//Version = "VC0703 1.00" - [TBD] - it is to be in the Protocol
+	utils::packet_CameraVC0706::tVideoResolution Resolution = utils::packet_CameraVC0706::tVideoResolution::VR160x120;// = "640x480"
+	std::uint32_t CheckPresencePeriod_ms = 0;
+	std::uint32_t ImagePeriod_ms = 0;
+	std::uint32_t ImageChunkSize = 0;
+	std::uint32_t ImageChunkDelayFromReq_ms = 0;
+};
+
 class tCameraVC0706
 {
 	using tClock = std::chrono::high_resolution_clock;

@@ -41,6 +41,13 @@ struct tSettings
 		std::string FileName;
 	}Output;
 
+	mod::tCameraVC0706Settings Camera;
+	//<HW Version = "VC0703 1.00" / >
+	//	<State>
+	//	<Start Resolution = "640x480">
+	//	<Operation CheckPresencePeriod_ms = "1000">
+	//	<OperationImage ImagePeriod_ms = "10000" ChunkSize = "4096" ChunkDelayFromReq_ms = "50000" / >
+	// 
 	//StateOparation
 	//mod::tCameraVC0706::tStateOperation::tSettings StateOperation;
 	//mod::tCameraVC0706::tStateOperation::tSettings StateOperation;
