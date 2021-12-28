@@ -14,27 +14,10 @@
 #include <utilsBase.h>
 #include <utilsPacketCameraVC0706.h>
 
-//#include <atomic>
 #include <chrono>
-//#include <mutex>
 #include <queue>
 #include <sstream>
-//#include <thread>
 
-/*
-//"ProjectName.[MAIN].[ATTRIBUTE]"
-#define LIB_MODULE_CAMERA_VC0706_VERSION "modCameraVC0706.5.1"
-
-#include <libConfig.h>
-
-#include "modCameraVC0706_Attribute.h"
-#include "modCameraVC0706_Packet.h"
-
-#include <utilsLog.h>
-
-#include <string>
-#include <vector>
-*/
 namespace mod
 {
 
