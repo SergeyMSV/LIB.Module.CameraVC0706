@@ -15,6 +15,11 @@ tCamera::tModCamera::~tModCamera()
 
 }
 
+mod::tCameraVC0706Settings tCamera::tModCamera::GetSettings()
+{
+	return g_Settings.Camera;
+}
+
 void tCamera::tModCamera::OnStart()
 {
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Default, "OnStart");
@@ -108,7 +113,7 @@ bool tCamera::tModCamera::Board_Send(const utils::tVectorUInt8& data)
 
 void tCamera::tModCamera::OnReceived(utils::tVectorUInt8& data)
 {
-	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
+	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
 	Board_OnReceived(data);
 }
 

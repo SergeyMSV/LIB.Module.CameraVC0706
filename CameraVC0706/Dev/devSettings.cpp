@@ -57,8 +57,8 @@ tSettings::tSettings(const std::string& fileName)
 			Camera.Resolution = utils::packet_CameraVC0706::ToResolution(Str);
 			Camera.CheckPresencePeriod_ms = ValueIter->second.get<std::uint32_t>("CheckPresencePeriod_ms");
 			Camera.ImagePeriod_ms = ValueIter->second.get<std::uint32_t>("ImagePeriod_ms");
-			Camera.ImageChunkSize = ValueIter->second.get<std::uint32_t>("ChunkSize");
-			Camera.ImageChunkDelayFromReq_ms = ValueIter->second.get<std::uint32_t>("ChunkDelayFromReq_ms");
+			Camera.ImageChunkSize = ValueIter->second.get<std::uint32_t>("ImageChunkSize");
+			Camera.ImageChunkDelayFromReq_us = ValueIter->second.get<std::uint32_t>("ImageChunkDelayFromReq_us");
 		}
 	}
 }

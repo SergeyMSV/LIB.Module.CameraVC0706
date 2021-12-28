@@ -27,7 +27,7 @@ struct tCameraVC0706Settings
 	std::uint32_t CheckPresencePeriod_ms = 0;
 	std::uint32_t ImagePeriod_ms = 0;
 	std::uint32_t ImageChunkSize = 0;
-	std::uint32_t ImageChunkDelayFromReq_ms = 0;
+	std::uint32_t ImageChunkDelayFromReq_us = 0;
 };
 
 class tCameraVC0706
@@ -125,6 +125,8 @@ class tCameraVC0706
 
 	class tStateOperationImage : public tState
 	{
+		const tCameraVC0706Settings m_Settings;
+
 		bool m_ImageReady = false;
 
 	public:
@@ -231,6 +233,7 @@ public:
 	std::string GetLastErrorMsg() const;
 
 protected:
+	virtual tCameraVC0706Settings GetSettings() = 0;
 	/*
 	virtual void OnChanged(tCameraVC0706Property value) { }
 */

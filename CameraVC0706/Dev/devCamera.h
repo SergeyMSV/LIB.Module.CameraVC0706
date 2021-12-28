@@ -50,6 +50,8 @@ class tCamera
 		virtual ~tModCamera();
 
 	protected:
+		mod::tCameraVC0706Settings GetSettings() override;
+
 		void OnStart() override;
 		void OnReady() override;
 		void OnHalt() override;

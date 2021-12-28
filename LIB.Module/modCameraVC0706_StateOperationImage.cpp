@@ -6,7 +6,7 @@ namespace mod
 {
 
 tCameraVC0706::tStateOperationImage::tStateOperationImage(tCameraVC0706 *obj)
-	:tState(obj, "tStateOperationImage")
+	:tState(obj, "tStateOperationImage"), m_Settings(m_pObj->GetSettings())
 {
 
 }
@@ -33,11 +33,10 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		m_ImageReady = true;
 		m_pObj->OnImageReady(); // when picture is really exists
 
-		const std::size_t ChunkSizeMax = 768;// 4096;//[TBD] from config ImageChunkSizeMax
-		const std::uint32_t ChunkDelay = 5000;//in 0.01ms //[TBD] from config ImageChunkSizeMax
+		const std::uint32_t ChunkDelay = m_Settings.ImageChunkDelayFromReq_us / 10;//in 0.01ms => 5000 / 10 = 500 => 50ms
 
-		std::size_t ChunkQty = FBufLen.Value / ChunkSizeMax;
-		if (FBufLen.Value % ChunkSizeMax)
+		std::size_t ChunkQty = FBufLen.Value / m_Settings.ImageChunkSize;
+		if (FBufLen.Value % m_Settings.ImageChunkSize)
 			++ChunkQty;
 
 		std::uint32_t ChunkAddr = 0;
@@ -45,7 +44,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		for (std::size_t i = 0; i < ChunkQty; ++i)
 		{
 			const std::uint32_t DataLeft = FBufLen.Value - ChunkAddr;
-			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
+			const std::uint32_t ChunkSize = DataLeft > m_Settings.ImageChunkSize ? m_Settings.ImageChunkSize : DataLeft;
 
 			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 				return false;
@@ -90,8 +89,6 @@ bool tCameraVC0706::tStateOperationImage::Go()
 				return true;
 			}
 		}
-
-		//std::this_thread::sleep_for(std::chrono::milliseconds(1000));//[TEST]
 	}
 
 	if (!HandleCmd(tPacketCmd::MakeFBufCtrlResumeFrame(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
