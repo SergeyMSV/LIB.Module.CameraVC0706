@@ -39,25 +39,25 @@ bool tCameraVC0706::tStateStart::Go()
 	tMsgStatus MsgStatus;
 
 	std::string Version;
-	if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || (Version <=> "VC0703 1.00") != 0)
+	if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || !CheckVersion(Version))
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
-	tVideoResolution VideoResolution = tVideoResolution::VR160x120;
-	if (!HandleCmd(tPacketCmd::MakeReadDataReg_VideoResolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, VideoResolution, 100) || MsgStatus != tMsgStatus::None)
+	tResolution Resolution = tResolution::VR160x120;
+	if (!HandleCmd(tPacketCmd::MakeReadDataReg_Resolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, Resolution, 100) || MsgStatus != tMsgStatus::None)
 		return false;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "VideoResolution: " + ToString(VideoResolution));
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Resolution: " + ToString(Resolution));
 
-	const tVideoResolution SettingsVideoResolution = tVideoResolution::VR640x480;//[TBD] from settings
+	const tResolution SettingsResolution = tResolution::VR640x480;//[TBD] from settings
 
-	if (VideoResolution != SettingsVideoResolution)
+	if (Resolution != SettingsResolution)
 	{
-		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsVideoResolution), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsResolution), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 			return false;
 
-		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set VideoResolution: " + ToString(VideoResolution));
+		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set Resolution: " + ToString(Resolution));
 	}
 
 	tUARTHSBaudrate UARTHSBaudrate = tUARTHSBaudrate::BR921600;

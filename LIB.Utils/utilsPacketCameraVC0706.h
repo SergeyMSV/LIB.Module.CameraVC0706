@@ -16,6 +16,8 @@ namespace utils
 	namespace packet_CameraVC0706
 	{
 
+constexpr char Version[][15] = {"VC0703 1.00", "VC0706 1.00" };
+
 constexpr std::size_t ContainerCmdSize = 4;//STX, SerialNumber, Command(MsgId), PayloadSize
 constexpr std::size_t ContainerRetSize = 5;//STX, SerialNumber, Command(MsgId), Status, PayloadSize
 constexpr std::size_t ContainerCmdHeaderSize = ContainerCmdSize - 1;//SerialNumber, Command(MsgId), PayloadSize
@@ -311,7 +313,7 @@ enum class tUARTHSBaudrate : std::uint8_t
 	BR921600,
 };
 
-enum class tVideoResolution : std::uint8_t
+enum class tResolution : std::uint8_t
 {
 	VR640x480 = 0x00,
 	VR320x240 = 0x11,
@@ -373,14 +375,14 @@ public:
 	static tPacketCmd MakeReadDataReg_Port(tMemoryDataReg memory, std::uint8_t sn);
 	static tPacketCmd MakeReadDataReg_PortUART(tMemoryDataReg memory, std::uint8_t sn);
 	static tPacketCmd MakeReadDataReg_PortUARTHS(tMemoryDataReg memory, std::uint8_t sn);
-	static tPacketCmd MakeReadDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn);
-	static tPacketCmd MakeReadDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_Resolution(tMemoryDataReg memory, std::uint8_t sn);
+	static tPacketCmd MakeReadDataReg_Compression(tMemoryDataReg memory, std::uint8_t sn);
 
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data);
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tPort port);
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTBaudrate baudrate);
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
-	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution);
+	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tResolution resolution);
 
 	static tPacketCmd MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
 	//static tPacketCmd MakeReadFBufNext(std::uint8_t sn);
@@ -420,7 +422,7 @@ public:
 	static tMsgStatus Parse(const tPacketRet& packet, tPort& port);
 	static tMsgStatus Parse(const tPacketRet& packet, tUARTBaudrate& baudrate);
 	static tMsgStatus Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate);
-	static tMsgStatus Parse(const tPacketRet& packet, tVideoResolution& resolution);
+	static tMsgStatus Parse(const tPacketRet& packet, tResolution& resolution);
 	static tMsgStatus Parse(const tPacketRet& packet, tFBufLen& value);
 	//static tMsgStatus Parse(const tPacketRet& packet, tFBufLen1& value);
 
@@ -429,10 +431,14 @@ private:
 	static tMsgStatus Check(const tPacketRet::payload_value_type& payloadValue, tMsgId msgId, std::size_t dataSize);
 };
 
+bool CheckVersion(const std::string& value);
+
 std::string ToString(tPort value);
 std::string ToString(tUARTBaudrate value);
 std::string ToString(tUARTHSBaudrate value);
-std::string ToString(tVideoResolution value);
+std::string ToString(tResolution value);
+
+tResolution ToResolution(const std::string& value);
 
 	}
 }

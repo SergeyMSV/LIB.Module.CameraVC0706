@@ -112,8 +112,8 @@ tPacketCmd tPacketCmd::MakeSystemReset(std::uint8_t sn)
 constexpr tDataReg DataReg_Port{ 0x0007, 1 };
 constexpr tDataReg DataReg_PortUART_BR{ 0x0008, 2 };
 constexpr tDataReg DataReg_PortUARTHS_BR{ 0x000A, 4 };
-constexpr tDataReg DataReg_VideoResolution{ 0x0019, 1 };
-constexpr tDataReg DataReg_VideoCompression{ 0x001A, 1 };
+constexpr tDataReg DataReg_Resolution{ 0x0019, 1 };
+constexpr tDataReg DataReg_Compression{ 0x001A, 1 };
 
 tPacketCmd tPacketCmd::MakeReadDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg)
 {
@@ -142,14 +142,14 @@ tPacketCmd tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg memory, std::ui
 	return MakeReadDataReg(memory, sn, DataReg_PortUARTHS_BR);
 }
 
-tPacketCmd tPacketCmd::MakeReadDataReg_VideoResolution(tMemoryDataReg memory, std::uint8_t sn)
+tPacketCmd tPacketCmd::MakeReadDataReg_Resolution(tMemoryDataReg memory, std::uint8_t sn)
 {
-	return MakeReadDataReg(memory, sn, DataReg_VideoResolution);
+	return MakeReadDataReg(memory, sn, DataReg_Resolution);
 }
 
-tPacketCmd tPacketCmd::MakeReadDataReg_VideoCompression(tMemoryDataReg memory, std::uint8_t sn)
+tPacketCmd tPacketCmd::MakeReadDataReg_Compression(tMemoryDataReg memory, std::uint8_t sn)
 {
-	return MakeReadDataReg(memory, sn, DataReg_VideoCompression);
+	return MakeReadDataReg(memory, sn, DataReg_Compression);
 }
 
 tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data)
@@ -184,9 +184,9 @@ tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, 
 	return MakeWriteDataReg(memory, sn, DataReg_PortUARTHS_BR, utils::ToVector(SetPortUARTHS_BR[static_cast<std::size_t>(baudrate)]));
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tVideoResolution resolution)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tResolution resolution)
 {
-	return MakeWriteDataReg(memory, sn, DataReg_VideoResolution, {static_cast<std::uint8_t>(resolution)});
+	return MakeWriteDataReg(memory, sn, DataReg_Resolution, {static_cast<std::uint8_t>(resolution)});
 }
 
 enum class tFBufType : std::uint8_t
@@ -379,7 +379,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tUARTHSBaudrate& baudrate
 	return tMsgStatus::None;
 }
 
-tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tVideoResolution& resolution)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tResolution& resolution)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();
 
@@ -387,7 +387,7 @@ tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tVideoResolution& resolut
 	if (Status != tMsgStatus::None)
 		return Status;
 
-	resolution = static_cast<tVideoResolution>(PayloadValue.Payload[0]);
+	resolution = static_cast<tResolution>(PayloadValue.Payload[0]);
 
 	return tMsgStatus::None;
 }
@@ -439,6 +439,16 @@ tMsgStatus tPacketRet::Check(const tPacketRet::payload_value_type& payloadValue,
 	return tMsgStatus::None;
 }
 
+bool CheckVersion(const std::string& value)
+{
+	for (auto& i : Version)
+	{
+		if ((i <=> value) == 0)
+			return true;
+	}
+	return false;
+}
+
 std::string ToString(tPort value)
 {
 	switch (value)
@@ -476,15 +486,26 @@ std::string ToString(tUARTHSBaudrate value)
 	return {};
 }
 
-std::string ToString(tVideoResolution value)
+std::string ToString(tResolution value)
 {
 	switch (value)
 	{
-	case tVideoResolution::VR160x120: return "160x120";
-	case tVideoResolution::VR320x240: return "320x240";
-	case tVideoResolution::VR640x480: return "640x480";
+	case tResolution::VR160x120: return "160x120";
+	case tResolution::VR320x240: return "320x240";
+	case tResolution::VR640x480: return "640x480";
 	}
 	return {};
+}
+
+tResolution ToResolution(const std::string& value)
+{
+	if (value == "160x120")
+		return tResolution::VR160x120;
+
+	if (value == "320x240")
+		return tResolution::VR320x240;
+
+	return tResolution::VR640x480;
 }
 
 	}

@@ -44,7 +44,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 
 		for (std::size_t i = 0; i < ChunkQty; ++i)
 		{
-			const std::size_t DataLeft = FBufLen.Value - ChunkAddr;
+			const std::uint32_t DataLeft = FBufLen.Value - ChunkAddr;
 			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
 			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
