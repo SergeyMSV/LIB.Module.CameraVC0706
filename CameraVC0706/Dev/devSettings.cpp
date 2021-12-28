@@ -25,7 +25,7 @@ tSettings::tSettings(const std::string& fileName)
 		}
 	}
 
-	if (auto Value = PTree.get_child_optional("App.Settings.GNSS_Receiver"))
+	if (auto Value = PTree.get_child_optional("App.Settings.Device"))
 	{
 		auto ValueIter = (*Value).begin();
 
@@ -44,6 +44,21 @@ tSettings::tSettings(const std::string& fileName)
 		{
 			SerialPort.ID = ValueIter->second.get<std::string>("ID");
 			SerialPort.BR = ValueIter->second.get<std::uint32_t>("BR");
+		}
+	}
+
+	if (auto Value = PTree.get_child_optional("App.Settings.CameraVC0706"))
+	{
+		auto ValueIter = (*Value).begin();
+
+		if (ValueIter->first == "<xmlattr>")
+		{
+			std::string Str = ValueIter->second.get<std::string>("Resolution");
+			Camera.Resolution = utils::packet_CameraVC0706::ToResolution(Str);
+			Camera.CheckPresencePeriod_ms = ValueIter->second.get<std::uint32_t>("CheckPresencePeriod_ms");
+			Camera.ImagePeriod_ms = ValueIter->second.get<std::uint32_t>("ImagePeriod_ms");
+			Camera.ImageChunkSize = ValueIter->second.get<std::uint32_t>("ChunkSize");
+			Camera.ImageChunkDelayFromReq_ms = ValueIter->second.get<std::uint32_t>("ChunkDelayFromReq_ms");
 		}
 	}
 }
