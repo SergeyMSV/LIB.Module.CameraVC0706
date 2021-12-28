@@ -33,10 +33,14 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		m_ImageReady = true;
 		m_pObj->OnImageReady(); // when picture is really exists
 
-		const std::uint32_t ChunkDelay = m_Settings.ImageChunkDelayFromReq_us / 10;//in 0.01ms => 5000 / 10 = 500 => 50ms
+		std::size_t ChunkSizeMax = m_Settings.ImageChunkSize / 4;
+		ChunkSizeMax *= 4;//it must be multiple of 4
 
-		std::size_t ChunkQty = FBufLen.Value / m_Settings.ImageChunkSize;
-		if (FBufLen.Value % m_Settings.ImageChunkSize)
+		const std::uint32_t ChunkDelay = m_Settings.ImageChunkDelayFromReq_us / 10;//in 0.01ms => 5000 / 10 = 500 => 50ms
+		const std::uint32_t ChunkDelay_ms = m_Settings.ImageChunkDelayFromReq_us / 1000;
+
+		std::size_t ChunkQty = FBufLen.Value / ChunkSizeMax;
+		if (FBufLen.Value % ChunkSizeMax)
 			++ChunkQty;
 
 		std::uint32_t ChunkAddr = 0;
@@ -44,16 +48,18 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		for (std::size_t i = 0; i < ChunkQty; ++i)
 		{
 			const std::uint32_t DataLeft = FBufLen.Value - ChunkAddr;
-			const std::uint32_t ChunkSize = DataLeft > m_Settings.ImageChunkSize ? m_Settings.ImageChunkSize : DataLeft;
+			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
 			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
 				return false;
+
+			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.PortBR) + ChunkDelay_ms) * 2;//ms, this interval is doubled
 
 			utils::tVectorUInt8 Chunk;
 			Chunk.reserve(ChunkSize);
 			while (Chunk.size() != ChunkSize)
 			{
-				if (!WaitForReceivedData(1000))//[TBD] period of time for transferring data chunk
+				if (!WaitForReceivedData(ChunkTransferTime))
 					return false;
 
 				const std::size_t DataWaiting = ChunkSize - Chunk.size();
@@ -70,8 +76,9 @@ bool tCameraVC0706::tStateOperationImage::Go()
 				}
 			}
 
-			if (!HandleRsp(tMsgId::ReadFBuf, MsgStatus, 100) || MsgStatus != tMsgStatus::None)
-				return false;
+			HandleRsp(tMsgId::ReadFBuf, MsgStatus, 1000);//[!] it's not needed to check this packet 
+			//if (!HandleRsp(tMsgId::ReadFBuf, MsgStatus, 1000) || MsgStatus != tMsgStatus::None)
+			//	return false;
 
 			ChunkAddr += ChunkSize;
 
@@ -91,7 +98,9 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		}
 	}
 
-	if (!HandleCmd(tPacketCmd::MakeFBufCtrlResumeFrame(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+	//[!] first response comes in 93ms from cmd sent at the br=115200
+	//[!] it works well with wait_ms=150ms and doesn't work with wait_ms=100ms
+	if (!HandleCmd(tPacketCmd::MakeFBufCtrlResumeFrame(m_pObj->m_SN), MsgStatus, 150, 10) || MsgStatus != tMsgStatus::None)
 		return false;
 	
 	ChangeState(new tStateOperation(m_pObj));

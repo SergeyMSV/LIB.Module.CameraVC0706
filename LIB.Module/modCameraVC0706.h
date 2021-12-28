@@ -28,11 +28,12 @@ struct tCameraVC0706Settings
 	std::uint32_t ImagePeriod_ms = 0;
 	std::uint32_t ImageChunkSize = 0;
 	std::uint32_t ImageChunkDelayFromReq_us = 0;
+	std::uint32_t PortBR = 0;
 };
 
 class tCameraVC0706
 {
-	using tClock = std::chrono::high_resolution_clock;
+	using tClock = std::chrono::steady_clock;
 	using tDevStatus = utils::tDevStatus;
 
 	class tState
@@ -100,8 +101,8 @@ class tCameraVC0706
 		}
 
 		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
+		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty);
 
-	//private: [TBD] -- acute - is to be uncommented
 		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
 	protected:

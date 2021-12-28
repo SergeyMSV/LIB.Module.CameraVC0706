@@ -44,6 +44,7 @@ tSettings::tSettings(const std::string& fileName)
 		{
 			SerialPort.ID = ValueIter->second.get<std::string>("ID");
 			SerialPort.BR = ValueIter->second.get<std::uint32_t>("BR");
+			Camera.PortBR = SerialPort.BR;
 		}
 	}
 

@@ -113,7 +113,7 @@ bool tCamera::tModCamera::Board_Send(const utils::tVectorUInt8& data)
 
 void tCamera::tModCamera::OnReceived(utils::tVectorUInt8& data)
 {
-	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
+	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
 	Board_OnReceived(data);
 }
 
