@@ -12,6 +12,7 @@
 #include "modCamera.h"
 
 #include <utilsBase.h>
+#include <utilsChrono.h>
 #include <utilsPacketCameraVC0706.h>
 
 #include <chrono>
@@ -33,7 +34,6 @@ struct tCameraVC0706Settings
 
 class tCameraVC0706
 {
-	using tClock = std::chrono::steady_clock;
 	using tDevStatus = utils::tDevStatus;
 
 	class tState
@@ -210,8 +210,8 @@ class tCameraVC0706
 
 	const std::uint8_t m_SN = 0;
 
-	std::chrono::time_point<tClock> m_CheckLastTime{};//period for checking presence of the camera
-	std::chrono::time_point<tClock> m_ImageLastTime{};
+	utils::tTimePoint m_CheckLastTime{};//period for checking presence of the camera
+	utils::tTimePoint m_ImageLastTime{};
 
 	std::string m_LastErrorMsg;
 

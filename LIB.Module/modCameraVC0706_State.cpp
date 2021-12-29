@@ -41,7 +41,7 @@ bool tCameraVC0706::tState::Halt()
 
 bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 {
-	std::chrono::time_point<tClock> StartTime = tClock::now();
+	const utils::tTimePoint TimeStart = utils::tClock::now();
 
 	while (true)
 	{
@@ -58,11 +58,10 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 		if (!m_ReceivedData.empty())
 			return true;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-		const auto Duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(tClock::now() - StartTime).count();
-		if (wait_ms < Duration_ms)
+		if (wait_ms < utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now()))
 			return false;
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	return false;
@@ -94,11 +93,11 @@ bool tCameraVC0706::tState::HandleRsp(const utils::packet_CameraVC0706::tMsgId m
 {
 	using namespace utils::packet_CameraVC0706;
 
-	const std::chrono::time_point<tClock> StartTime = tClock::now();
+	const utils::tTimePoint TimeStart = utils::tClock::now();
 
 	while (true)
 	{
-		const auto TimeElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(tClock::now() - StartTime).count();
+		const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
 		if (wait_ms < TimeElapsed)
 			return false;
 

@@ -158,6 +158,7 @@
     <ClInclude Include="..\LIB.Module\modCamera.h" />
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />
     <ClInclude Include="..\LIB.Utils\utilsBase.h" />
+    <ClInclude Include="..\LIB.Utils\utilsChrono.h" />
     <ClInclude Include="..\LIB.Utils\utilsLog.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacket.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h" />

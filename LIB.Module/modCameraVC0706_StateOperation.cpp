@@ -19,25 +19,23 @@ bool tCameraVC0706::tStateOperation::Go()
 		return true;
 	}
 
-	const auto ClockNow = tClock::now();
+	const auto TimeNow = utils::tClock::now();
 
 	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
 
-	const auto ImageTime = std::chrono::duration_cast<std::chrono::milliseconds>(ClockNow - m_pObj->m_ImageLastTime).count();
-	const std::uint32_t ImagePeriod = Settings.ImagePeriod_ms;
-	if (ImageTime > ImagePeriod)
+	const auto ImageTime = utils::GetDuration<utils::ttime_ms>(m_pObj->m_ImageLastTime, TimeNow);
+	if (ImageTime > Settings.ImagePeriod_ms)
 	{
-		m_pObj->m_ImageLastTime = ClockNow;
+		m_pObj->m_ImageLastTime = TimeNow;
 
 		ChangeState(new tStateOperationImage(m_pObj));
 		return true;
 	}
 
-	const auto Duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(ClockNow - m_pObj->m_CheckLastTime).count();
-	const std::uint32_t CheckPresencePeriod_ms = Settings.CheckPresencePeriod_ms;
-	if (Duration_ms > CheckPresencePeriod_ms)
+	const auto Duration_ms = utils::GetDuration<utils::ttime_ms>(m_pObj->m_CheckLastTime, TimeNow);
+	if (Duration_ms > Settings.CheckPresencePeriod_ms)
 	{
-		m_pObj->m_CheckLastTime = ClockNow;
+		m_pObj->m_CheckLastTime = TimeNow;
 
 		tMsgStatus MsgStatus;
 		if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
