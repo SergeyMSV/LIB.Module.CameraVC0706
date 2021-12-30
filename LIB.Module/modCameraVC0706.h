@@ -9,8 +9,6 @@
 #include <devDataSet.h>
 #include <devLog.h>
 
-#include "modCamera.h"
-
 #include <utilsBase.h>
 #include <utilsChrono.h>
 #include <utilsPacketCameraVC0706.h>
@@ -57,16 +55,6 @@ class tCameraVC0706
 
 		virtual tDevStatus GetStatus() = 0;
 
-		//		virtual bool GetImageReady() { return false; }//[srg]2017-02-02 Start
-		//		virtual bool GetImageChunk(int chunkSize) { return false; }//[srg]2017-02-03
-		//
-		////#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-		////		virtual bool GetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return false; }
-		////		virtual bool SetConfig(CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return false; }
-		////#endif//LIB_MODULE_CAMERA_VC0706_CONFIG
-		//
-		//		virtual void Receive(std::vector<char>& data);
-		//
 	protected:
 		bool WaitForReceivedData(std::uint32_t wait_ms);
 
@@ -235,9 +223,9 @@ public:
 
 protected:
 	virtual tCameraVC0706Settings GetSettings() = 0;
-	/*
-	virtual void OnChanged(tCameraVC0706Property value) { }
-*/
+
+	//virtual void OnChanged(tCameraVC0706Property value) { }
+
 	virtual void OnStart() = 0;
 	virtual void OnReady() = 0;
 	virtual void OnHalt() = 0;
@@ -255,8 +243,7 @@ protected:
 	void Board_OnReceived(utils::tVectorUInt8& data);
 
 private:
-	//bool WaitForReceivedData(std::uint32_t wait_ms) const;
-	bool IsReceivedData() const;//[TBD] deprecated might be
+	bool IsReceivedData() const;
 	utils::tVectorUInt8 GetReceivedDataChunk();
 	bool IsControlOperation() { return m_Control_Operation && !m_Control_Restart; }
 	//bool IsControlStop() { return !m_Control_Operation && m_Control_Restart; }
