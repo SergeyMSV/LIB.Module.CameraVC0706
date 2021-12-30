@@ -48,6 +48,18 @@ bool tCameraVC0706::tStateStart::Go()
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
+
+	//[!]Setup: sets UARTHS BR
+	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR460800), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+	//	return false;
+
+	//[!]Setup: sets port UARTHS
+	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UARTHS), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+	//	return false;
+	//[!]Setup: sets port UART
+	if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UART), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+		return false;
+
 	tResolution Resolution = tResolution::VR160x120;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_Resolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, Resolution, 100) || MsgStatus != tMsgStatus::None)
 		return false;
@@ -75,14 +87,6 @@ bool tCameraVC0706::tStateStart::Go()
 		return false;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BR: " + ToString(UARTBaudrate));
-
-	//[!]Setup: sets UARTHS BR
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR460800), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
-
-	//[!]Setup: sets port UARTHS
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UARTHS), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
 
 	m_pObj->OnReady();
 

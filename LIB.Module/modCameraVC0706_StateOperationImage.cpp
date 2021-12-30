@@ -21,7 +21,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 {
 	tMsgStatus MsgStatus;
 
-	if (!HandleCmd(tPacketCmd::MakeFBufCtrlStopCurrentFrame(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+	if (!HandleCmd(tPacketCmd::MakeFBufCtrlStopCurrentFrame(m_pObj->m_SN), MsgStatus, 100, 10) || MsgStatus != tMsgStatus::None)
 		return false;
 
 	tFBufLen FBufLen;
@@ -50,7 +50,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 			const std::uint32_t DataLeft = FBufLen.Value - ChunkAddr;
 			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
-			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
+			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(tPort::UART, m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
 				return false;
 
 			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.PortBR) + ChunkDelay_ms) * 2;//ms, this interval is doubled

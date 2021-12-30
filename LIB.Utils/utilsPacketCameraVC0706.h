@@ -384,7 +384,7 @@ public:
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tUARTHSBaudrate baudrate);
 	static tPacketCmd MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tResolution resolution);
 
-	static tPacketCmd MakeReadFBufCurrent(std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
+	static tPacketCmd MakeReadFBufCurrent(tPort port, std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay);//size must be multiple of 4; delay is in 0.01ms
 	//static tPacketCmd MakeReadFBufNext(std::uint8_t sn);
 	static tPacketCmd MakeGetFBufLenCurrent(std::uint8_t sn);
 	static tPacketCmd MakeGetFBufLenNext(std::uint8_t sn);
