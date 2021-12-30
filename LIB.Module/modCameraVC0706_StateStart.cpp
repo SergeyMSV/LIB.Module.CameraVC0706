@@ -38,6 +38,10 @@ bool tCameraVC0706::tStateStart::Go()
 	
 	tMsgStatus MsgStatus;
 
+	//[!]Setup: restores UARTHS BR if the chip doesn't respond
+	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR115200), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+	//	return false;
+
 	std::string Version;
 	if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || !CheckVersion(Version))
 		return false;
@@ -72,8 +76,13 @@ bool tCameraVC0706::tStateStart::Go()
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BR: " + ToString(UARTBaudrate));
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	// p_obj->OnFailed(tCameraVC0706Error_StateStart_ErrTimer);
+	//[!]Setup: sets UARTHS BR
+	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR460800), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+	//	return false;
+
+	//[!]Setup: sets port UARTHS
+	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UARTHS), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
+	//	return false;
 
 	m_pObj->OnReady();
 
