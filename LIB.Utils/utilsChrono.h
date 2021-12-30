@@ -21,7 +21,7 @@ using ttime_ms = std::chrono::milliseconds;
 template<class _Period, class T>
 std::uint32_t GetDuration(std::chrono::time_point<T> timeStart, std::chrono::time_point<T> timeNow)
 {
-	if (timeStart >= timeNow)//[!]time can be changed backwards by OS (Windows)
+	if (timeStart > timeNow)//[!]time can be changed backwards by OS (Windows)
 		return 0;
 
 	auto Duration = std::chrono::duration_cast<_Period>(timeNow - timeStart).count();
