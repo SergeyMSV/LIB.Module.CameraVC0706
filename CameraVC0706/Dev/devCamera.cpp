@@ -6,66 +6,66 @@ namespace dev
 tCamera::tCamera(utils::tLog* log, boost::asio::io_context& io)
 	:m_pLog(log), m_pIO(&io)
 {
-	m_pModFSMachine = new tModCamera(this);
+	m_pMod = new tModCamera(this);
 }
 
 tCamera::~tCamera()
 {
-	delete m_pModFSMachine;
+	delete m_pMod;
 }
 
 void tCamera::operator()()
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
 		if (m_StartAuto)
 		{
 			m_StartAuto = false;
 
-			m_pModFSMachine->Start(true);
+			m_pMod->Start(true);
 		}
 
-		(*m_pModFSMachine)();
+		(*m_pMod)();
 	}
 }
 
 void tCamera::Start()
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		m_pModFSMachine->Start();
+		m_pMod->Start();
 	}
 }
 
 void tCamera::Restart()
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		m_pModFSMachine->Restart();
+		m_pMod->Restart();
 	}
 }
 
 void tCamera::Halt()
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		m_pModFSMachine->Halt();
+		m_pMod->Halt();
 	}
 }
 
 void tCamera::Exit()
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		m_pModFSMachine->Exit();
+		m_pMod->Exit();
 	}
 }
 
 utils::tDevStatus tCamera::GetStatus() const
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		return m_pModFSMachine->GetStatus();
+		return m_pMod->GetStatus();
 	}
 
 	return utils::tDevStatus::Unknown;
@@ -73,9 +73,9 @@ utils::tDevStatus tCamera::GetStatus() const
 
 std::string tCamera::GetLastErrorMsg() const
 {
-	if (m_pModFSMachine)
+	if (m_pMod)
 	{
-		return m_pModFSMachine->GetLastErrorMsg();
+		return m_pMod->GetLastErrorMsg();
 	}
 
 	return {};

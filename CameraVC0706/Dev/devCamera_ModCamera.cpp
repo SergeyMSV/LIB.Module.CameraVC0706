@@ -38,28 +38,28 @@ void tCamera::tModCamera::OnHalt()
 
 	//OnModHalt();
 }
-/*
-void tCamera::tModCamera::OnRestart()
-{
-	p_obj->p_log->WriteLine("OnRestart");
 
-	if (m_Board)
-	{
-		tBoard *Board = m_Board;
+//void tCamera::tModCamera::OnRestart()
+//{
+//	p_obj->p_log->WriteLine("OnRestart");
+//
+//	if (m_Board)
+//	{
+//		tBoard *Board = m_Board;
+//
+//		m_Board = 0;
+//
+//		delete Board;
+//	}
+//}
+//
+//void tCamera::tModCamera::OnFailed(mod::tCameraVC0706Error cerr)
+//{
+//	p_obj->p_log->WriteLine("OnFailed: 0x" + utils::ToString((unsigned int)cerr, utils::tRadix_16));
+//
+//	OnModFailed();
+//}
 
-		m_Board = 0;
-
-		delete Board;
-	}
-}
-
-void tCamera::tModCamera::OnFailed(mod::tCameraVC0706Error cerr)
-{
-	p_obj->p_log->WriteLine("OnFailed: 0x" + utils::ToString((unsigned int)cerr, utils::tRadix_16));
-
-	OnModFailed();
-}
-*/
 void tCamera::tModCamera::OnImageReady()
 {
 	m_FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
@@ -76,7 +76,8 @@ void tCamera::tModCamera::OnImageChunk(utils::tVectorUInt8& data)
 
 	m_File.write(reinterpret_cast<char*>(data.data()), data.size());
 
-	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightBlue, "Image: Chunk", data);
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Chunk " + std::to_string(data.size()));
+	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightBlue, "Image: Chunk", data);
 }
 
 void tCamera::tModCamera::OnImageComplete()
@@ -107,13 +108,13 @@ void tCamera::tModCamera::Board_Reset(bool state)
 
 bool tCamera::tModCamera::Board_Send(const utils::tVectorUInt8& data)
 {
-	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightYellow, "Send", data);//[TBD]makes no sense
+	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightYellow, "Send", data);//[TBD]makes no sense
 	return m_Board.Send(data);
 }
 
 void tCamera::tModCamera::OnReceived(utils::tVectorUInt8& data)
 {
-	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
+	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
 	Board_OnReceived(data);
 }
 

@@ -155,7 +155,6 @@
     <None Include="CameraVC0706.conf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\LIB.Module\modCamera.h" />
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />
     <ClInclude Include="..\LIB.Utils\utilsBase.h" />
     <ClInclude Include="..\LIB.Utils\utilsChrono.h" />

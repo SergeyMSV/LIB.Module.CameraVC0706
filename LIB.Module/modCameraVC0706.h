@@ -65,11 +65,19 @@ class tCameraVC0706
 
 			responseStatus = tMsgStatus::None;
 
+			const utils::tTimePoint TimeStart = utils::tClock::now();
+
 			m_ReceivedData.clear();
 			m_pObj->Board_Send(packet.ToVector());
 			while (true)
 			{
-				if (!WaitForReceivedData(wait_ms))//[TBD] calculate according to BR and waiting for camera response
+				const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
+				if (wait_ms < TimeElapsed)
+					return false;
+
+				const std::uint32_t TimeLeft = wait_ms - TimeElapsed;
+
+				if (!WaitForReceivedData(TimeLeft))
 					return false;
 
 				tPacketRet Rsp;

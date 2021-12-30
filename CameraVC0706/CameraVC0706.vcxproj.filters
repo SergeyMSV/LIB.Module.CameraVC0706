@@ -22,9 +22,6 @@
   <ItemGroup>
     <ClInclude Include="devConfig.h" />
     <ClInclude Include="libConfig.h" />
-    <ClInclude Include="..\LIB.Module\modCamera.h">
-      <Filter>LIB.Module</Filter>
-    </ClInclude>
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h">
       <Filter>LIB.Module</Filter>
     </ClInclude>
