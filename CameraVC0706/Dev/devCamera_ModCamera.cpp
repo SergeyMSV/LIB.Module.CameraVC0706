@@ -60,34 +60,34 @@ void tCamera::tModCamera::OnFailed(mod::tCameraVC0706Error cerr)
 	OnModFailed();
 }
 */
-
 void tCamera::tModCamera::OnImageReady()
 {
+	m_FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
+	const std::string FileNameTemp = m_FileName + ".tmp";
+	m_File.open(FileNameTemp, std::ios::out | std::ios::binary);
+
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Ready");
 }
 
 void tCamera::tModCamera::OnImageChunk(utils::tVectorUInt8& data)
 {
+	if (!m_File.is_open())
+		return;
+
+	m_File.write(reinterpret_cast<char*>(data.data()), data.size());
+
 	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightBlue, "Image: Chunk", data);
-
-	//[TBD] write image in a file
-
-//const std::string FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
-//const std::string FileNameTemp = FileName + ".tmp";
-//std::fstream File = std::fstream(FileNameTemp, std::ios::out);
-//if (File.is_open())
-//{
-//	File << value.ToJSON();
-//	File.close();
-//}
-//std::remove(FileName.c_str());
-//std::rename(FileNameTemp.c_str(), FileName.c_str());
-
-//m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightYellow, value.ToJSON());
 }
 
 void tCamera::tModCamera::OnImageComplete()
 {
+	m_File.close();
+
+	const std::string FileNameTemp = m_FileName + ".tmp";
+
+	std::remove(m_FileName.c_str());
+	std::rename(FileNameTemp.c_str(), m_FileName.c_str());
+
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Complete");
 }
 

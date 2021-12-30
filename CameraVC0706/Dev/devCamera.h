@@ -1,12 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // devCamera.h
-//
-// Standard ISO/IEC 114882, C++11
-//
-// |   version  |    release    | Description
-// |------------|---------------|---------------------------------
-// |      1     |   2017 01 31  |
-// |            |               |
+// 2017-01-31
+// Standard ISO/IEC 114882, C++=20
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -17,6 +12,7 @@
 
 #include <utilsSerialPort.h>
 
+#include <fstream>
 #include <future>
 
 #include <boost/asio.hpp>
@@ -26,7 +22,6 @@ namespace dev
 
 class tCamera
 {
-///////////////////////////////////////////////////////////////////////////////////////////////////
 	class tModCamera : public mod::tCameraVC0706
 	{
 		class tBoard : public utils::serial_port::tSerialPort<>
@@ -40,10 +35,13 @@ class tCamera
 		protected:
 			void OnReceived(utils::tVectorUInt8& data) override;
 		};
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
 		tCamera* m_pObj = nullptr;
 
 		tBoard m_Board;
+
+		std::fstream m_File;
+		std::string m_FileName;
 
 	public:
 		explicit tModCamera(tCamera* obj);
@@ -68,19 +66,12 @@ class tCamera
 		bool Board_Send(const utils::tVectorUInt8& data) override;
 		void OnReceived(utils::tVectorUInt8& data);
 	};
-///////////////////////////////////////////////////////////////////////////////////////////////////
-	/*friend class tModCamera;
-
-	utils::log::tLog *p_log;
-
-	tModCamera *m_ModCamera;
-*/
 
 	utils::tLog* m_pLog = nullptr;
 
 	boost::asio::io_context* m_pIO = nullptr;
 
-	tModCamera* m_pModFSMachine = nullptr;
+	tModCamera* m_pMod = nullptr;
 
 	bool m_StartAuto = true;
 
@@ -100,29 +91,8 @@ public:
 	void Halt();
 	void Exit();
 
-	//bool StartUserTaskScript(const std::string& taskScriptID);
-
 	utils::tDevStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
-
-//	tCamera();
-//	~tCamera();
-
-/*	void Tick10ms();
-
-	void Control();
-
-	void Start();
-	void Halt();
-
-	//TEST
-	bool GetImageReady() { return m_ModCamera->GetImageReady(); }//[srg]2017-02-02 TEST
-	bool GetImageChunk(int chunkSize) { return m_ModCamera->GetImageChunk(chunkSize); }//[srg]2017-02-03 TEST
-
-#ifdef LIB_MODULE_CAMERA_VC0706_CONFIG
-	bool GetConfig(mod::CameraVC0706::Packet::tMemoryDevice memory, int address, int size) { return m_ModCamera->GetConfig(memory, address, size); }
-	bool SetConfig(mod::CameraVC0706::Packet::tMemoryDevice memory, int address, std::vector<char>& data) { return m_ModCamera->SetConfig(memory, address, data); }
-#endif//LIB_MODULE_CAMERA_VC0706_CONFIG*/
 };
 
 }
