@@ -395,6 +395,8 @@ public:
 	//static tPacketCmd MakeFBufCtrlStepFrame(std::uint8_t sn);
 };
 
+struct tEmpty {};
+
 #pragma pack(push, 1)
 union tFBufLen
 {
@@ -418,6 +420,7 @@ public:
 	tMsgId GetMsgId() const;
 	tMsgStatus GetMsgStatus() const;
 
+	static tMsgStatus Parse(const tPacketRet& packet, const tEmpty&);
 	static tMsgStatus Parse(const tPacketRet& packet, std::string& version);
 	static tMsgStatus Parse(const tPacketRet& packet, tPort& port);
 	static tMsgStatus Parse(const tPacketRet& packet, tUARTBaudrate& baudrate);

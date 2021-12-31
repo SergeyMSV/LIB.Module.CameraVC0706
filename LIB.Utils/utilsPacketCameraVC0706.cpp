@@ -313,6 +313,11 @@ tMsgStatus tPacketRet::GetMsgStatus() const
 	return GetPayloadValue().MsgStatus;
 }
 
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, const tEmpty&)
+{
+	return tMsgStatus::None;
+}
+
 tMsgStatus tPacketRet::Parse(const tPacketRet& packet, std::string& version)
 {
 	const tPacketRet::payload_value_type& PayloadValue = packet.GetPayloadValue();

@@ -192,6 +192,8 @@ protected:
 //char FromBCD(char dataBCD); [TBD]
 //char ToBCD(char dataBCD); [TBD]
 
+struct tEmpty {};
+
 enum class tDevStatus : std::uint8_t
 {
 	Init,

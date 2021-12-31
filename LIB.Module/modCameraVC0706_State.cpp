@@ -84,9 +84,11 @@ bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketC
 
 bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty)
 {
+	utils::packet_CameraVC0706::tEmpty Empty;
+
 	for (int i = 0; i < repeatQty; ++i)
 	{
-		if (HandleCmd(packet, responseStatus, wait_ms))
+		if (HandleCmd(packet, responseStatus, Empty, wait_ms))
 			return true;
 	}
 	return false;
