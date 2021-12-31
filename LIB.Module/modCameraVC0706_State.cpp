@@ -70,17 +70,17 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 	return false;
 }
 
-bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
-{
-	using namespace utils::packet_CameraVC0706;
-
-	responseStatus = tMsgStatus::None;
-
-	m_ReceivedData.clear();
-	m_pObj->Board_Send(packet.ToVector());
-
-	return HandleRsp(packet.GetMsgId(), responseStatus, wait_ms);
-}
+//bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+//{
+//	using namespace utils::packet_CameraVC0706;
+//
+//	responseStatus = tMsgStatus::None;
+//
+//	m_ReceivedData.clear();
+//	m_pObj->Board_Send(packet.ToVector());
+//
+//	return HandleRsp(packet.GetMsgId(), responseStatus, wait_ms);
+//}
 
 bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty)
 {

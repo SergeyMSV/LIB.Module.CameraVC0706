@@ -70,7 +70,7 @@ bool tCameraVC0706::tStateStart::Go()
 
 	if (Resolution != SettingsResolution)
 	{
-		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsResolution), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsResolution), MsgStatus, 100, 2) || MsgStatus != tMsgStatus::None)
 			return false;
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set Resolution: " + ToString(Resolution));

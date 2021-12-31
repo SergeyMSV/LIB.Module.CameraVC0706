@@ -38,7 +38,7 @@ bool tCameraVC0706::tStateOperation::Go()
 		m_pObj->m_CheckLastTime = TimeNow;
 
 		tMsgStatus MsgStatus;
-		if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, 100) || MsgStatus != tMsgStatus::None)
+		if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, 100, 2) || MsgStatus != tMsgStatus::None)
 			return false;
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "CheckConnection");//[TBD]makes no sense

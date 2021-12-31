@@ -25,7 +25,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 		return false;
 
 	tFBufLen FBufLen;
-	if (!HandleCmd(tPacketCmd::MakeGetFBufLenCurrent(m_pObj->m_SN), MsgStatus, FBufLen, 100) || MsgStatus != tMsgStatus::None)
+	if (!HandleCmd(tPacketCmd::MakeGetFBufLenCurrent(m_pObj->m_SN), MsgStatus, FBufLen, 100, 10) || MsgStatus != tMsgStatus::None)
 		return false;
 
 	if (FBufLen.Value > 0)
