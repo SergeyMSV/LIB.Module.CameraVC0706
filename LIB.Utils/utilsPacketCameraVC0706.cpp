@@ -525,5 +525,42 @@ tResolution ToResolution(const std::string& value)
 	return tResolution::VR640x480;
 }
 
+//std::uint32_t ToUInt32(tUARTBaudrate value)
+//{
+//	constexpr std::uint32_t BR[] = {9600, 19200, 38400, 57600, 115200};
+//
+//	std::uint32_t BRIndex = static_cast<std::uint8_t>(value);
+//
+//	if (BRIndex < sizeof(BR) / sizeof(std::uint32_t))
+//		return BR[BRIndex];
+//
+//	return 0;
+//}
+//
+//std::uint32_t ToUInt32(tUARTHSBaudrate value)
+//{
+//	constexpr std::uint32_t BR[] = { 38400, 57600, 115200, 460800, 921600 };
+//
+//	std::uint32_t BRIndex = static_cast<std::uint8_t>(value);
+//
+//	if (BRIndex < sizeof(BR) / sizeof(std::uint32_t))
+//		return BR[BRIndex];
+//
+//	return 0;
+//}
+
+tUARTHSBaudrate ToUARTHSBaudrate(std::uint32_t value)
+{
+	switch (value)
+	{
+	case 38400: return tUARTHSBaudrate::BR38400;
+	case 57600: return tUARTHSBaudrate::BR57600;
+	case 115200: return tUARTHSBaudrate::BR115200;
+	case 460800: return tUARTHSBaudrate::BR460800;
+	case 921600: return tUARTHSBaudrate::BR921600;
+	}
+	return tUARTHSBaudrate::BR_ERR;
+}
+
 	}
 }

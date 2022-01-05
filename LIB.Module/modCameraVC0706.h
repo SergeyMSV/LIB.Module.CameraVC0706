@@ -85,6 +85,7 @@ class tCameraVC0706
 
 		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty);
 
+	private:
 		template<typename T>
 		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
 		{
@@ -118,6 +119,9 @@ class tCameraVC0706
 					return false;
 			}
 		}
+
+	public:
+		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
 	protected:
 		virtual bool Go() { return true; }//ChangeState

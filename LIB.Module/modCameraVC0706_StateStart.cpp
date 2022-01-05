@@ -48,14 +48,6 @@ bool tCameraVC0706::tStateStart::Go()
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
-
-	//[!]Setup: sets UARTHS BR
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR460800), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
-
-	//[!]Setup: sets port UARTHS
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UARTHS), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
 	//[!]Setup: sets port UART
 	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UART), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
 	//	return false;
@@ -84,8 +76,18 @@ bool tCameraVC0706::tStateStart::Go()
 
 	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
 
-	//if (UARTHSBaudrate != Settings.PortBR)
+	tUARTHSBaudrate UARTHSBaudrateSet = ToUARTHSBaudrate(Settings.PortDataBR);
 
+	if (UARTHSBaudrateSet != tUARTHSBaudrate::BR_ERR && UARTHSBaudrateSet != UARTHSBaudrate)
+	{
+		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, UARTHSBaudrateSet), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
+			return false;
+
+		if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
+			return false;
+
+		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightGreen, "BRHS: " + ToString(UARTHSBaudrate));
+	}
 
 	tUARTBaudrate UARTBaudrate = tUARTBaudrate::BR9600;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)

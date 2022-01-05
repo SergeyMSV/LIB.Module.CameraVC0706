@@ -76,8 +76,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 				}
 			}
 
-			tEmpty Empty;
-			HandleRsp(tMsgId::ReadFBuf, MsgStatus, Empty, 1000);//[!] it's not needed to check this packet 
+			HandleRsp(tMsgId::ReadFBuf, MsgStatus, 1000);//[!] it's not needed to check this packet 
 			//if (!HandleRsp(tMsgId::ReadFBuf, MsgStatus, 1000) || MsgStatus != tMsgStatus::None)
 			//	return false;
 

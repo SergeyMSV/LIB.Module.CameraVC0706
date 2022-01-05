@@ -82,4 +82,10 @@ bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketC
 	return false;
 }
 
+bool tCameraVC0706::tState::HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+{
+	utils::packet_CameraVC0706::tEmpty Empty;
+	return HandleRsp(msgId, responseStatus, Empty, wait_ms);
+}
+
 }
