@@ -53,7 +53,7 @@ bool tCameraVC0706::tStateOperationImage::Go()
 			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(tPort::UART, m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
 				return false;
 
-			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.PortBR) + ChunkDelay_ms) * 2;//ms, this interval is doubled
+			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.PortDataBR) + ChunkDelay_ms) * 2;//ms, this interval is doubled
 
 			utils::tVectorUInt8 Chunk;
 			Chunk.reserve(ChunkSize);

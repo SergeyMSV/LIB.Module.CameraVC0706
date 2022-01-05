@@ -82,6 +82,11 @@ bool tCameraVC0706::tStateStart::Go()
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BRHS: " + ToString(UARTHSBaudrate));
 
+	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
+
+	//if (UARTHSBaudrate != Settings.PortBR)
+
+
 	tUARTBaudrate UARTBaudrate = tUARTBaudrate::BR9600;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)
 		return false;

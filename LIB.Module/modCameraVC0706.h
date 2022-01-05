@@ -27,7 +27,8 @@ struct tCameraVC0706Settings
 	std::uint32_t ImagePeriod_ms = 0;
 	std::uint32_t ImageChunkSize = 0;
 	std::uint32_t ImageChunkDelayFromReq_us = 0;
-	std::uint32_t PortBR = 0;
+	std::uint32_t PortCtrlBR = 0;
+	std::uint32_t PortDataBR = 0;
 };
 
 class tCameraVC0706

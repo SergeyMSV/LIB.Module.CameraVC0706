@@ -28,7 +28,13 @@ struct tSettings
 	{
 		std::string ID;
 		std::uint32_t BR = 0;
-	}SerialPort;
+	}SerialPortCtrl;
+
+	struct
+	{
+		std::string ID;
+		std::uint32_t BR = 0;
+	}SerialPortData;
 
 	struct
 	{

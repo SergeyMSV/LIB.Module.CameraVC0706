@@ -5,7 +5,7 @@ namespace dev
 {
 
 tCamera::tModCamera::tBoard::tBoard(tModCamera* obj, boost::asio::io_context& io)
-	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPort.ID, g_Settings.SerialPort.BR)
+	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPortCtrl.ID, g_Settings.SerialPortCtrl.BR)
 {
 
 }
