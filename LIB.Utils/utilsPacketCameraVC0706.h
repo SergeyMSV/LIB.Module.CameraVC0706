@@ -444,8 +444,7 @@ std::string ToString(tUARTHSBaudrate value);
 std::string ToString(tResolution value);
 
 tResolution ToResolution(const std::string& value);
-//std::uint32_t ToUInt32(tUARTBaudrate value);
-//std::uint32_t ToUInt32(tUARTHSBaudrate value);
 tUARTHSBaudrate ToUARTHSBaudrate(std::uint32_t value);
+
 	}
 }
