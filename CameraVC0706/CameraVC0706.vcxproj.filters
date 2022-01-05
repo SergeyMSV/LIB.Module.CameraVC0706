@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="LIB.Utils">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="LIB.Module">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Dev">
+      <UniqueIdentifier>{a0aa8fdb-596d-4759-b2ce-d10bde10dabf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CameraVC0706.conf" />
+    <None Include="..\LIB.Utils\!Refresh.bat">
+      <Filter>LIB.Utils</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="devConfig.h" />
+    <ClInclude Include="libConfig.h" />
+    <ClInclude Include="..\LIB.Module\modCameraVC0706.h">
+      <Filter>LIB.Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsBase.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsLog.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPacket.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsSerialPort.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsShell.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devCamera.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devDataSet.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devLog.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devSettings.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="Dev\devShell.h">
+      <Filter>Dev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsChrono.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\LIB.Module\modCameraVC0706.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_State.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateError.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperationImage.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateHalt.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperation.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp">
+      <Filter>LIB.Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsLog.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsShell.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devCamera.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devCamera_ModCamera.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devCamera_ModCamera_Board.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devDataSet.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devLog.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devSettings.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="Dev\devShell.cpp">
+      <Filter>Dev</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
