@@ -70,18 +70,6 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 	return false;
 }
 
-//bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
-//{
-//	using namespace utils::packet_CameraVC0706;
-//
-//	responseStatus = tMsgStatus::None;
-//
-//	m_ReceivedData.clear();
-//	m_pObj->Board_Send(packet.ToVector());
-//
-//	return HandleRsp(packet.GetMsgId(), responseStatus, wait_ms);
-//}
-
 bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty)
 {
 	utils::packet_CameraVC0706::tEmpty Empty;
@@ -92,35 +80,6 @@ bool tCameraVC0706::tState::HandleCmd(const utils::packet_CameraVC0706::tPacketC
 			return true;
 	}
 	return false;
-}
-
-bool tCameraVC0706::tState::HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
-{
-	using namespace utils::packet_CameraVC0706;
-
-	const utils::tTimePoint TimeStart = utils::tClock::now();
-
-	while (true)
-	{
-		const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
-		if (wait_ms < TimeElapsed)
-			return false;
-
-		const std::uint32_t TimeLeft = wait_ms - TimeElapsed;
-
-		if (!WaitForReceivedData(TimeLeft))
-			return false;
-
-		tPacketRet Rsp;
-		if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == msgId)
-		{
-			responseStatus = Rsp.GetMsgStatus();
-			return true;
-		}
-
-		if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
-			return false;
-	}
 }
 
 }

@@ -207,8 +207,8 @@ union tFBufControlModeRead
 	struct
 	{
 		std::uint8_t TRANSFER_MODE : 1;//tFBufTransferMode
-		std::uint8_t NONAME_1 : 2;
-		std::uint8_t NONAME_2 : 1;
+		std::uint8_t PortDst : 2;//tPort - destination port
+		std::uint8_t NONAME  : 1;
 		std::uint8_t : 4;
 	}Field;
 
@@ -216,7 +216,7 @@ union tFBufControlModeRead
 };
 #pragma pack(pop)
 
-tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort port, std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay)
+tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort portDst, std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay)
 {
 	tPayloadCmd::value_type Cmd;
 	Cmd.SerialNumber = sn;
@@ -225,23 +225,21 @@ tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort port, std::uint8_t sn, std::uin
 
 	tFBufControlModeRead ControlModeRead;
 	ControlModeRead.Value = 0;
-	switch (port)
+	switch (portDst)
 	{
 	case tPort::UART:
 	{
 		ControlModeRead.Field.TRANSFER_MODE = static_cast<std::uint8_t>(tFBufTransferMode::MCU);
-		ControlModeRead.Field.NONAME_1 = 1;
-		ControlModeRead.Field.NONAME_2 = 1;
 		break;
 	}
 	case tPort::UARTHS:
 	{
 		ControlModeRead.Field.TRANSFER_MODE = static_cast<std::uint8_t>(tFBufTransferMode::DMA);
-		ControlModeRead.Field.NONAME_1 = 2;
-		ControlModeRead.Field.NONAME_2 = 1;
 		break;
 	}
 	}
+	ControlModeRead.Field.PortDst = static_cast<std::uint8_t>(portDst);
+	ControlModeRead.Field.NONAME = 1;
 	Cmd.Payload.push_back(ControlModeRead.Value);
 
 	tVectorUInt8 LocalVec = utils::ToVector(address);
@@ -313,7 +311,7 @@ tMsgStatus tPacketRet::GetMsgStatus() const
 	return GetPayloadValue().MsgStatus;
 }
 
-tMsgStatus tPacketRet::Parse(const tPacketRet& packet, const tEmpty&)
+tMsgStatus tPacketRet::Parse(const tPacketRet& packet, tEmpty&)
 {
 	return tMsgStatus::None;
 }

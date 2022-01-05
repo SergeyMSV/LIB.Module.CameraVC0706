@@ -65,35 +65,10 @@ class tCameraVC0706
 
 			responseStatus = tMsgStatus::None;
 
-			const utils::tTimePoint TimeStart = utils::tClock::now();
-
 			m_ReceivedData.clear();
 			m_pObj->Board_Send(packet.ToVector());
-			while (true)
-			{
-				const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
-				if (wait_ms < TimeElapsed)
-					return false;
 
-				const std::uint32_t TimeLeft = wait_ms - TimeElapsed;
-
-				if (!WaitForReceivedData(TimeLeft))
-					return false;
-
-				tPacketRet Rsp;
-				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == packet.GetMsgId())
-				{
-					responseStatus = Rsp.GetMsgStatus();
-					if (responseStatus != tMsgStatus::None)
-						return true;
-
-					tPacketRet::Parse(Rsp, response);
-					return true;
-				}
-
-				if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
-					return false;
-			}
+			return HandleRsp(packet.GetMsgId(), responseStatus, response, wait_ms);
 		}
 
 		template<typename T>
@@ -107,10 +82,41 @@ class tCameraVC0706
 			return false;
 		}
 
-		//bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty);
 
-		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
+		template<typename T>
+		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
+		{
+			using namespace utils::packet_CameraVC0706;
+
+			const utils::tTimePoint TimeStart = utils::tClock::now();
+
+			while (true)
+			{
+				const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
+				if (wait_ms < TimeElapsed)
+					return false;
+
+				const std::uint32_t TimeLeft = wait_ms - TimeElapsed;
+
+				if (!WaitForReceivedData(TimeLeft))
+					return false;
+
+				tPacketRet Rsp;
+				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == msgId)
+				{
+					responseStatus = Rsp.GetMsgStatus();
+					if (responseStatus != tMsgStatus::None)
+						return true;
+
+					tPacketRet::Parse(Rsp, response);
+					return true;
+				}
+
+				if (m_ReceivedData.size() > ContainerCmdSize + ContainerPayloadSizeMax)
+					return false;
+			}
+		}
 
 	protected:
 		virtual bool Go() { return true; }//ChangeState
