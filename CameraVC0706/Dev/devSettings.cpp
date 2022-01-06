@@ -74,6 +74,12 @@ tSettings::tSettings(const std::string& fileName)
 			Camera.ImageChunkDelayFromReq_us = ValueIter->second.get<std::uint32_t>("ImageChunkDelayFromReq_us");
 		}
 	}
+
+	if (SerialPortData == tSettings::tSerialPort())
+	{
+		SerialPortData = SerialPortCtrl;
+		Camera.PortDataBR = SerialPortData.BR;
+	}
 }
 
 }

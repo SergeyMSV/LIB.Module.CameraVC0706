@@ -24,17 +24,16 @@ struct tSettings
 		std::string ID;
 	}Main;
 
-	struct
+	struct tSerialPort
 	{
 		std::string ID;
 		std::uint32_t BR = 0;
-	}SerialPortCtrl;
 
-	struct
-	{
-		std::string ID;
-		std::uint32_t BR = 0;
-	}SerialPortData;
+		bool operator == (const tSerialPort& value) const = default;
+	};
+
+	tSerialPort SerialPortCtrl;
+	tSerialPort SerialPortData;
 
 	struct
 	{
