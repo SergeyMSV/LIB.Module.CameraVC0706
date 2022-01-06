@@ -109,11 +109,13 @@ void tCamera::tModCamera::Board_Reset(bool state)
 
 bool tCamera::tModCamera::Board_SendCtrl(const utils::tVectorUInt8& data)
 {
+	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightYellow, "Send", data);
 	return m_BoardCtrl.Send(data);
 }
 
 void tCamera::tModCamera::OnReceivedCtrl(utils::tVectorUInt8& data)
 {
+	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);
 	Board_OnReceivedCtrl(data);
 }
 
