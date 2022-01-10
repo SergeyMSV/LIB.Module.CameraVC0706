@@ -36,15 +36,27 @@ tSettings::tSettings(const std::string& fileName)
 		}
 	}
 
-	if (auto Value = PTree.get_child_optional("App.Settings.SerialPort"))
+	if (auto Value = PTree.get_child_optional("App.Settings.SerialPortCtrl"))
 	{
 		auto ValueIter = (*Value).begin();
 
 		if (ValueIter->first == "<xmlattr>")
 		{
-			SerialPort.ID = ValueIter->second.get<std::string>("ID");
-			SerialPort.BR = ValueIter->second.get<std::uint32_t>("BR");
-			Camera.PortBR = SerialPort.BR;
+			SerialPortCtrl.ID = ValueIter->second.get<std::string>("ID");
+			SerialPortCtrl.BR = ValueIter->second.get<std::uint32_t>("BR");
+			Camera.SetPortCtrlBR(SerialPortCtrl.BR);
+		}
+	}
+
+	if (auto Value = PTree.get_child_optional("App.Settings.SerialPortData"))
+	{
+		auto ValueIter = (*Value).begin();
+
+		if (ValueIter->first == "<xmlattr>")
+		{
+			SerialPortData.ID = ValueIter->second.get<std::string>("ID");
+			SerialPortData.BR = ValueIter->second.get<std::uint32_t>("BR");
+			Camera.SetPortDataBR(SerialPortData.BR);
 		}
 	}
 
