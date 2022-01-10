@@ -115,7 +115,8 @@ bool tCamera::tModCamera::Board_SendCtrl(const utils::tVectorUInt8& data)
 
 void tCamera::tModCamera::OnReceivedCtrl(utils::tVectorUInt8& data)
 {
-	m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);
+	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);
+	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Yellow, "Received " + std::to_string(data.size()));
 	Board_OnReceivedCtrl(data);
 }
 
