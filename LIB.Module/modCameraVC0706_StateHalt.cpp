@@ -10,7 +10,7 @@ tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& val
 }
 
 tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& value, bool error)
-	:tState(obj), m_Error(error)
+	:tState(obj, "StateHalt"), m_Error(error)
 {
 	if (m_pObj->IsControlRestart())
 	{
@@ -18,7 +18,7 @@ tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& val
 	}
 }
 
-bool tCameraVC0706::tStateHalt::operator()()
+void tCameraVC0706::tStateHalt::operator()()
 {
 	if (!m_Off)
 	{
@@ -29,20 +29,24 @@ bool tCameraVC0706::tStateHalt::operator()()
 	}
 
 	if (m_pObj->m_Control_Exit)
-		return false;
+	{
+		m_pObj->m_Control_OnExit = true;
+		return;
+	}
 
 	if (m_Error && m_pObj->m_Control_ExitOnError)
-		return false;
+	{
+		m_pObj->m_Control_OnExit = true;
+		return;
+	}
 
 	if (m_pObj->IsControlOperation())
 	{
 		ChangeState(new tStateStart(m_pObj/*, "start...s"*/));
-		return true;
+		return;
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-	return true;
 }
 
 }

@@ -17,16 +17,31 @@ tCameraVC0706::tStateOperationImage::~tStateOperationImage()
 		m_pObj->OnImageComplete();
 }
 
-bool tCameraVC0706::tStateOperationImage::Go()
+void tCameraVC0706::tStateOperationImage::operator()()
 {
+	if (IsChangeState_ToStop())
+		return;
+
 	tMsgStatus MsgStatus;
 
 	if (!HandleCmd(tPacketCmd::MakeFBufCtrlStopCurrentFrame(m_pObj->m_SN), MsgStatus, 100, 10) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}	
+
+	if (IsChangeState_ToStop())
+		return;
 
 	tFBufLen FBufLen;
 	if (!HandleCmd(tPacketCmd::MakeGetFBufLenCurrent(m_pObj->m_SN), MsgStatus, FBufLen, 100, 10) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	if (FBufLen.Value > 0)
 	{
@@ -51,7 +66,10 @@ bool tCameraVC0706::tStateOperationImage::Go()
 			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
 			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_Settings.GetPortDataBR() == 0 ? tPort::UART : tPort::UARTHS, m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
-				return false;
+			{
+				ChangeState(new tStateError(m_pObj, "HandleCmd"));
+				return;
+			}
 
 			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.GetImageDataBR()) + ChunkDelay_ms) * 2;//ms, this interval is doubled
 
@@ -60,7 +78,13 @@ bool tCameraVC0706::tStateOperationImage::Go()
 			while (Chunk.size() != ChunkSize)
 			{
 				if (!WaitForReceivedData(ChunkTransferTime))
-					return false;
+				{
+					ChangeState(new tStateError(m_pObj, "WaitForReceivedData"));
+					return;
+				}
+
+				if (IsChangeState_ToStop())
+					return;
 
 				const std::size_t DataWaiting = ChunkSize - Chunk.size();
 
@@ -82,29 +106,25 @@ bool tCameraVC0706::tStateOperationImage::Go()
 
 			ChunkAddr += ChunkSize;
 
-			if (!m_pObj->IsControlOperation())
-			{
-				ChangeState(new tStateStop(m_pObj));
-				return true;
-			}
+			if (IsChangeState_ToStop())
+				return;
 
 			m_pObj->OnImageChunk(Chunk);
 
-			if (!m_pObj->IsControlOperation())
-			{
-				ChangeState(new tStateStop(m_pObj));
-				return true;
-			}
+			if (IsChangeState_ToStop())
+				return;
 		}
 	}
 
 	//[!] first response comes in 93ms from cmd sent at the br=115200
 	//[!] it works well with wait_ms=150ms and doesn't work with wait_ms=100ms
 	if (!HandleCmd(tPacketCmd::MakeFBufCtrlResumeFrame(m_pObj->m_SN), MsgStatus, 150, 10) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
 	
 	ChangeState(new tStateOperation(m_pObj));
-	return true;
 }
 
 }

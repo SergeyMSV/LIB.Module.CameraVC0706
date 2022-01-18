@@ -11,13 +11,10 @@ tCameraVC0706::tStateOperation::tStateOperation(tCameraVC0706 *obj)
 
 }
 
-bool tCameraVC0706::tStateOperation::Go()
+void tCameraVC0706::tStateOperation::operator()()
 {
-	if (!m_pObj->IsControlOperation())
-	{
-		ChangeState(new tStateStop(m_pObj));
-		return true;
-	}
+	if (IsChangeState_ToStop())
+		return;
 
 	const auto TimeNow = utils::tClock::now();
 
@@ -29,7 +26,7 @@ bool tCameraVC0706::tStateOperation::Go()
 		m_pObj->m_ImageLastTime = TimeNow;
 
 		ChangeState(new tStateOperationImage(m_pObj));
-		return true;
+		return;
 	}
 
 	const auto Duration_ms = utils::GetDuration<utils::ttime_ms>(m_pObj->m_CheckLastTime, TimeNow);
@@ -39,12 +36,15 @@ bool tCameraVC0706::tStateOperation::Go()
 
 		tMsgStatus MsgStatus;
 		if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, 100, 2) || MsgStatus != tMsgStatus::None)
-			return false;
+		{
+			ChangeState(new tStateError(m_pObj, "HandleCmd"));
+			return;
+		}
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "CheckConnection");//[TBD]makes no sense
 	}
 
-	return true;
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
 }

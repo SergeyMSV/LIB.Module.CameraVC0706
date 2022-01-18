@@ -15,6 +15,7 @@
 
 #include <chrono>
 #include <queue>
+#include <source_location>
 #include <sstream>
 
 namespace mod
@@ -60,7 +61,7 @@ class tCameraVC0706
 		tState(tCameraVC0706* obj, const std::string& taskScriptID);
 		virtual ~tState();
 
-		virtual bool operator()();
+		virtual void operator()() = 0;
 
 		virtual bool Start() { return false; }
 		virtual bool Halt();
@@ -110,6 +111,9 @@ class tCameraVC0706
 				if (!WaitForReceivedData(TimeLeft))
 					return false;
 
+				if (!m_pObj->IsControlOperation())
+					return true;
+
 				tPacketRet Rsp;
 				if (tPacketRet::Find(m_ReceivedData, Rsp) > 0 && Rsp.GetMsgId() == msgId)
 				{
@@ -130,8 +134,7 @@ class tCameraVC0706
 		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
 	protected:
-		virtual bool Go() { return true; }//ChangeState
-
+		bool IsChangeState_ToStop();//ChangeState
 		void ChangeState(tState* state) { m_pObj->ChangeState(state); }
 	};
 
@@ -140,10 +143,9 @@ class tCameraVC0706
 	public:
 		explicit tStateOperation(tCameraVC0706 *obj);
 
-		tDevStatus GetStatus() override { return tDevStatus::Operation; }
+		void operator()() override;
 
-	protected:
-		bool Go() override;
+		tDevStatus GetStatus() override { return tDevStatus::Operation; }
 	};
 
 	class tStateOperationImage : public tState
@@ -156,18 +158,17 @@ class tCameraVC0706
 		explicit tStateOperationImage(tCameraVC0706* obj);
 		virtual ~tStateOperationImage();
 
-		tDevStatus GetStatus() override { return tDevStatus::Operation; }
+		void operator()() override;
 
-	protected:
-		bool Go() override;
+		tDevStatus GetStatus() override { return tDevStatus::Operation; }
 	};
 
 	class tStateError :public tState
 	{
 	public:
-		tStateError(tCameraVC0706* obj, const std::string& value);
+		tStateError(tCameraVC0706* obj, const std::string& value, const std::source_location loc = std::source_location::current());
 
-		bool operator()() override;
+		void operator()() override;
 
 		bool Halt() override { return false; }
 
@@ -183,7 +184,7 @@ class tCameraVC0706
 		tStateHalt(tCameraVC0706* obj, const std::string& value);
 		tStateHalt(tCameraVC0706* obj, const std::string& value, bool error);
 
-		bool operator()() override;
+		void operator()() override;
 
 		bool Start() override { return false; }
 		bool Halt() override { return true; }
@@ -196,10 +197,9 @@ class tCameraVC0706
 	public:
 		explicit tStateStart(tCameraVC0706* obj);
 
-		tDevStatus GetStatus() override { return tDevStatus::Init; }
+		void operator()() override;
 
-	protected:
-		bool Go() override;
+		tDevStatus GetStatus() override { return tDevStatus::Init; }
 	};
 
 	class tStateStop :public tState
@@ -207,13 +207,12 @@ class tCameraVC0706
 	public:
 		explicit tStateStop(tCameraVC0706* obj);
 
+		void operator()() override;
+
 		bool Start() override { return false; }
 		bool Halt() override { return true; }
 
 		tDevStatus GetStatus() override { return tDevStatus::Deinit; }
-
-	protected:
-		bool Go() override;
 	};
 
 	utils::tLog* m_pLog = nullptr;
@@ -224,6 +223,8 @@ class tCameraVC0706
 	std::atomic_bool m_Control_Restart{ false };
 	std::atomic_bool m_Control_Exit{ false };
 	std::atomic_bool m_Control_ExitOnError{ false };
+
+	std::atomic_bool m_Control_OnExit{ false };
 
 	mutable std::mutex m_MtxReceivedData;
 	std::queue<utils::tVectorUInt8> m_ReceivedData;

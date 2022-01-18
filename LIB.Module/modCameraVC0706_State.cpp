@@ -20,19 +20,6 @@ tCameraVC0706::tState::~tState()
 
 }
 
-bool tCameraVC0706::tState::operator()()
-{
-	if (!Go())
-	{
-		ChangeState(new tStateError(m_pObj, "Go failed"));
-		return true;
-	}
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-	return true;
-}
-
 bool tCameraVC0706::tState::Halt()
 {
 	ChangeState(new tStateStop(m_pObj));
@@ -46,7 +33,7 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 	while (true)
 	{
 		if (!m_pObj->IsControlOperation())
-			return false;
+			return true;
 
 		if (m_pObj->IsReceivedData())
 		{
@@ -86,6 +73,17 @@ bool tCameraVC0706::tState::HandleRsp(const utils::packet_CameraVC0706::tMsgId m
 {
 	utils::packet_CameraVC0706::tEmpty Empty;
 	return HandleRsp(msgId, responseStatus, Empty, wait_ms);
+}
+
+bool tCameraVC0706::tState::IsChangeState_ToStop()
+{
+	if (!m_pObj->IsControlOperation())
+	{
+		ChangeState(new tStateStop(m_pObj));
+		return true;
+	}
+
+	return false;
 }
 
 }

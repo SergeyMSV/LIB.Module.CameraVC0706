@@ -12,7 +12,10 @@ tCameraVC0706::tCameraVC0706(utils::tLog* log)
 
 void tCameraVC0706::operator()()
 {
-	while ((*m_pState)());
+	while (!m_Control_OnExit)
+	{
+		(*m_pState)();
+	}
 }
 
 void tCameraVC0706::Start()

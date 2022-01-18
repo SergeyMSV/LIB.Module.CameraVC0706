@@ -14,27 +14,27 @@ tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
 	}
 }
 
-bool tCameraVC0706::tStateStart::Go()
+void tCameraVC0706::tStateStart::operator()()
 {
-	if (!m_pObj->IsControlOperation())
-		return false;
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->OnStart();
 
-	if (!m_pObj->IsControlOperation())
-		return false;
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->Board_Reset(false);
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));//[TBD] from settings
 
-	if (!m_pObj->IsControlOperation())
-		return false;
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->Board_PowerSupply(true);
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));//[TBD] from settings
 
-	if (!m_pObj->IsControlOperation())
-		return false;
+	if (IsChangeState_ToStop())
+		return;
 	
 	tMsgStatus MsgStatus;
 
@@ -47,7 +47,13 @@ bool tCameraVC0706::tStateStart::Go()
 
 	std::string Version;
 	if (!HandleCmd(tPacketCmd::MakeGetVersion(m_pObj->m_SN), MsgStatus, Version, 100) || MsgStatus != tMsgStatus::None || !CheckVersion(Version))
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
@@ -57,7 +63,13 @@ bool tCameraVC0706::tStateStart::Go()
 
 	tResolution Resolution = tResolution::VR160x120;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_Resolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, Resolution, 100) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Resolution: " + ToString(Resolution));
 
@@ -66,14 +78,26 @@ bool tCameraVC0706::tStateStart::Go()
 	if (Resolution != SettingsResolution)
 	{
 		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsResolution), MsgStatus, 100, 2) || MsgStatus != tMsgStatus::None)
-			return false;
+		{
+			ChangeState(new tStateError(m_pObj, "HandleCmd"));
+			return;
+		}
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set Resolution: " + ToString(Resolution));
 	}
 
+	if (IsChangeState_ToStop())
+		return;
+
 	tUARTHSBaudrate UARTHSBaudrate = tUARTHSBaudrate::BR921600;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BRHS: " + ToString(UARTHSBaudrate));
 
@@ -84,10 +108,22 @@ bool tCameraVC0706::tStateStart::Go()
 	if (UARTHSBaudrateSet != tUARTHSBaudrate::BR_ERR && UARTHSBaudrateSet != UARTHSBaudrate)
 	{
 		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, UARTHSBaudrateSet), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
-			return false;
+		{
+			ChangeState(new tStateError(m_pObj, "HandleCmd"));
+			return;
+		}
+
+		if (IsChangeState_ToStop())
+			return;
 
 		if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
-			return false;
+		{
+			ChangeState(new tStateError(m_pObj, "HandleCmd"));
+			return;
+		}
+
+		if (IsChangeState_ToStop())
+			return;
 
 		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightGreen, "BRHS: " + ToString(UARTHSBaudrate));
 
@@ -96,19 +132,27 @@ bool tCameraVC0706::tStateStart::Go()
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 		ChangeState(new tStateStart(m_pObj));
-		return true;
+		return;
 	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	tUARTBaudrate UARTBaudrate = tUARTBaudrate::BR9600;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)
-		return false;
+	{
+		ChangeState(new tStateError(m_pObj, "HandleCmd"));
+		return;
+	}
+
+	if (IsChangeState_ToStop())
+		return;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BR: " + ToString(UARTBaudrate));
 
 	m_pObj->OnReady();
 
 	ChangeState(new tStateOperation(m_pObj));
-	return true;
 }
 
 }

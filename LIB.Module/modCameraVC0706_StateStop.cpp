@@ -9,10 +9,9 @@ tCameraVC0706::tStateStop::tStateStop(tCameraVC0706* obj)
 
 }
 
-bool tCameraVC0706::tStateStop::Go()
+void tCameraVC0706::tStateStop::operator()()
 {
 	ChangeState(new tStateHalt(m_pObj, "stop"));
-	return true;
 }
 
 }
