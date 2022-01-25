@@ -302,6 +302,7 @@ enum class tUARTBaudrate : std::uint8_t
 	BR38400,
 	BR57600,
 	BR115200,
+	BR_ERR = 0xFF
 };
 
 enum class tUARTHSBaudrate : std::uint8_t
@@ -311,6 +312,7 @@ enum class tUARTHSBaudrate : std::uint8_t
 	BR115200,
 	BR460800,
 	BR921600,
+	BR_ERR = 0xFF
 };
 
 enum class tResolution : std::uint8_t
@@ -442,6 +444,7 @@ std::string ToString(tUARTHSBaudrate value);
 std::string ToString(tResolution value);
 
 tResolution ToResolution(const std::string& value);
+tUARTHSBaudrate ToUARTHSBaudrate(std::uint32_t value);
 
 	}
 }
