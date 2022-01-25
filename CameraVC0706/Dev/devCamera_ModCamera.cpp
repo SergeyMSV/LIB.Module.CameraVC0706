@@ -5,14 +5,15 @@ namespace dev
 {
 
 tCamera::tModCamera::tModCamera(tCamera* obj)
-	:mod::tCameraVC0706(obj->m_pLog), m_pObj(obj), m_Board(this, *obj->m_pIO)
+	:mod::tCameraVC0706(obj->m_pLog), m_pObj(obj), m_BoardCtrl(this, *obj->m_pIO)
 {
-
+	if (g_Settings.SerialPortData != tSettings::tSerialPort())
+		m_BoardData = new tBoardData(this, *obj->m_pIO);
 }
 
 tCamera::tModCamera::~tModCamera()
 {
-
+	delete m_BoardData;
 }
 
 mod::tCameraVC0706Settings tCamera::tModCamera::GetSettings()
@@ -106,16 +107,14 @@ void tCamera::tModCamera::Board_Reset(bool state)
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightMagenta, SStream.str());
 }
 
-bool tCamera::tModCamera::Board_Send(const utils::tVectorUInt8& data)
+bool tCamera::tModCamera::Board_SendCtrl(const utils::tVectorUInt8& data)
 {
-	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::LightYellow, "Send", data);//[TBD]makes no sense
-	return m_Board.Send(data);
+	return m_BoardCtrl.Send(data);
 }
 
-void tCamera::tModCamera::OnReceived(utils::tVectorUInt8& data)
+void tCamera::tModCamera::OnReceivedCtrl(utils::tVectorUInt8& data)
 {
-	//m_pObj->m_pLog->WriteHex(true, utils::tLogColour::Yellow, "Received", data);//[TBD]makes no sense
-	Board_OnReceived(data);
+	Board_OnReceivedCtrl(data);
 }
 
 }

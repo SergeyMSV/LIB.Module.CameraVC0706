@@ -59,7 +59,7 @@ std::string tCameraVC0706::GetLastErrorMsg() const
 	return m_LastErrorMsg;
 }
 
-void tCameraVC0706::Board_OnReceived(utils::tVectorUInt8& data)
+void tCameraVC0706::Board_OnReceivedCtrl(utils::tVectorUInt8& data)
 {
 	std::lock_guard<std::mutex> Lock(m_MtxReceivedData);
 

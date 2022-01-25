@@ -65,13 +65,13 @@ void tCameraVC0706::tStateOperationImage::operator()()
 			const std::uint32_t DataLeft = FBufLen.Value - ChunkAddr;
 			const std::uint32_t ChunkSize = DataLeft > ChunkSizeMax ? ChunkSizeMax : DataLeft;
 
-			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(tPort::UART, m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
+			if (!HandleCmd(tPacketCmd::MakeReadFBufCurrent(m_Settings.GetPortDataBR() == 0 ? tPort::UART : tPort::UARTHS, m_pObj->m_SN, ChunkAddr, ChunkSize, ChunkDelay), MsgStatus, 200, 10) || MsgStatus != tMsgStatus::None)
 			{
 				ChangeState(new tStateError(m_pObj, "HandleCmd"));
 				return;
 			}
 
-			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.PortBR) + ChunkDelay_ms) * 2;//ms, this interval is doubled
+			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.GetImageDataBR()) + ChunkDelay_ms) * 2;//ms, this interval is doubled
 
 			utils::tVectorUInt8 Chunk;
 			Chunk.reserve(ChunkSize);

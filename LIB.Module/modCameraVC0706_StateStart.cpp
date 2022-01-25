@@ -38,6 +38,9 @@ void tCameraVC0706::tStateStart::operator()()
 	
 	tMsgStatus MsgStatus;
 
+	//HandleCmd(tPacketCmd::MakeSystemReset(m_pObj->m_SN), MsgStatus, 100, 1);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 	//[!]Setup: restores UARTHS BR if the chip doesn't respond
 	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR115200), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
 	//	return false;
@@ -54,14 +57,6 @@ void tCameraVC0706::tStateStart::operator()()
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
 
-
-	//[!]Setup: sets UARTHS BR
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tUARTHSBaudrate::BR460800), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
-
-	//[!]Setup: sets port UARTHS
-	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UARTHS), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
-	//	return false;
 	//[!]Setup: sets port UART
 	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UART), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
 	//	return false;
@@ -105,6 +100,28 @@ void tCameraVC0706::tStateStart::operator()()
 		return;
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BRHS: " + ToString(UARTHSBaudrate));
+
+	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
+
+	tUARTHSBaudrate UARTHSBaudrateSet = ToUARTHSBaudrate(Settings.GetPortDataBR());
+
+	if (UARTHSBaudrateSet != tUARTHSBaudrate::BR_ERR && UARTHSBaudrateSet != UARTHSBaudrate)
+	{
+		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, UARTHSBaudrateSet), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
+			return;
+
+		if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
+			return;
+
+		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightGreen, "BRHS: " + ToString(UARTHSBaudrate));
+
+		HandleCmd(tPacketCmd::MakeSystemReset(m_pObj->m_SN), MsgStatus, 100, 1);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+		ChangeState(new tStateStart(m_pObj));
+		return;
+	}
 
 	tUARTBaudrate UARTBaudrate = tUARTBaudrate::BR9600;
 	if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUART(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTBaudrate, 100) || MsgStatus != tMsgStatus::None)
