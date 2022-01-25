@@ -24,13 +24,25 @@ class tCamera
 {
 	class tModCamera : public mod::tCameraVC0706
 	{
-		class tBoard : public utils::serial_port::tSerialPort<>
+		class tBoardCtrl : public utils::serial_port::tSerialPort<>
 		{
 			tModCamera* m_pObj = nullptr;
 
 		public:
-			tBoard(tModCamera* obj, boost::asio::io_context& io);
-			virtual ~tBoard();
+			tBoardCtrl(tModCamera* obj, boost::asio::io_context& io);
+			virtual ~tBoardCtrl();
+
+		protected:
+			void OnReceived(utils::tVectorUInt8& data) override;
+		};
+
+		class tBoardData : public utils::serial_port::tSerialPort<4096>
+		{
+			tModCamera* m_pObj = nullptr;
+
+		public:
+			tBoardData(tModCamera* obj, boost::asio::io_context& io);
+			virtual ~tBoardData();
 
 		protected:
 			void OnReceived(utils::tVectorUInt8& data) override;
@@ -38,7 +50,8 @@ class tCamera
 
 		tCamera* m_pObj = nullptr;
 
-		tBoard m_Board;
+		tBoardCtrl m_BoardCtrl;
+		tBoardData* m_BoardData = nullptr;
 
 		std::fstream m_File;
 		std::string m_FileName;
@@ -63,8 +76,10 @@ class tCamera
 		void Board_PowerSupply(bool state) override;
 		void Board_Reset(bool state) override;
 
-		bool Board_Send(const utils::tVectorUInt8& data) override;
-		void OnReceived(utils::tVectorUInt8& data);
+		bool Board_SendCtrl(const utils::tVectorUInt8& data) override;
+		void OnReceivedCtrl(utils::tVectorUInt8& data);
+
+		void OnReceivedData(utils::tVectorUInt8& data);
 	};
 
 	utils::tLog* m_pLog = nullptr;

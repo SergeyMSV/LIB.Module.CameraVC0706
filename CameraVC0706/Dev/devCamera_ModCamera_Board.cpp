@@ -4,20 +4,36 @@
 namespace dev
 {
 
-tCamera::tModCamera::tBoard::tBoard(tModCamera* obj, boost::asio::io_context& io)
-	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPort.ID, g_Settings.SerialPort.BR)
+tCamera::tModCamera::tBoardCtrl::tBoardCtrl(tModCamera* obj, boost::asio::io_context& io)
+	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPortCtrl.ID, g_Settings.SerialPortCtrl.BR)
 {
 
 }
 
-tCamera::tModCamera::tBoard::~tBoard()
+tCamera::tModCamera::tBoardCtrl::~tBoardCtrl()
 {
 
 }
 
-void tCamera::tModCamera::tBoard::OnReceived(utils::tVectorUInt8& data)
+void tCamera::tModCamera::tBoardCtrl::OnReceived(utils::tVectorUInt8& data)
 {
-	m_pObj->OnReceived(data);
+	m_pObj->OnReceivedCtrl(data);
+}
+
+tCamera::tModCamera::tBoardData::tBoardData(tModCamera* obj, boost::asio::io_context& io)
+	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPortData.ID, g_Settings.SerialPortData.BR)
+{
+
+}
+
+tCamera::tModCamera::tBoardData::~tBoardData()
+{
+
+}
+
+void tCamera::tModCamera::tBoardData::OnReceived(utils::tVectorUInt8& data)
+{
+	m_pObj->OnReceivedCtrl(data);
 }
 
 }

@@ -28,7 +28,19 @@ struct tCameraVC0706Settings
 	std::uint32_t ImagePeriod_ms = 0;
 	std::uint32_t ImageChunkSize = 0;
 	std::uint32_t ImageChunkDelayFromReq_us = 0;
-	std::uint32_t PortBR = 0;
+
+private:
+	std::uint32_t PortCtrlBR = 0;
+	std::uint32_t PortDataBR = 0;//if it is equal to 0 - image data is transferred through PortCtrl
+
+public:
+	void SetPortCtrlBR(std::uint32_t value) { PortCtrlBR = value; }
+	void SetPortDataBR(std::uint32_t value) { PortDataBR = value; }
+	std::uint32_t GetPortDataBR() const { return PortDataBR; }
+	std::uint32_t GetImageDataBR() const
+	{
+		return PortDataBR != 0 ? PortDataBR : PortCtrlBR;
+	}
 };
 
 class tCameraVC0706
@@ -67,7 +79,7 @@ class tCameraVC0706
 			responseStatus = tMsgStatus::None;
 
 			m_ReceivedData.clear();
-			m_pObj->Board_Send(packet.ToVector());
+			m_pObj->Board_SendCtrl(packet.ToVector());
 
 			return HandleRsp(packet.GetMsgId(), responseStatus, response, wait_ms);
 		}
@@ -265,8 +277,8 @@ protected:
 	virtual void Board_PowerSupply(bool state) = 0;
 	virtual void Board_Reset(bool state) = 0;
 
-	virtual bool Board_Send(const utils::tVectorUInt8& data) = 0;
-	void Board_OnReceived(utils::tVectorUInt8& data);
+	virtual bool Board_SendCtrl(const utils::tVectorUInt8& data) = 0;
+	void Board_OnReceivedCtrl(utils::tVectorUInt8& data);
 
 private:
 	bool IsReceivedData() const;
