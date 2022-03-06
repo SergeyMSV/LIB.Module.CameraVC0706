@@ -15,7 +15,7 @@
 
 #include <chrono>
 #include <queue>
-#include <source_location>
+//#include <source_location> GCC-11 is needed, now used gcc-9.3.0 from Ubuntu 20.04
 #include <sstream>
 
 namespace mod
@@ -171,7 +171,7 @@ class tCameraVC0706
 	class tStateError :public tState
 	{
 	public:
-		tStateError(tCameraVC0706* obj, const std::string& value, const std::source_location loc = std::source_location::current());
+		tStateError(tCameraVC0706* obj, const std::string& value/*, const std::source_location loc = std::source_location::current()*/);
 
 		void operator()() override;
 
