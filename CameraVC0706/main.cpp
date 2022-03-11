@@ -13,6 +13,7 @@
 #include <future>
 #include <iostream>
 #include <mutex>
+#include <thread>
 
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>

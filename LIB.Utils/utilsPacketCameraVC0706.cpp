@@ -12,7 +12,7 @@ tMsgId tPacketCmd::GetMsgId() const
 
 tPacketCmd tPacketCmd::MakeGetVersion(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::GetVersion;
 	return tPacketCmd(Cmd);
@@ -20,7 +20,7 @@ tPacketCmd tPacketCmd::MakeGetVersion(std::uint8_t sn)
 
 tPacketCmd tPacketCmd::MakeSetSerialNumber(std::uint8_t sn, std::uint8_t value)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::SetSerialNumber;
 	Cmd.Payload.push_back(value);
@@ -75,7 +75,7 @@ tPacketCmd tPacketCmd::MakeSetPort(std::uint8_t sn, tUARTBaudrate baudrate)
 {
 	assert(static_cast<std::size_t>(baudrate) < (sizeof(SetPortUART_BR) / sizeof(tSetPortUART_BR)));
 
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::SetPort;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tPort::UART));
@@ -89,7 +89,7 @@ tPacketCmd tPacketCmd::MakeSetPort(std::uint8_t sn, tUARTHSBaudrate baudrate)
 {
 	assert(static_cast<std::size_t>(baudrate) < (sizeof(SetPortUARTHS_BR) / sizeof(tSetPortUARTHS_BR)));
 
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::SetPort;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tPort::UARTHS));
@@ -103,7 +103,7 @@ tPacketCmd tPacketCmd::MakeSetPort(std::uint8_t sn, tUARTHSBaudrate baudrate)
 
 tPacketCmd tPacketCmd::MakeSystemReset(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::SystemReset;
 	return tPacketCmd(Cmd);
@@ -117,7 +117,7 @@ constexpr tDataReg DataReg_Compression{ 0x001A, 1 };
 
 tPacketCmd tPacketCmd::MakeReadDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::ReadDataReg;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(memory));
@@ -156,7 +156,7 @@ tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, 
 {
 	assert(reg.Size == data.size());
 
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::WriteDataReg;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(memory));
@@ -218,7 +218,7 @@ union tFBufControlModeRead
 
 tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort portDst, std::uint8_t sn, std::uint32_t address, std::uint32_t size, std::uint16_t delay)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::ReadFBuf;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tFBufType::Current));
@@ -247,7 +247,7 @@ tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort portDst, std::uint8_t sn, std::
 
 tPacketCmd tPacketCmd::MakeGetFBufLenCurrent(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::GetFBufLength;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tFBufType::Current));
@@ -256,7 +256,7 @@ tPacketCmd tPacketCmd::MakeGetFBufLenCurrent(std::uint8_t sn)
 
 tPacketCmd tPacketCmd::MakeGetFBufLenNext(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::GetFBufLength;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tFBufType::Next));
@@ -273,7 +273,7 @@ enum class tFBufCtrlFrame : std::uint8_t
 
 tPacketCmd tPacketCmd::MakeFBufCtrlStopCurrentFrame(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::FBufCtrl;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tFBufCtrlFrame::StopCurrent));
@@ -282,7 +282,7 @@ tPacketCmd tPacketCmd::MakeFBufCtrlStopCurrentFrame(std::uint8_t sn)
 
 tPacketCmd tPacketCmd::MakeFBufCtrlResumeFrame(std::uint8_t sn)
 {
-	tPayloadCmd::value_type Cmd;
+	tPacketCmd::payload_value_type Cmd;
 	Cmd.SerialNumber = sn;
 	Cmd.MsgId = tMsgId::FBufCtrl;
 	Cmd.Payload.push_back(static_cast<std::uint8_t>(tFBufCtrlFrame::Resume));
