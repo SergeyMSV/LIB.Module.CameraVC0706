@@ -1,0 +1,67 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: cpp build active file",
+            "command": "/usr/bin/arm-linux-gnueabihf-g++-10",
+            "args": [
+				"-std=c++2a",
+                "-g",
+				"-Wall",
+				"-I${workspaceFolder}/CameraVC0706",
+				"-I${workspaceFolder}/CameraVC0706/Dev",
+				"-I${workspaceFolder}/LIB.Utils",
+				"-I${workspaceFolder}/LIB.Module",
+				"-I/usr/local/boost_1_77_0_ARM",
+				"-L/usr/local/boost_1_77_0_ARM/stage/lib",
+				"-L/usr/arm-linux-gnueabihf/lib",
+				"CameraVC0706/Dev/devDataSet.cpp",
+				"CameraVC0706/Dev/devCamera.cpp",
+				"CameraVC0706/Dev/devCamera_ModCamera.cpp",
+				"CameraVC0706/Dev/devCamera_ModCamera_Board.cpp",
+				"CameraVC0706/Dev/devLog.cpp",
+				"CameraVC0706/Dev/devSettings.cpp",
+				"CameraVC0706/Dev/devShell.cpp",
+				"CameraVC0706/main.cpp",
+				"LIB.Utils/utilsLog.cpp",
+				"LIB.Utils/utilsPacketCameraVC0706.cpp",
+				"LIB.Utils/utilsShell.cpp",
+				"LIB.Module/modCameraVC0706.cpp",
+				"LIB.Module/modCameraVC0706_State.cpp",
+				"LIB.Module/modCameraVC0706_StateError.cpp",
+				"LIB.Module/modCameraVC0706_StateHalt.cpp",
+				"LIB.Module/modCameraVC0706_StateOperation.cpp",
+				"LIB.Module/modCameraVC0706_StateOperationImage.cpp",
+				"LIB.Module/modCameraVC0706_StateStart.cpp",
+				"LIB.Module/modCameraVC0706_StateStop.cpp",
+                "-o",
+                "${workspaceFolder}/camvc0706",
+				"-lpthread",
+				"-lboost_filesystem"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+			"dependsOn":[
+				"ConfigCopy"
+			]
+        },
+		{
+			"label": "ConfigCopy",
+			"command": "cp",
+			"args": [
+				"-f",
+				"CameraVC0706/camvc0706.conf",
+				"."
+			]
+		}
+    ]
+}
