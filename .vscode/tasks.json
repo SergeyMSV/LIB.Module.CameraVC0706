@@ -26,6 +26,7 @@
 				"CameraVC0706/main.cpp",
 				"LIB.Utils/utilsLog.cpp",
 				"LIB.Utils/utilsPacketCameraVC0706.cpp",
+				"LIB.Utils/utilsPath.cpp",
 				"LIB.Utils/utilsShell.cpp",
 				"LIB.Module/modCameraVC0706.cpp",
 				"LIB.Module/modCameraVC0706_State.cpp",
