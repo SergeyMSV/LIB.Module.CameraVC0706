@@ -45,9 +45,6 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 		if (!m_ReceivedData.empty())
 			return true;
 
-		const utils::tTimePoint TimeNow = utils::tClock::now();
-		auto Duration = std::chrono::duration_cast<utils::ttime_ms>(TimeNow - TimeStart).count();
-
 		if (wait_ms < utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now()))
 			return false;
 
