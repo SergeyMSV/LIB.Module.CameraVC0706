@@ -61,6 +61,9 @@
     <ClInclude Include="..\LIB.Utils\utilsChrono.h">
       <Filter>LIB.Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPath.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Dev\devShell.cpp">
       <Filter>Dev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsPath.cpp">
+      <Filter>LIB.Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

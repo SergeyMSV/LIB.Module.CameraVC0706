@@ -165,6 +165,7 @@
     <ClInclude Include="..\LIB.Utils\utilsLog.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacket.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h" />
+    <ClInclude Include="..\LIB.Utils\utilsPath.h" />
     <ClInclude Include="..\LIB.Utils\utilsSerialPort.h" />
     <ClInclude Include="..\LIB.Utils\utilsShell.h" />
     <ClInclude Include="devConfig.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp" />
+    <ClCompile Include="..\LIB.Utils\utilsPath.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsShell.cpp" />
     <ClCompile Include="Dev\devCamera.cpp" />
     <ClCompile Include="Dev\devCamera_ModCamera.cpp" />
