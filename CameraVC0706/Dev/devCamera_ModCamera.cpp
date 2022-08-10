@@ -65,7 +65,7 @@ void tCamera::tModCamera::OnHalt()
 
 void tCamera::tModCamera::OnImageReady()
 {
-	m_FileName = g_Settings.Output.Path + "/" + g_Settings.Output.FileName;
+	m_FileName = utils::linux::GetPath(g_Settings.Picture.Path) + "/" + g_Settings.Picture.Prefix + "[TBD].jpg";//[TBD] set time in the filename
 	const std::string FileNameTemp = m_FileName + ".tmp";
 	m_File.open(FileNameTemp, std::ios::out | std::ios::binary);
 
