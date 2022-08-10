@@ -5,7 +5,7 @@ namespace dev
 {
 
 tCamera::tModCamera::tBoardCtrl::tBoardCtrl(tModCamera* obj, boost::asio::io_context& io)
-	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPortCtrl.ID, g_Settings.SerialPortCtrl.BR)
+	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPort.CtrlID, g_Settings.SerialPort.CtrlBR)
 {
 
 }
@@ -21,7 +21,7 @@ void tCamera::tModCamera::tBoardCtrl::OnReceived(utils::tVectorUInt8& data)
 }
 
 tCamera::tModCamera::tBoardData::tBoardData(tModCamera* obj, boost::asio::io_context& io)
-	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPortData.ID, g_Settings.SerialPortData.BR)
+	:m_pObj(obj), tSerialPort(io, g_Settings.SerialPort.DataID, g_Settings.SerialPort.DataBR)
 {
 
 }
