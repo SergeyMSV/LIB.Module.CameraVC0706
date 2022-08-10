@@ -1,13 +1,15 @@
 #include "devCamera.h"
 #include "devSettings.h"
 
+#include <utilsPath.h>
+
 namespace dev
 {
 
 tCamera::tModCamera::tModCamera(tCamera* obj)
 	:mod::tCameraVC0706(obj->m_pLog), m_pObj(obj), m_BoardCtrl(this, *obj->m_pIO)
 {
-	if (g_Settings.SerialPortData != tSettings::tSerialPort())
+	if (!g_Settings.SerialPort.DataID.empty())
 		m_BoardData = new tBoardData(this, *obj->m_pIO);
 }
 

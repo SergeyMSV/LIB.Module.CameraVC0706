@@ -1,10 +1,39 @@
 #include "devSettings.h"
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 namespace dev
 {
+
+namespace config
+{
+
+tDevice::tDevice(boost::property_tree::ptree a_PTree)
+{
+	Model = a_PTree.get<std::string>("device.model");
+}
+
+tSerialPort::tSerialPort(boost::property_tree::ptree a_PTree)
+{
+	CtrlID = a_PTree.get<std::string>("serial_port.ctrl_id");
+	CtrlBR = a_PTree.get<uint32_t>("serial_port.ctrl_br");
+	DataID = a_PTree.get<std::string>("serial_port.data_id");
+	DataBR = a_PTree.get<uint32_t>("serial_port.data_br");
+
+#if defined(_WIN32)
+	CtrlID = a_PTree.get<std::string>("serial_port.ctrl_id_win");
+	DataID = a_PTree.get<std::string>("serial_port.data_id_win");
+#endif
+}
+
+tPicture::tPicture(boost::property_tree::ptree a_PTree)
+{
+	Path = a_PTree.get<std::string>("picture.path");
+	Prefix = a_PTree.get<std::string>("picture.prefix");
+	QtyMax = a_PTree.get<uint8_t>("picture.qtyMax");
+}
+
+}
 
 tSettings g_Settings;
 
@@ -12,68 +41,21 @@ tSettings::tSettings(const std::string& fileName)
 	:m_ConfigFileName(fileName)
 {
 	boost::property_tree::ptree PTree;
-	boost::property_tree::xml_parser::read_xml(m_ConfigFileName, PTree);
+	boost::property_tree::json_parser::read_json(m_ConfigFileName, PTree);
 
-	if (auto Value = PTree.get_child_optional("App.Settings.OutputFile"))
-	{
-		auto ValueIter = (*Value).begin();
+	Device = config::tDevice(PTree);
+	SerialPort = config::tSerialPort(PTree);
+	Picture = config::tPicture(PTree);
 
-		if (ValueIter->first == "<xmlattr>")
-		{
-			Output.Path = ValueIter->second.get<std::string>("Path");
-			Output.FileName = ValueIter->second.get<std::string>("FileName");
-		}
-	}
+	auto Str = PTree.get<std::string>("camera.resolution");
+	Camera.Resolution = utils::packet_CameraVC0706::ToResolution(Str);
+	Camera.CheckPresencePeriod_ms = PTree.get<std::uint32_t>("camera.check_presence_period_ms");
+	Camera.ImagePeriod_ms = PTree.get<std::uint32_t>("camera.image_period_ms");
+	Camera.ImageChunkSize = PTree.get<std::uint32_t>("camera.image_chunk_size");
+	Camera.ImageChunkDelayFromReq_us = PTree.get<std::uint32_t>("camera.image_chunk_delay_from_req_us");
 
-	if (auto Value = PTree.get_child_optional("App.Settings.Device"))
-	{
-		auto ValueIter = (*Value).begin();
-
-		if (ValueIter->first == "<xmlattr>")
-		{
-			Main.Model = ValueIter->second.get<std::string>("Model");
-			Main.ID = ValueIter->second.get<std::string>("ID");
-		}
-	}
-
-	if (auto Value = PTree.get_child_optional("App.Settings.SerialPortCtrl"))
-	{
-		auto ValueIter = (*Value).begin();
-
-		if (ValueIter->first == "<xmlattr>")
-		{
-			SerialPortCtrl.ID = ValueIter->second.get<std::string>("ID");
-			SerialPortCtrl.BR = ValueIter->second.get<std::uint32_t>("BR");
-			Camera.SetPortCtrlBR(SerialPortCtrl.BR);
-		}
-	}
-
-	if (auto Value = PTree.get_child_optional("App.Settings.SerialPortData"))
-	{
-		auto ValueIter = (*Value).begin();
-
-		if (ValueIter->first == "<xmlattr>")
-		{
-			SerialPortData.ID = ValueIter->second.get<std::string>("ID");
-			SerialPortData.BR = ValueIter->second.get<std::uint32_t>("BR");
-			Camera.SetPortDataBR(SerialPortData.BR);
-		}
-	}
-
-	if (auto Value = PTree.get_child_optional("App.Settings.CameraVC0706"))
-	{
-		auto ValueIter = (*Value).begin();
-
-		if (ValueIter->first == "<xmlattr>")
-		{
-			std::string Str = ValueIter->second.get<std::string>("Resolution");
-			Camera.Resolution = utils::packet_CameraVC0706::ToResolution(Str);
-			Camera.CheckPresencePeriod_ms = ValueIter->second.get<std::uint32_t>("CheckPresencePeriod_ms");
-			Camera.ImagePeriod_ms = ValueIter->second.get<std::uint32_t>("ImagePeriod_ms");
-			Camera.ImageChunkSize = ValueIter->second.get<std::uint32_t>("ImageChunkSize");
-			Camera.ImageChunkDelayFromReq_us = ValueIter->second.get<std::uint32_t>("ImageChunkDelayFromReq_us");
-		}
-	}
+	Camera.SetPortCtrlBR(SerialPort.CtrlBR);
+	Camera.SetPortDataBR(SerialPort.DataBR);
 }
 
 }

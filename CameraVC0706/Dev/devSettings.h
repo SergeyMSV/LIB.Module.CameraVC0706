@@ -13,33 +13,50 @@
 
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+
 namespace dev
 {
 
+namespace config
+{
+
+struct tDevice
+{
+	std::string Model;
+
+	tDevice() = default;
+	explicit tDevice(boost::property_tree::ptree a_PTree);
+};
+
+struct tSerialPort
+{
+	std::string CtrlID;
+	std::uint32_t CtrlBR = 0;
+	std::string DataID;
+	std::uint32_t DataBR = 0;
+
+	tSerialPort() = default;
+	explicit tSerialPort(boost::property_tree::ptree a_PTree);
+};
+
+struct tPicture
+{
+	std::string Path;
+	std::string Prefix;
+	uint8_t QtyMax = 0;
+
+	tPicture() = default;
+	explicit tPicture(boost::property_tree::ptree a_PTree);
+};
+
+}
+
 struct tSettings
 {
-	struct
-	{
-		std::string Model;
-		std::string ID;
-	}Main;
-
-	struct tSerialPort
-	{
-		std::string ID;
-		std::uint32_t BR = 0;
-
-		bool operator == (const tSerialPort& value) const = default;
-	};
-
-	tSerialPort SerialPortCtrl;
-	tSerialPort SerialPortData;
-
-	struct
-	{
-		std::string Path;
-		std::string FileName;
-	}Output;
+	config::tDevice Device;
+	config::tSerialPort SerialPort;
+	config::tPicture Picture;
 
 	mod::tCameraVC0706Settings Camera;
 

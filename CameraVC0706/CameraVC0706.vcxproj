@@ -156,7 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\LIB.Utils\!Refresh.bat" />
-    <None Include="camvc0706.conf" />
+    <None Include="camvc0706.conf.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />
