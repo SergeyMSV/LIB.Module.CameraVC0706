@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 		if (PathFile.has_extension())
 			PathFile.replace_extension();
 
-		std::string FileNameConf = utils::GetPathConfig(PathFile.string());
+		std::string FileNameConf = utils::linux::GetPathConfig(PathFile.string());
 		if (FileNameConf.empty())
 			throw std::runtime_error{ "config file is not found" };
 
