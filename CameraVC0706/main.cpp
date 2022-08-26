@@ -10,6 +10,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <filesystem>
 #include <functional>
 #include <future>
 #include <iostream>
@@ -17,7 +18,6 @@
 #include <thread>
 
 #include <boost/asio.hpp>
-#include <boost/filesystem.hpp>
 
 namespace dev
 {
@@ -126,8 +126,8 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		const boost::filesystem::path Path{ argv[0] };
-		boost::filesystem::path PathFile = Path.filename();
+		const std::filesystem::path Path{ argv[0] };
+		std::filesystem::path PathFile = Path.filename();
 		if (PathFile.has_extension())
 			PathFile.replace_extension();
 
