@@ -72,19 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>camvc0706</TargetName>
+    <TargetName>mxvc0706</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>camvc0706</TargetName>
+    <TargetName>mxvc0706</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>camvc0706</TargetName>
+    <TargetName>mxvc0706</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>camvc0706</TargetName>
+    <TargetName>mxvc0706</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -156,7 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\LIB.Utils\!Refresh.bat" />
-    <None Include="camvc0706.conf.json" />
+    <None Include="mxvc0706.conf.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />

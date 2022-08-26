@@ -19,7 +19,7 @@
 	},
 	"picture": {
 		"path": "/tmpram",
-		"prefix": "cam_",
+		"prefix": "mxcam_",
 		"qtyMax": 10
 	}
 }

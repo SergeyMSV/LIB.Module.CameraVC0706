@@ -37,7 +37,7 @@
 				"LIB.Module/modCameraVC0706_StateStart.cpp",
 				"LIB.Module/modCameraVC0706_StateStop.cpp",
                 "-o",
-                "${workspaceFolder}/camvc0706",
+                "${workspaceFolder}/mxvc0706",
 				"-lpthread",
 				"-lboost_filesystem"
             ],
@@ -60,7 +60,7 @@
 			"command": "cp",
 			"args": [
 				"-f",
-				"CameraVC0706/camvc0706.conf",
+				"CameraVC0706/mxvc0706.conf.json",
 				"."
 			]
 		}
