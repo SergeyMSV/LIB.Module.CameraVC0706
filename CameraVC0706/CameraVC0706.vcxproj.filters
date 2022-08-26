@@ -14,7 +14,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="camvc0706.conf.json" />
+    <None Include="mxvc0706.conf.json" />
     <None Include="..\LIB.Utils\!Refresh.bat">
       <Filter>LIB.Utils</Filter>
     </None>
