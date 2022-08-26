@@ -1,13 +1,43 @@
 #include "utilsPath.h"
 
+#include <cctype>
+#include <cerrno>
+#include <cstdlib>
+
 #include <deque>
 #include <fstream>
-#include <stdlib.h>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
 
 namespace utils
 {
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+std::string GetDateTime(tm a_DateTime)
+{
+	std::ostringstream oss;
+	oss << std::put_time(&a_DateTime, "%Y-%m-%d_%H-%M-%S");
+	return oss.str();
+}
+
+std::string GetDateTime()
+{
+	time_t TimeNow = std::time(nullptr);
+	tm* Time = std::localtime(&TimeNow);
+	return GetDateTime(*Time);
+}
+
+tm GetDateTime(const std::string& a_value)
+{
+	tm DateTime{};
+	std::istringstream iss(a_value);
+	iss >> std::get_time(&DateTime, "%Y-%m-%d_%H-%M-%S");
+	return DateTime;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace linux
 {
@@ -31,7 +61,7 @@ const std::vector<std::string> g_PathConfig =
 #endif
 };
 
-bool TestFile(const std::string& fileName)
+static bool TestFile(const std::string& fileName)
 {
 	std::fstream File = std::fstream(fileName, std::ios::in);
 	if (!File.is_open())
@@ -41,7 +71,7 @@ bool TestFile(const std::string& fileName)
 	return true;
 }
 
-std::string TestPath(const std::string& path, std::string fileName, bool testDir)
+static std::string TestPath(const std::string& path, std::string fileName, bool testDir)
 {
 	std::string FilePath;
 
@@ -212,10 +242,12 @@ tCpuInfo GetCpuInfo()
 		}
 		else if (PrmName == "BogoMIPS")
 		{
+			errno = 0;
 			std::string Value = GetValueString(Line);
 			 double Num = strtod(Value.c_str(), nullptr);
-			 if (Num > 0 && Num != HUGE_VAL)
+			 if (Num > 0 && errno != ERANGE)
 				 CpuInfo.BogoMIPS = Num;
+			 errno = 0;
 		}
 		else if (PrmName == "Hardware")
 		{
@@ -231,6 +263,33 @@ tCpuInfo GetCpuInfo()
 std::string GetHostname()
 {
 	return GetFirstLine("/etc/hostname");
+}
+
+std::string GetLoadAvg()
+{
+	return GetFirstLine("/proc/loadavg");
+
+	/*
+Они взяты из файла /proc/loadavg. Если вы еще раз посмотрите на вывод strace, вы увидите, что этот файл также был открыт.
+
+$ cat /proc/loadavg
+0.00 0.01 0.03 1/120 1500
+
+Первые три столбца представляют среднюю загрузку системы за последние 1, 5 и 15-минутные периоды. Четвертый столбец показывает количество запущенных в данный момент процессов и общее количество процессов. В последнем столбце отображается последний использованный идентификатор процесса.
+
+Начнем с последнего номера.
+
+Каждый раз, когда вы запускаете новый процесс, ему присваивается идентификационный номер. Идентификаторы процесса обычно увеличиваются, если они не были исчерпаны и используются повторно. Идентификатор процесса с 1 принадлежит /sbin/init, который запускается во время загрузки.
+
+Давайте снова посмотрим на содержимое /proc/loadavg и затем запустим команду sleep в фоновом режиме. Когда он запущен в фоновом режиме, будет показан его идентификатор процесса.
+
+$ cat /proc/loadavg
+0.00 0.01 0.03 1/123 1566
+$ sleep 10 &
+[1] 1567
+
+
+	*/
 }
 
 double GetUptime()

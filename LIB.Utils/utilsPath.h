@@ -5,11 +5,16 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <ctime>
 #include <string>
 #include <vector>
 
 namespace utils
 {
+
+std::string GetDateTime(tm a_DateTime);
+std::string GetDateTime();
+tm GetDateTime(const std::string& a_value);
 
 	namespace linux
 	{
@@ -23,12 +28,15 @@ struct tCpuInfo
 	double BogoMIPS = 0.0;
 	std::string Hardware;
 
+	tCpuInfo() = default;
+
 	bool operator == (const tCpuInfo&) const = default;
 	bool operator != (const tCpuInfo&) const = default;
 };
 
 tCpuInfo GetCpuInfo();
 std::string GetHostname();
+std::string GetLoadAvg();//[TBD] is not a string
 double GetUptime();
 std::string GetVersion();
 
