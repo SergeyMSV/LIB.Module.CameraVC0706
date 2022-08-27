@@ -1,21 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // utilsBase.h
-//
+// 2014-09-24
 // Standard ISO/IEC 114882, C++17
-//
-// |   version  |    release    | Description
-// |------------|---------------|---------------------------------
-// |            |   2014 09 24  |
-// |            |               | 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 #include <cassert>
+#include <cctype>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
 namespace utils
@@ -74,43 +71,57 @@ typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type Read(cons
 	return Read<T, const char*>(Begin, Begin + dataSize);
 }
 
-enum class tRadix : unsigned char
+enum class tRadix : std::uint8_t
 {
+	//oct = 8,//it's just for tests
 	dec = 10,
 	hex = 16,
+};
+
+template<typename T, typename Iterator, tRadix Radix>
+struct tRead
+{
+	typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type operator()(Iterator first, Iterator last)
+	{
+		assert(false);
+		return 0;//T();//T{};//[TBD] - C++20
+	}
+};
+
+template<typename T, typename Iterator>
+struct tRead<T, Iterator, tRadix::dec>
+{
+	typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type operator()(Iterator first, Iterator last)
+	{
+		std::string ValStr(first, last);
+		ValStr.erase(ValStr.begin(), std::find_if(ValStr.begin(), ValStr.end(), [](char ch) { return std::isdigit(ch) || ch == '-'; }));
+		return static_cast<T>(strtol(ValStr.c_str(), nullptr, 10));
+	}
+};
+
+template<typename T, typename Iterator>
+struct tRead<T, Iterator, tRadix::hex>
+{
+	typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type operator()(Iterator first, Iterator last)
+	{
+		std::string ValStr(first, last);
+		ValStr.erase(ValStr.begin(), std::find_if(ValStr.begin(), ValStr.end(), [](char ch) { return std::isxdigit(ch); }));
+		return static_cast<T>(strtoul(ValStr.c_str(), nullptr, 16));
+	}
 };
 
 template<typename T, typename Iterator, int N = 20>
 typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type Read(Iterator first, Iterator last, tRadix radix)
 {
-	char Str[N];//[#] and +/- and 0x00
-
-	std::size_t StrIndex = 0;
-
-	for (; first != last && StrIndex < sizeof(Str) - 1; ++first)
+	switch (radix)
 	{
-		char Byte = static_cast<char>(*first);
-
-		if ((Byte >= '0' && Byte <= '9') ||
-			(radix == tRadix::dec && Byte == '-' && StrIndex == 0) ||
-			(radix == tRadix::hex && ((Byte >= 'A' && Byte <= 'F') || (Byte >= 'a' && Byte <= 'f'))))
-		{
-			Str[StrIndex++] = Byte;
-		}
-		else if (StrIndex != 0)
-		{
-			break;
-		}
+	//case tRadix::oct: return tRead<T, Iterator, tRadix::oct>()(first, last);
+	case tRadix::dec: return tRead<T, Iterator, tRadix::dec>()(first, last);
+	case tRadix::hex: return tRead<T, Iterator, tRadix::hex>()(first, last);
+	default:
+		assert(false);
+		return 0;
 	}
-
-	Str[StrIndex] = 0;
-
-	if (Str[0] == '-' && radix == tRadix::dec)
-	{
-		return static_cast<T>(strtol(Str, 0, static_cast<int>(radix)));
-	}
-
-	return static_cast<T>(strtoul(Str, 0, static_cast<int>(radix)));
 }
 
 template<typename T>
@@ -188,9 +199,6 @@ public:
 protected:
 	~tEmptyAble() {}
 };
-
-//char FromBCD(char dataBCD); [TBD]
-//char ToBCD(char dataBCD); [TBD]
 
 enum class tDevStatus : std::uint8_t
 {
