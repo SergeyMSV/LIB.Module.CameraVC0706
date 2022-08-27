@@ -3,10 +3,10 @@
 		"model": "Vimicro VC0706"
 	},
 	"serial_port": {
-		"ctrl_id_win": "COM5",
+		"ctrl_id_win": "COM1",
 		"ctrl_id": "/dev/ttyUSB1",
 		"ctrl_br": 115200,
-		"data_id_win": "COM4",
+		"data_id_win": "",
 		"data_id": "/dev/ttyUSB2",
 		"data_br": 921600
 	},
