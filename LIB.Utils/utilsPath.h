@@ -6,6 +6,8 @@
 #pragma once
 
 #include <ctime>
+
+#include <deque>
 #include <string>
 #include <vector>
 
@@ -15,6 +17,9 @@ namespace utils
 std::string GetDateTime(tm a_DateTime);
 std::string GetDateTime();
 tm GetDateTime(const std::string& a_value);
+
+std::deque<std::string> GetFilesLatest(const std::string& path, const std::string& prefix, size_t qtyFilesLatest);
+void RemoveFilesOutdated(const std::string& path, const std::string& prefix, size_t qtyFilesLatest);
 
 	namespace linux
 	{
@@ -29,6 +34,9 @@ struct tCpuInfo
 	std::string Hardware;
 
 	tCpuInfo() = default;
+	tCpuInfo(const std::string& modelName, double bogoMIPS, const std::string& hardware)
+		: ModelName(modelName), BogoMIPS(bogoMIPS), Hardware(hardware)
+	{}
 
 	bool operator == (const tCpuInfo&) const = default;
 	bool operator != (const tCpuInfo&) const = default;

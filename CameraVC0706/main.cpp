@@ -152,6 +152,11 @@ int main(int argc, char* argv[])
 		Thread_Shell = std::thread(dev::ThreadFunShell);
 	////////////////////////////////
 
+	dev::config::tPicture Pict = dev::g_Settings.Picture;
+	utils::RemoveFilesOutdated(Pict.Path, Pict.Prefix, Pict.QtyMax);
+
+	////////////////////////////////
+
 	std::promise<bool> Thread_CAM_Promise;
 	auto Thread_CAM_Future = Thread_CAM_Promise.get_future();
 
