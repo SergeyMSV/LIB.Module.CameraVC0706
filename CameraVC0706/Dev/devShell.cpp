@@ -90,15 +90,15 @@ bool tShell::HandlerCAM(const std::vector<std::string>& data)
 		switch (data.size())
 		{
 		case 2: g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::Start; break;
-		case 3:
-		{
-			g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::UserTaskScriptStart;
+		//case 3:
+		//{
+		//	g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::UserTaskScriptStart;
 
-			std::lock_guard<std::mutex> Lock(g_DataSetMainControl.Thread_CAM_State_UserTaskScriptIDMtx);
+		//	std::lock_guard<std::mutex> Lock(g_DataSetMainControl.Thread_CAM_State_UserTaskScriptIDMtx);
 
-			g_DataSetMainControl.Thread_CAM_State_UserTaskScriptID = data[2];
-			break;
-		}
+		//	g_DataSetMainControl.Thread_CAM_State_UserTaskScriptID = data[2];
+		//	break;
+		//}
 		}
 	}
 	else if (data.size() == 2 && data[1] == "restart")
