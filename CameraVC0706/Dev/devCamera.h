@@ -55,6 +55,7 @@ class tCamera
 
 		std::fstream m_File;
 		std::string m_FileName;
+		std::string m_FileNameTemp;
 
 	public:
 		explicit tModCamera(tCamera* obj);

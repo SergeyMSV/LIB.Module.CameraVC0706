@@ -23,3 +23,5 @@ struct tDataSetMainControl
 	mutable std::mutex Thread_CAM_State_UserTaskScriptIDMtx;
 	std::string Thread_CAM_State_UserTaskScriptID;
 };
+
+constexpr char g_FileNameTempPrefix[] = "_";

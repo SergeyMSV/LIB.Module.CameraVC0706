@@ -154,6 +154,7 @@ int main(int argc, char* argv[])
 
 	dev::config::tPicture Pict = dev::g_Settings.Picture;
 	utils::RemoveFilesOutdated(Pict.Path, Pict.Prefix, Pict.QtyMax);
+	utils::RemoveFilesOutdated(Pict.Path, g_FileNameTempPrefix + Pict.Prefix, 0);
 
 	////////////////////////////////
 

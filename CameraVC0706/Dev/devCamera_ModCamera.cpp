@@ -66,9 +66,11 @@ void tCamera::tModCamera::OnHalt()
 void tCamera::tModCamera::OnImageReady()
 {
 	std::string DTStr = utils::GetDateTime();
-	m_FileName = utils::linux::GetPath(g_Settings.Picture.Path) + "/" + g_Settings.Picture.Prefix + DTStr + ".jpg";
-	const std::string FileNameTemp = m_FileName + ".tmp";
-	m_File.open(FileNameTemp, std::ios::out | std::ios::binary);
+	std::string Path = utils::linux::GetPath(g_Settings.Picture.Path) + "/";
+	std::string FileName = g_Settings.Picture.Prefix + DTStr + ".jpg";
+	m_FileName = Path + FileName;
+	m_FileNameTemp = Path + g_FileNameTempPrefix + FileName + ".tmp";
+	m_File.open(m_FileNameTemp, std::ios::out | std::ios::binary);
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Ready");
 }
@@ -88,10 +90,7 @@ void tCamera::tModCamera::OnImageComplete()
 {
 	m_File.close();
 
-	const std::string FileNameTemp = m_FileName + ".tmp";
-
-	std::remove(m_FileName.c_str());
-	std::rename(FileNameTemp.c_str(), m_FileName.c_str());
+	std::rename(m_FileNameTemp.c_str(), m_FileName.c_str());
 
 	utils::RemoveFilesOutdated(g_Settings.Picture.Path, g_Settings.Picture.Prefix, g_Settings.Picture.QtyMax);
 
