@@ -93,6 +93,8 @@ void tCamera::tModCamera::OnImageComplete()
 	std::remove(m_FileName.c_str());
 	std::rename(FileNameTemp.c_str(), m_FileName.c_str());
 
+	utils::RemoveFilesOutdated(g_Settings.Picture.Path, g_Settings.Picture.Prefix, g_Settings.Picture.QtyMax);
+
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Complete");
 }
 
