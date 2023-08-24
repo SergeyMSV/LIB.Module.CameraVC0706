@@ -12,11 +12,23 @@
     <Filter Include="Dev">
       <UniqueIdentifier>{a0aa8fdb-596d-4759-b2ce-d10bde10dabf}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".vscode">
+      <UniqueIdentifier>{5aa0e64c-2b4e-430c-a511-aee1bd5c52a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="mxvc0706.conf.json" />
     <None Include="..\LIB.Utils\!Refresh.bat">
       <Filter>LIB.Utils</Filter>
+    </None>
+    <None Include="..\.vscode\c_cpp_properties.json">
+      <Filter>.vscode</Filter>
+    </None>
+    <None Include="..\.vscode\launch.json">
+      <Filter>.vscode</Filter>
+    </None>
+    <None Include="..\.vscode\tasks.json">
+      <Filter>.vscode</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +74,9 @@
       <Filter>LIB.Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsPath.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsFile.h">
       <Filter>LIB.Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -122,6 +137,9 @@
       <Filter>Dev</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Utils\utilsPath.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsFile.cpp">
       <Filter>LIB.Utils</Filter>
     </ClCompile>
   </ItemGroup>
