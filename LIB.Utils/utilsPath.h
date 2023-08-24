@@ -7,9 +7,8 @@
 
 #include <ctime>
 
-#include <deque>
+#include <filesystem>
 #include <string>
-#include <vector>
 
 namespace utils
 {
@@ -18,36 +17,17 @@ std::string GetDateTime(tm a_DateTime);
 std::string GetDateTime();
 tm GetDateTime(const std::string& a_value);
 
-std::deque<std::string> GetFilesLatest(const std::string& path, const std::string& prefix, size_t qtyFilesLatest);
-void RemoveFilesOutdated(const std::string& path, const std::string& prefix, size_t qtyFilesLatest);
-
-	namespace linux
-	{
-
-std::string GetPathConfig(const std::string& fileName);
-std::string GetPath(const std::string& path);
-
-struct tCpuInfo
+namespace path
 {
-	std::string ModelName;
-	double BogoMIPS = 0.0;
-	std::string Hardware;
 
-	tCpuInfo() = default;
-	tCpuInfo(const std::string& modelName, double bogoMIPS, const std::string& hardware)
-		: ModelName(modelName), BogoMIPS(bogoMIPS), Hardware(hardware)
-	{}
+std::string GetAppName(const std::filesystem::path& path);
+std::string GetAppNameMain(const std::filesystem::path& path);
 
-	bool operator == (const tCpuInfo&) const = default;
-	bool operator != (const tCpuInfo&) const = default;
-};
+std::filesystem::path GetPathNormal(const std::filesystem::path& pathRaw);
 
-tCpuInfo GetCpuInfo();
-std::string GetHostname();
-std::string GetLoadAvg();//[TBD] is not a string
-double GetUptime();
-std::string GetVersion();
+std::filesystem::path GetPathConfig(const std::string& filename);
+std::filesystem::path GetPathConfigExc(const std::string& filename);
 
-	}
+}
 
 }

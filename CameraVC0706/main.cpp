@@ -6,6 +6,7 @@
 #include <devShell.h>
 
 #include <utilsBase.h>
+#include <utilsFile.h>
 #include <utilsPath.h>
 
 #include <atomic>
@@ -53,7 +54,7 @@ void Thread_CAM_Handler(std::promise<bool>& promise)
 					const std::string ErrMsg = Dev.GetLastErrorMsg();
 					if (!ErrMsg.empty())
 					{
-						std::cerr << ErrMsg << "\n";
+						std::cerr << ErrMsg << '\n';
 						Thread_Dev_ExistOnError = true;
 					}
 				}
@@ -126,20 +127,17 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		const std::filesystem::path Path{ argv[0] };
-		std::filesystem::path PathFile = Path.filename();
-		if (PathFile.has_extension())
-			PathFile.replace_extension();
-
-		std::string FileNameConf = utils::linux::GetPathConfig(PathFile.string());
+		const std::filesystem::path Path(argv[0]);
+		const std::string AppName = utils::path::GetAppNameMain(Path);
+		std::string FileNameConf = utils::path::GetPathConfig(AppName).string();
 		if (FileNameConf.empty())
-			throw std::runtime_error{ "config file is not found" };
+			THROW_RUNTIME_ERROR("config file is not found");
 
 		dev::g_Settings = dev::tSettings(FileNameConf);
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << "Exception: " << e.what() << "\n";
+		std::cerr << e.what() << '\n';
 
 		return static_cast<int>(utils::tExitCode::EX_CONFIG);
 	}
@@ -153,8 +151,8 @@ int main(int argc, char* argv[])
 	////////////////////////////////
 
 	dev::config::tPicture Pict = dev::g_Settings.Picture;
-	utils::RemoveFilesOutdated(Pict.Path, Pict.Prefix, Pict.QtyMax);
-	utils::RemoveFilesOutdated(Pict.Path, g_FileNameTempPrefix + Pict.Prefix, 0);
+	utils::file::RemoveFilesOutdated(Pict.Path, Pict.Prefix, Pict.QtyMax);
+	utils::file::RemoveFilesOutdated(Pict.Path, g_FileNameTempPrefix + Pict.Prefix, 0);
 
 	////////////////////////////////
 
@@ -170,7 +168,7 @@ int main(int argc, char* argv[])
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << "Exception: " << e.what() << "\n";
+		std::cerr << e.what() << '\n';
 
 		g_DataSetMainControl.Thread_CAM_State = tDataSetMainControl::tStateCAM::Exit;
 

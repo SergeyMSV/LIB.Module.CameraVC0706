@@ -1,6 +1,7 @@
 #include "devCamera.h"
 #include "devSettings.h"
 
+#include <utilsFile.h>
 #include <utilsPath.h>
 
 namespace dev
@@ -66,7 +67,7 @@ void tCamera::tModCamera::OnHalt()
 void tCamera::tModCamera::OnImageReady()
 {
 	std::string DTStr = utils::GetDateTime();
-	std::string Path = utils::linux::GetPath(g_Settings.Picture.Path) + "/";
+	std::string Path = g_Settings.Picture.Path + "/";
 	std::string FileName = g_Settings.Picture.Prefix + DTStr + ".jpg";
 	m_FileName = Path + FileName;
 	m_FileNameTemp = Path + g_FileNameTempPrefix + FileName + ".tmp";
@@ -92,7 +93,7 @@ void tCamera::tModCamera::OnImageComplete()
 
 	std::rename(m_FileNameTemp.c_str(), m_FileName.c_str());
 
-	utils::RemoveFilesOutdated(g_Settings.Picture.Path, g_Settings.Picture.Prefix, g_Settings.Picture.QtyMax);
+	utils::file::RemoveFilesOutdated(g_Settings.Picture.Path, g_Settings.Picture.Prefix, g_Settings.Picture.QtyMax);
 
 	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightBlue, "Image: Complete");
 }

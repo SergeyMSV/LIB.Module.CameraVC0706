@@ -1,5 +1,7 @@
 #include "devSettings.h"
 
+#include <utilsPath.h>
+
 #include <boost/property_tree/json_parser.hpp>
 
 namespace dev
@@ -28,7 +30,8 @@ tSerialPort::tSerialPort(boost::property_tree::ptree a_PTree)
 
 tPicture::tPicture(boost::property_tree::ptree a_PTree)
 {
-	Path = a_PTree.get<std::string>("picture.path");
+	std::string PathRaw = a_PTree.get<std::string>("picture.path");
+	Path = utils::path::GetPathNormal(PathRaw).string();
 	Prefix = a_PTree.get<std::string>("picture.prefix");
 	QtyMax = a_PTree.get<uint8_t>("picture.qtyMax");
 }

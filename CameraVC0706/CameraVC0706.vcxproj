@@ -155,6 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\.vscode\c_cpp_properties.json" />
+    <None Include="..\.vscode\launch.json" />
+    <None Include="..\.vscode\tasks.json" />
     <None Include="..\LIB.Utils\!Refresh.bat" />
     <None Include="mxvc0706.conf.json" />
   </ItemGroup>
@@ -162,6 +165,7 @@
     <ClInclude Include="..\LIB.Module\modCameraVC0706.h" />
     <ClInclude Include="..\LIB.Utils\utilsBase.h" />
     <ClInclude Include="..\LIB.Utils\utilsChrono.h" />
+    <ClInclude Include="..\LIB.Utils\utilsFile.h" />
     <ClInclude Include="..\LIB.Utils\utilsLog.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacket.h" />
     <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h" />
@@ -185,6 +189,7 @@
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateOperation.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStart.cpp" />
     <ClCompile Include="..\LIB.Module\modCameraVC0706_StateStop.cpp" />
+    <ClCompile Include="..\LIB.Utils\utilsFile.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsLog.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsPacketCameraVC0706.cpp" />
     <ClCompile Include="..\LIB.Utils\utilsPath.cpp" />

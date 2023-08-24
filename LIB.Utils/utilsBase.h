@@ -12,8 +12,26 @@
 #include <cstring>
 
 #include <algorithm>
+#include <filesystem>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+namespace utils
+{
+
+inline std::string GetLogMessage(const std::string& msg, const std::string& filename, int line)
+{
+	const std::filesystem::path Path(filename);
+	return msg + " " + Path.filename().string() + ":" + std::to_string(line);
+}
+
+}
+
+#define THROW_INVALID_ARGUMENT(msg) throw std::invalid_argument{ utils::GetLogMessage(msg, __FILE__, __LINE__) }
+#define THROW_RUNTIME_ERROR(msg) throw std::runtime_error{ utils::GetLogMessage(msg, __FILE__, __LINE__) }
+
+///////////////////////////////////////////////////////////////////////////////
 
 namespace utils
 {
@@ -142,49 +160,6 @@ typename std::enable_if<std::is_trivially_copyable<T>::value, T>::type Reverse(T
 	return value;
 }
 
-namespace type
-{
-
-template <std::size_t size>
-struct tArray1
-{
-	enum { Size = size };
-	std::uint8_t Value[size];
-
-	//tArray1() in union it's deleted by default
-	//{
-	//	std::memset(Value, 0, Size);
-	//}
-
-	std::uint8_t& operator [] (std::size_t i)
-	{
-		assert(i < Size);
-
-		return Value[i];
-	}
-
-	bool operator == (const tArray1& value)
-	{
-		return std::memcmp(Value, value.Value, Size) == 0;
-	}
-
-	bool operator != (const tArray1& value)
-	{
-		return std::memcmp(Value, value.Value, Size) != 0;
-	}
-};
-
-template <std::size_t size>
-struct tArray2 : public tArray1<size>
-{
-	tArray2()
-	{
-		std::memset(this->Value, 0, this->Size);
-	}
-};
-
-}
-
 class tEmptyAble
 {
 protected:
@@ -242,6 +217,97 @@ enum class tExitCode : int
 	EX_NOPERM = 77,		// permission denied
 	EX_CONFIG = 78,		// configuration error
 	EX__MAX = 78,		// maximum listed value
+};
+
+struct tVersion // 1.0.234
+{
+	std::uint16_t Major = 0;
+	std::uint16_t Minor = 0;
+	std::uint16_t Build = 0;
+
+	tVersion() = default;
+	tVersion(std::uint16_t major, std::uint16_t minor, std::uint16_t build)
+		:Major(major), Minor(minor), Build(build)
+	{
+	}
+	explicit tVersion(const std::string& strVersion)
+	{
+		if (!TryParse(strVersion, *this))
+			THROW_RUNTIME_ERROR("format");
+	}
+
+	bool operator==(const tVersion& val) const
+	{
+		return Major == val.Major && Minor == val.Minor && Build == val.Build;
+	}
+	bool operator!=(const tVersion& val) const
+	{
+		return !operator==(val);
+	}
+	//bool operator==(const tVersion&)const = default;//[TBD] - C++20 set at the beginning of the file
+	//bool operator!=(const tVersion&)const = default;
+
+	bool operator<(const tVersion& val) const
+	{
+		if (Major == val.Major)
+		{
+			if (Minor == val.Minor)
+			{
+				return Build < val.Build;
+			}
+			return Minor < val.Minor;
+		}
+		return Major < val.Major;
+	}
+	bool operator>(const tVersion& val) const
+	{
+		if (Major == val.Major)
+		{
+			if (Minor == val.Minor)
+			{
+				return Build > val.Build;
+			}
+			return Minor > val.Minor;
+		}
+		return Major > val.Major;
+	}
+
+	static bool TryParse(const std::string& strVersion, tVersion& version)
+	{
+		version = tVersion{};
+
+		auto IsNotVersionSymbol = [](char ch)->bool { return !isdigit(ch) && ch != '.'; };
+
+		std::string Value = strVersion;
+		Value.erase(std::remove_if(Value.begin(), Value.end(), IsNotVersionSymbol), Value.end());
+
+		const std::size_t Part1Begin = 0;
+		const std::size_t Part1End = Value.find('.');
+		const std::size_t Part2Begin = Part1End + 1;
+		const std::size_t Part2End = Value.find('.', Part2Begin);
+		const std::size_t Part3Begin = Part2End + 1;
+		const std::size_t Part3End = Value.size() - 1;
+
+		if (Part1End == std::string::npos || Part2End == std::string::npos || Part2End == Value.size() - 1)
+			return false;
+
+		auto GetFigure = [&Value](std::size_t begin, std::size_t end)->long
+		{
+			std::string SubStr = Value.substr(begin, end);
+			return std::strtol(SubStr.c_str(), nullptr, 10);
+		};
+
+		version.Major = static_cast<std::uint16_t>(GetFigure(Part1Begin, Part1End));
+		version.Minor = static_cast<std::uint16_t>(GetFigure(Part2Begin, Part2End));
+		version.Build = static_cast<std::uint16_t>(GetFigure(Part3Begin, Part3End));
+
+		return true;
+	}
+
+	std::string ToString() const
+	{
+		return std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Build);
+	}
 };
 
 }
