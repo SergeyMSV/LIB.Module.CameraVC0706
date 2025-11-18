@@ -30,6 +30,7 @@
     <None Include="..\.vscode\tasks.json">
       <Filter>.vscode</Filter>
     </None>
+    <None Include="..\cam_arm.code-workspace" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="devConfig.h" />

@@ -158,6 +158,7 @@
     <None Include="..\.vscode\c_cpp_properties.json" />
     <None Include="..\.vscode\launch.json" />
     <None Include="..\.vscode\tasks.json" />
+    <None Include="..\cam_arm.code-workspace" />
     <None Include="..\LIB.Utils\!Refresh.bat" />
     <None Include="mxvc0706.conf.json" />
   </ItemGroup>
