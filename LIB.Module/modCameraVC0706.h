@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// modCameraVC0706.h
+// modCameraVC0706
 // 2017-01-31
-// Standard ISO/IEC 114882, C++20
+// C++20
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -21,10 +21,22 @@
 
 namespace mod
 {
-
-struct tCameraVC0706Settings
+namespace vc0706
 {
-	utils::packet_CameraVC0706::tResolution Resolution = utils::packet_CameraVC0706::tResolution::VR640x480;
+
+enum class tStatus : std::uint8_t
+{
+	Init,
+	Operation,
+	Deinit,
+	Halted,
+	Error,
+	Unknown = 0xFF,
+};
+
+struct tSettings
+{
+	utils::packet::vc0706::tResolution Resolution = utils::packet::vc0706::tResolution::VR640x480;
 	std::uint32_t CheckPresencePeriod_ms = 0;
 	std::uint32_t ImagePeriod_ms = 0;
 	std::uint32_t ImageChunkSize = 0;
@@ -46,14 +58,12 @@ public:
 
 class tCameraVC0706
 {
-	using tDevStatus = utils::tDevStatus;
-
 	class tState
 	{
 	protected:
 		tCameraVC0706* m_pObj = nullptr;
 
-		utils::tVectorUInt8 m_ReceivedData;
+		std::vector<std::uint8_t> m_ReceivedData;
 
 		tState() = delete;
 
@@ -67,15 +77,15 @@ class tCameraVC0706
 		virtual bool Start() { return false; }
 		virtual bool Halt();
 
-		virtual tDevStatus GetStatus() = 0;
+		virtual tStatus GetStatus() = 0;
 
 	protected:
 		bool WaitForReceivedData(std::uint32_t wait_ms);
 
 		template<typename T>
-		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
+		bool HandleCmd(const utils::packet::vc0706::tPacketCmd& packet, utils::packet::vc0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
 		{
-			using namespace utils::packet_CameraVC0706;
+			using namespace utils::packet::vc0706;
 
 			responseStatus = tMsgStatus::None;
 
@@ -86,7 +96,7 @@ class tCameraVC0706
 		}
 
 		template<typename T>
-		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms, int repeatQty)
+		bool HandleCmd(const utils::packet::vc0706::tPacketCmd& packet, utils::packet::vc0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms, int repeatQty)
 		{
 			for (int i = 0; i < repeatQty; ++i)
 			{
@@ -96,19 +106,19 @@ class tCameraVC0706
 			return false;
 		}
 
-		bool HandleCmd(const utils::packet_CameraVC0706::tPacketCmd& packet, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty);
+		bool HandleCmd(const utils::packet::vc0706::tPacketCmd& packet, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty);
 
 	private:
 		template<typename T>
-		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
+		bool HandleRsp(const utils::packet::vc0706::tMsgId msgId, utils::packet::vc0706::tMsgStatus& responseStatus, T& response, std::uint32_t wait_ms)
 		{
-			using namespace utils::packet_CameraVC0706;
+			using namespace utils::packet::vc0706;
 
-			const utils::tTimePoint TimeStart = utils::tClock::now();
+			const utils::chrono::tTimePoint TimeStart = utils::chrono::tClock::now();
 
 			while (true)
 			{
-				const auto TimeElapsed = utils::GetDuration<utils::ttime_ms>(TimeStart, utils::tClock::now());
+				const auto TimeElapsed = utils::chrono::GetDuration<std::chrono::milliseconds>(TimeStart, utils::chrono::tClock::now());
 				if (wait_ms < TimeElapsed)
 					return false;
 
@@ -137,7 +147,7 @@ class tCameraVC0706
 		}
 
 	public:
-		bool HandleRsp(const utils::packet_CameraVC0706::tMsgId msgId, utils::packet_CameraVC0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
+		bool HandleRsp(const utils::packet::vc0706::tMsgId msgId, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms);
 
 	protected:
 		bool IsChangeState_ToStop();//ChangeState
@@ -151,12 +161,12 @@ class tCameraVC0706
 
 		void operator()() override;
 
-		tDevStatus GetStatus() override { return tDevStatus::Operation; }
+		tStatus GetStatus() override { return tStatus::Operation; }
 	};
 
 	class tStateOperationImage : public tState
 	{
-		const tCameraVC0706Settings m_Settings;
+		const tSettings m_Settings;
 
 		bool m_ImageReady = false;
 
@@ -166,7 +176,7 @@ class tCameraVC0706
 
 		void operator()() override;
 
-		tDevStatus GetStatus() override { return tDevStatus::Operation; }
+		tStatus GetStatus() override { return tStatus::Operation; }
 	};
 
 	class tStateError :public tState
@@ -178,7 +188,7 @@ class tCameraVC0706
 
 		bool Halt() override { return false; }
 
-		tDevStatus GetStatus() override { return tDevStatus::Error; }
+		tStatus GetStatus() override { return tStatus::Error; }
 	};
 
 	class tStateHalt : public tState
@@ -195,7 +205,7 @@ class tCameraVC0706
 		bool Start() override { return false; }
 		bool Halt() override { return true; }
 
-		tDevStatus GetStatus() override { return tDevStatus::Halted; }
+		tStatus GetStatus() override { return tStatus::Halted; }
 	};
 
 	class tStateStart :public tState
@@ -205,7 +215,7 @@ class tCameraVC0706
 
 		void operator()() override;
 
-		tDevStatus GetStatus() override { return tDevStatus::Init; }
+		tStatus GetStatus() override { return tStatus::Init; }
 	};
 
 	class tStateStop :public tState
@@ -218,10 +228,10 @@ class tCameraVC0706
 		bool Start() override { return false; }
 		bool Halt() override { return true; }
 
-		tDevStatus GetStatus() override { return tDevStatus::Deinit; }
+		tStatus GetStatus() override { return tStatus::Deinit; }
 	};
 
-	utils::tLog* m_pLog = nullptr;
+	utils::log::tLog* m_pLog = nullptr;
 
 	tState* m_pState = nullptr;
 
@@ -233,18 +243,18 @@ class tCameraVC0706
 	std::atomic_bool m_Control_OnExit{ false };
 
 	mutable std::mutex m_MtxReceivedData;
-	std::queue<utils::tVectorUInt8> m_ReceivedData;
+	std::queue<std::vector<std::uint8_t>> m_ReceivedData;
 
 	const std::uint8_t m_SN = 0;
 
-	utils::tTimePoint m_CheckLastTime{};//period for checking presence of the camera
-	utils::tTimePoint m_ImageLastTime{};
+	utils::chrono::tTimePoint m_CheckLastTime{};//period for checking presence of the camera
+	utils::chrono::tTimePoint m_ImageLastTime{};
 
 	std::string m_LastErrorMsg;
 
 public:
 	tCameraVC0706() = delete;
-	explicit tCameraVC0706(utils::tLog* log);
+	explicit tCameraVC0706(utils::log::tLog* log);
 	tCameraVC0706(const tCameraVC0706&) = delete;
 	tCameraVC0706(tCameraVC0706&&) = delete;
 	virtual ~tCameraVC0706() {}
@@ -257,11 +267,11 @@ public:
 	void Halt();
 	void Exit();
 
-	tDevStatus GetStatus() const;
+	tStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
 
 protected:
-	virtual tCameraVC0706Settings GetSettings() = 0;
+	virtual tSettings GetSettings() = 0;
 
 	//virtual void OnChanged(tCameraVC0706Property value) { }
 
@@ -272,18 +282,18 @@ protected:
 	//virtual void OnFailed(tCameraVC0706Error cerr) = 0;
 
 	virtual void OnImageReady() = 0;
-	virtual void OnImageChunk(utils::tVectorUInt8& data) = 0;
+	virtual void OnImageChunk(std::vector<std::uint8_t>& data) = 0;
 	virtual void OnImageComplete() = 0;
 
 	virtual void Board_PowerSupply(bool state) = 0;
 	virtual void Board_Reset(bool state) = 0;
 
-	virtual bool Board_SendCtrl(const utils::tVectorUInt8& data) = 0;
-	void Board_OnReceivedCtrl(utils::tVectorUInt8& data);
+	virtual bool Board_SendCtrl(const std::vector<std::uint8_t>& data) = 0;
+	void Board_OnReceivedCtrl(std::vector<std::uint8_t>& data);
 
 private:
 	bool IsReceivedData() const;
-	utils::tVectorUInt8 GetReceivedDataChunk();
+	std::vector<std::uint8_t> GetReceivedDataChunk();
 	bool IsControlOperation() { return m_Control_Operation && !m_Control_Restart; }
 	//bool IsControlStop() { return !m_Control_Operation && m_Control_Restart; }
 	bool IsControlRestart() { return m_Control_Restart; }
@@ -294,4 +304,5 @@ private:
 	void ChangeState(tState *state);
 };
 
+}
 }

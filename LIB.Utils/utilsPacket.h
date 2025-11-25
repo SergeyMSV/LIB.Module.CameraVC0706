@@ -1,18 +1,19 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// utilsPacket.h
+// utilsPacket
 // 2019-06-20
-// Standard ISO/IEC 114882, C++14
+// C++14
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "utilsBase.h"
-
 #include <algorithm>
+#include <vector>
+
+#include <cstdint>
 
 namespace utils
 {
-	namespace packet
-	{
+namespace packet
+{
 
 template
 <
@@ -37,20 +38,18 @@ public:
 		TPayload::Value = payloadValue;
 	}
 
-	static std::size_t Find(tVectorUInt8& receivedData, tPacket& packet)
+	static std::size_t Find(std::vector<std::uint8_t>& receivedData, tPacket& packet)
 	{
-		tVectorUInt8::const_iterator Begin = receivedData.cbegin();
+		std::vector<std::uint8_t>::const_iterator Begin = receivedData.cbegin();
 
 		for (;;)
 		{
 			Begin = std::find(Begin, receivedData.cend(), TFormat<TPayload>::STX);
 
 			if (Begin == receivedData.cend())
-			{
 				break;
-			}
 
-			tVectorUInt8 PacketVector = TFormat<TPayload>::TestPacket(Begin, receivedData.cend());
+			std::vector<std::uint8_t> PacketVector = TFormat<TPayload>::TestPacket(Begin, receivedData.cend());
 
 			if (PacketVector.size() > 0)
 			{
@@ -77,16 +76,16 @@ public:
 		return TPayload::Value;
 	}
 
-	tVectorUInt8 ToVector() const
+	std::vector<std::uint8_t> ToVector() const
 	{
-		tVectorUInt8 PacketVector;
+		std::vector<std::uint8_t> PacketVector;
 
 		TFormat<TPayload>::Append(PacketVector, *this);
 
 		return PacketVector;
 	}
 };
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
 template <class TValue>
 struct tPayload
 {
@@ -105,17 +104,10 @@ struct tPayload
 		tIterator(const tPayload* obj, bool begin)
 			:m_pObj(obj), m_DataSize(m_pObj->size())
 		{
-			if (m_DataSize > 0)
-			{
-				if (begin)
-				{
-					m_DataIndex = 0;
-				}
-				else
-				{
-					m_DataIndex = m_DataSize;
-				}
-			}
+			if (!m_DataSize)
+				return;
+
+			m_DataIndex = begin ? 0 : m_DataSize;
 		}
 
 	public:
@@ -146,7 +138,7 @@ struct tPayload
 
 	tPayload() = default;
 
-	tPayload(tVectorUInt8::const_iterator cbegin, tVectorUInt8::const_iterator cend)
+	tPayload(std::vector<std::uint8_t>::const_iterator cbegin, std::vector<std::uint8_t>::const_iterator cend)
 		:Value(cbegin, cend)
 	{}
 
@@ -166,5 +158,5 @@ struct tPayload
 	}
 };
 
-	}
+}
 }

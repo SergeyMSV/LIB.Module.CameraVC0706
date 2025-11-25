@@ -1,4 +1,5 @@
 #include "utilsBase.h"
+#include "utilsException.h"
 #include "utilsPath.h"
 
 #include <cstdlib>
@@ -11,21 +12,21 @@
 namespace utils
 {
 
-std::string GetDateTime(tm a_DateTime)
+std::string GetDateTime(tm a_DateTime) // DEPRECATED use from utilsTime
 {
 	std::ostringstream oss;
 	oss << std::put_time(&a_DateTime, "%Y-%m-%d_%H-%M-%S");
 	return oss.str();
 }
 
-std::string GetDateTime()
+std::string GetDateTime() // DEPRECATED use from utilsTime
 {
 	time_t TimeNow = std::time(nullptr);
 	tm* Time = std::localtime(&TimeNow);
 	return GetDateTime(*Time);
 }
 
-tm GetDateTime(const std::string& a_value)
+tm GetDateTime(const std::string& a_value) // DEPRECATED use from utilsTime
 {
 	tm DateTime{};
 	std::istringstream iss(a_value);
@@ -48,7 +49,7 @@ std::string GetAppNameMain(const std::filesystem::path& path)
 {
 	std::string MainPart = GetAppName(path);
 	// Main part of application name: mfrc522_xxx
-	std::size_t Pos = MainPart.find_last_of('_');
+	std::size_t Pos = MainPart.find_first_of('_');
 	if (Pos != std::string::npos)
 		MainPart = MainPart.substr(0, Pos);
 	return MainPart;
@@ -145,10 +146,10 @@ std::filesystem::path GetPathConfig(const std::string& filename)
 
 	for (const auto& i : PathConfig)
 	{
-		bool CurrPath = i == ".";
+		bool CurrPath = std::string(i) == ".";
 #if defined(_WIN32)
 		if (!CurrPath)
-			CurrPath = i == ".."; // $(ProjectDir)
+			CurrPath = std::string(i) == ".."; // $(ProjectDir)
 #endif
 		std::filesystem::path PathItem = GetPathNormal(i);
 		if (PathItem.empty())

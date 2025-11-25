@@ -10,7 +10,7 @@
 
 #include <modCameraVC0706.h>
 
-#include <utilsSerialPort.h>
+#include <utilsPortSerial.h>
 
 #include <fstream>
 #include <future>
@@ -22,9 +22,9 @@ namespace dev
 
 class tCamera
 {
-	class tModCamera : public mod::tCameraVC0706
+	class tModCamera : public mod::vc0706::tCameraVC0706
 	{
-		class tBoardCtrl : public utils::serial_port::tSerialPort<>
+		class tBoardCtrl : public utils::port::serial::tPortSerialAsync<>
 		{
 			tModCamera* m_pObj = nullptr;
 
@@ -33,10 +33,10 @@ class tCamera
 			virtual ~tBoardCtrl();
 
 		protected:
-			void OnReceived(utils::tVectorUInt8& data) override;
+			void OnReceived(std::vector<std::uint8_t>& data) override;
 		};
 
-		class tBoardData : public utils::serial_port::tSerialPort<4096>
+		class tBoardData : public utils::port::serial::tPortSerialAsync<4096>
 		{
 			tModCamera* m_pObj = nullptr;
 
@@ -45,7 +45,7 @@ class tCamera
 			virtual ~tBoardData();
 
 		protected:
-			void OnReceived(utils::tVectorUInt8& data) override;
+			void OnReceived(std::vector<std::uint8_t>& data) override;
 		};
 
 		tCamera* m_pObj = nullptr;
@@ -62,28 +62,26 @@ class tCamera
 		virtual ~tModCamera();
 
 	protected:
-		mod::tCameraVC0706Settings GetSettings() override;
+		mod::vc0706::tSettings GetSettings() override;
 
 		void OnStart() override;
 		void OnReady() override;
 		void OnHalt() override;
 		//void OnRestart() override;
-		//void OnFailed(mod::tCameraVC0706Error cerr) override;
+		//void OnFailed(mod::vc0706::tCameraVC0706Error cerr) override;
 
 		void OnImageReady() override;
-		void OnImageChunk(utils::tVectorUInt8& data) override;
+		void OnImageChunk(std::vector<std::uint8_t>& data) override;
 		void OnImageComplete() override;
 
 		void Board_PowerSupply(bool state) override;
 		void Board_Reset(bool state) override;
 
-		bool Board_SendCtrl(const utils::tVectorUInt8& data) override;
-		void OnReceivedCtrl(utils::tVectorUInt8& data);
-
-		void OnReceivedData(utils::tVectorUInt8& data);
+		bool Board_SendCtrl(const std::vector<std::uint8_t>& data) override;
+		void OnReceivedCtrl(std::vector<std::uint8_t>& data);
 	};
 
-	utils::tLog* m_pLog = nullptr;
+	utils::log::tLog* m_pLog = nullptr;
 
 	boost::asio::io_context* m_pIO = nullptr;
 
@@ -93,7 +91,7 @@ class tCamera
 
 public:
 	tCamera() = delete;
-	tCamera(utils::tLog* log, boost::asio::io_context& io);
+	tCamera(utils::log::tLog* log, boost::asio::io_context& io);
 	tCamera(const tCamera&) = delete;
 	tCamera(tCamera&&) = delete;
 	~tCamera();
@@ -107,7 +105,7 @@ public:
 	void Halt();
 	void Exit();
 
-	utils::tDevStatus GetStatus() const;
+	mod::vc0706::tStatus GetStatus() const;
 	std::string GetLastErrorMsg() const;
 };
 

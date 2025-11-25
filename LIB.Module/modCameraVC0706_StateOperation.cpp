@@ -1,8 +1,10 @@
 #include "modCameraVC0706.h"
 
-using namespace utils::packet_CameraVC0706;
+using namespace utils::packet::vc0706;
 
 namespace mod
+{
+namespace vc0706
 {
 
 tCameraVC0706::tStateOperation::tStateOperation(tCameraVC0706 *obj)
@@ -16,11 +18,11 @@ void tCameraVC0706::tStateOperation::operator()()
 	if (IsChangeState_ToStop())
 		return;
 
-	const auto TimeNow = utils::tClock::now();
+	const auto TimeNow = utils::chrono::tClock::now();
 
-	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
+	const tSettings Settings = m_pObj->GetSettings();
 
-	const auto ImageTime = utils::GetDuration<utils::ttime_ms>(m_pObj->m_ImageLastTime, TimeNow);
+	const auto ImageTime = utils::chrono::GetDuration<std::chrono::milliseconds>(m_pObj->m_ImageLastTime, TimeNow);
 	if (ImageTime > Settings.ImagePeriod_ms)
 	{
 		m_pObj->m_ImageLastTime = TimeNow;
@@ -29,7 +31,7 @@ void tCameraVC0706::tStateOperation::operator()()
 		return;
 	}
 
-	const auto Duration_ms = utils::GetDuration<utils::ttime_ms>(m_pObj->m_CheckLastTime, TimeNow);
+	const auto Duration_ms = utils::chrono::GetDuration<std::chrono::milliseconds>(m_pObj->m_CheckLastTime, TimeNow);
 	if (Duration_ms > Settings.CheckPresencePeriod_ms)
 	{
 		m_pObj->m_CheckLastTime = TimeNow;
@@ -41,10 +43,11 @@ void tCameraVC0706::tStateOperation::operator()()
 			return;
 		}
 
-		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "CheckConnection");//[TBD]makes no sense
+		m_pObj->m_pLog->WriteLine(true, "CheckConnection", utils::log::tColor::Green); // [TBD]makes no sense
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
+}
 }

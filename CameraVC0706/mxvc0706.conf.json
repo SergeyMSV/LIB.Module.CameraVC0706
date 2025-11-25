@@ -3,15 +3,15 @@
 		"model": "Vimicro VC0706"
 	},
 	"serial_port": {
-		"ctrl_id_win": "COM5",
+		"ctrl_id_win": "COM4",
 		"ctrl_id": "/dev/ttyUSB1",
 		"ctrl_br": 115200,
-		"data_id_win": "COM4",
+		"data_id_win": "COM3",
 		"data_id": "/dev/ttyUSB2",
 		"data_br": 921600
 	},
 	"camera": {
-		"resolution": "640x480",
+		"resolution": "320x240",
 		"check_presence_period_ms": 1000,
 		"image_period_ms": 5000,
 		"image_chunk_size": 32768,

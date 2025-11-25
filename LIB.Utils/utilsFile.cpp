@@ -11,7 +11,7 @@ std::optional<std::string> ReplaceFileNamePrefix(const std::string& path, const 
 {
 	const std::size_t PosSlash = path.find_last_of('/');
 	const bool IsPath = PosSlash != std::string::npos;
-	const size_t Pos = path.find(from, IsPath ? PosSlash : 0);
+	const std::size_t Pos = path.find(from, IsPath ? PosSlash : 0);
 
 	if (Pos == std::string::npos || IsPath && Pos != PosSlash + 1)
 		return std::nullopt;
@@ -20,7 +20,7 @@ std::optional<std::string> ReplaceFileNamePrefix(const std::string& path, const 
 	return PathRes.replace(Pos, from.length(), to);
 }
 
-std::deque<std::string> GetFilesLatest(const std::string& path, const std::string& prefix, size_t qtyFilesLatest)
+std::deque<std::string> GetFilesLatest(const std::string& path, const std::string& prefix, std::size_t qtyFilesLatest)
 {
 	std::deque<std::string> List;
 
@@ -32,7 +32,7 @@ std::deque<std::string> GetFilesLatest(const std::string& path, const std::strin
 			break;
 
 		std::string ListFileName = i.path().filename().string();
-		size_t PrefPos = ListFileName.find(prefix);
+		std::size_t PrefPos = ListFileName.find(prefix);
 		if (PrefPos != 0)
 			continue;
 
@@ -52,7 +52,7 @@ std::deque<std::string> GetFilesLatest(const std::string& path, const std::strin
 	return List;
 }
 
-void RemoveFilesOutdated(const std::string& path, const std::string& prefix, size_t qtyFilesLatest)
+void RemoveFilesOutdated(const std::string& path, const std::string& prefix, std::size_t qtyFilesLatest)
 {
 	std::deque<std::string> List = GetFilesLatest(path, prefix, 0);
 

@@ -2,8 +2,10 @@
 
 namespace mod
 {
+namespace vc0706
+{
 
-tCameraVC0706::tCameraVC0706(utils::tLog* log)
+tCameraVC0706::tCameraVC0706(utils::log::tLog* log)
 	:m_pLog(log)
 {
 	ChangeState(new tStateHalt(this, "the very start"));
@@ -45,7 +47,7 @@ void tCameraVC0706::Exit()
 	m_Control_Operation = false;
 }
 
-utils::tDevStatus tCameraVC0706::GetStatus() const
+tStatus tCameraVC0706::GetStatus() const
 {
 	//std::lock_guard<std::mutex> Lock(m_MtxState);
 
@@ -59,7 +61,7 @@ std::string tCameraVC0706::GetLastErrorMsg() const
 	return m_LastErrorMsg;
 }
 
-void tCameraVC0706::Board_OnReceivedCtrl(utils::tVectorUInt8& data)
+void tCameraVC0706::Board_OnReceivedCtrl(std::vector<std::uint8_t>& data)
 {
 	std::lock_guard<std::mutex> Lock(m_MtxReceivedData);
 
@@ -73,13 +75,13 @@ bool tCameraVC0706::IsReceivedData() const
 	return m_ReceivedData.size() > 0;
 }
 
-utils::tVectorUInt8 tCameraVC0706::GetReceivedDataChunk()
+std::vector<std::uint8_t> tCameraVC0706::GetReceivedDataChunk()
 {
 	std::lock_guard<std::mutex> Lock(m_MtxReceivedData);
 
 	if (m_ReceivedData.size() > 0)
 	{
-		utils::tVectorUInt8 Data(std::forward<utils::tVectorUInt8>(m_ReceivedData.front()));
+		std::vector<std::uint8_t> Data(std::forward<std::vector<std::uint8_t>>(m_ReceivedData.front()));
 
 		m_ReceivedData.pop();
 
@@ -106,4 +108,5 @@ void tCameraVC0706::ChangeState(tState *state)
 	delete Prev;
 }
 
+}
 }
