@@ -10,13 +10,16 @@
 		"data_id": "/dev/ttyUSB2",
 		"data_br": 921600
 	},
-	"camera": {
-		"resolution": "320x240",
-		"check_presence_period_ms": 1000,
-		"image_period_ms": 5000,
-		"image_chunk_size": 32768,
-		"image_chunk_delay_from_req_us": 50000
-	},
+  "camera": {
+    "resolution": "640x480",
+    "comment 1 - resolution": "640x480",
+    "comment 2 - resolution": "320x240",
+    "comment 3 - resolution": "160x120",
+    "check_presence_period_ms": 1000,
+    "image_period_ms": 5000,
+    "image_chunk_size": 32768,
+    "image_chunk_delay_from_req_us": 50000
+  },
 	"picture": {
 		"path": "/tmpram",
 		"prefix": "mxcam_",
