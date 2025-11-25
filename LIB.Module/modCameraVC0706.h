@@ -56,20 +56,20 @@ public:
 	}
 };
 
-class tCameraVC0706
+class tCamera
 {
 	class tState
 	{
 	protected:
-		tCameraVC0706* m_pObj = nullptr;
+		tCamera* m_pObj = nullptr;
 
 		std::vector<std::uint8_t> m_ReceivedData;
 
 		tState() = delete;
 
 	public:
-		explicit tState(tCameraVC0706* obj);
-		tState(tCameraVC0706* obj, const std::string& taskScriptID);
+		explicit tState(tCamera* obj);
+		tState(tCamera* obj, const std::string& taskScriptID);
 		virtual ~tState();
 
 		virtual void operator()() = 0;
@@ -157,7 +157,7 @@ class tCameraVC0706
 	class tStateOperation : public tState
 	{
 	public:
-		explicit tStateOperation(tCameraVC0706 *obj);
+		explicit tStateOperation(tCamera *obj);
 
 		void operator()() override;
 
@@ -171,7 +171,7 @@ class tCameraVC0706
 		bool m_ImageReady = false;
 
 	public:
-		explicit tStateOperationImage(tCameraVC0706* obj);
+		explicit tStateOperationImage(tCamera* obj);
 		virtual ~tStateOperationImage();
 
 		void operator()() override;
@@ -182,7 +182,7 @@ class tCameraVC0706
 	class tStateError :public tState
 	{
 	public:
-		tStateError(tCameraVC0706* obj, const std::string& value/*, const std::source_location loc = std::source_location::current()*/);
+		tStateError(tCamera* obj, const std::string& value/*, const std::source_location loc = std::source_location::current()*/);
 
 		void operator()() override;
 
@@ -197,8 +197,8 @@ class tCameraVC0706
 		bool m_Off = false;
 
 	public:
-		tStateHalt(tCameraVC0706* obj, const std::string& value);
-		tStateHalt(tCameraVC0706* obj, const std::string& value, bool error);
+		tStateHalt(tCamera* obj, const std::string& value);
+		tStateHalt(tCamera* obj, const std::string& value, bool error);
 
 		void operator()() override;
 
@@ -211,7 +211,7 @@ class tCameraVC0706
 	class tStateStart :public tState
 	{
 	public:
-		explicit tStateStart(tCameraVC0706* obj);
+		explicit tStateStart(tCamera* obj);
 
 		void operator()() override;
 
@@ -221,7 +221,7 @@ class tCameraVC0706
 	class tStateStop :public tState
 	{
 	public:
-		explicit tStateStop(tCameraVC0706* obj);
+		explicit tStateStop(tCamera* obj);
 
 		void operator()() override;
 
@@ -253,11 +253,11 @@ class tCameraVC0706
 	std::string m_LastErrorMsg;
 
 public:
-	tCameraVC0706() = delete;
-	explicit tCameraVC0706(utils::log::tLog* log);
-	tCameraVC0706(const tCameraVC0706&) = delete;
-	tCameraVC0706(tCameraVC0706&&) = delete;
-	virtual ~tCameraVC0706() {}
+	tCamera() = delete;
+	explicit tCamera(utils::log::tLog* log);
+	tCamera(const tCamera&) = delete;
+	tCamera(tCamera&&) = delete;
+	virtual ~tCamera() {}
 	
 	void operator()();
 	

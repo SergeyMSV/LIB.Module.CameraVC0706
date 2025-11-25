@@ -5,7 +5,7 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateError::tStateError(tCameraVC0706* obj, const std::string& value/*, const std::source_location loc*/)
+tCamera::tStateError::tStateError(tCamera* obj, const std::string& value/*, const std::source_location loc*/)
 	:tState(obj, "StateError")
 {
 	m_pObj->m_LastErrorMsg = "tStateError: ";// +value + " " + loc.file_name();
@@ -19,7 +19,7 @@ tCameraVC0706::tStateError::tStateError(tCameraVC0706* obj, const std::string& v
 	m_pObj->m_Control_Operation = false;
 }
 
-void tCameraVC0706::tStateError::operator()()
+void tCamera::tStateError::operator()()
 {
 	ChangeState(new tStateHalt(m_pObj, "error", true));
 }

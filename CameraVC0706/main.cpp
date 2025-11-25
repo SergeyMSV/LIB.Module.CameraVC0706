@@ -38,7 +38,7 @@ void Thread_CAM_Handler(std::promise<bool>& promise)
 
 	try
 	{
-		dev::tCamera Dev(&Log, IO);
+		dev::tCam Dev(&Log, IO);
 
 		std::thread Thread_IO([&]() { IO.run(); });
 

@@ -5,13 +5,13 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateStop::tStateStop(tCameraVC0706* obj)
+tCamera::tStateStop::tStateStop(tCamera* obj)
 	:tState(obj, "StateStop")
 {
 
 }
 
-void tCameraVC0706::tStateStop::operator()()
+void tCamera::tStateStop::operator()()
 {
 	ChangeState(new tStateHalt(m_pObj, "stop"));
 }

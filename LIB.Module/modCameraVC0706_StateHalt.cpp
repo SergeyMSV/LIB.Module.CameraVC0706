@@ -5,13 +5,13 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& value)
+tCamera::tStateHalt::tStateHalt(tCamera* obj, const std::string& value)
 	:tStateHalt(obj, value, false)
 {
 
 }
 
-tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& value, bool error)
+tCamera::tStateHalt::tStateHalt(tCamera* obj, const std::string& value, bool error)
 	:tState(obj, "StateHalt"), m_Error(error)
 {
 	if (m_pObj->IsControlRestart())
@@ -20,7 +20,7 @@ tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& val
 	}
 }
 
-void tCameraVC0706::tStateHalt::operator()()
+void tCamera::tStateHalt::operator()()
 {
 	if (!m_Off)
 	{
@@ -58,7 +58,7 @@ void tCameraVC0706::tStateHalt::operator()()
 namespace mod
 {
 
-tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706 *obj, bool halted)
+tCamera::tStateHalt::tStateHalt(tCamera *obj, bool halted)
 	:tState(obj)
 {
 #ifdef LIB_MODULE_LOG
@@ -68,7 +68,7 @@ tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706 *obj, bool halted)
 	m_Halted = halted;
 }
 
-void tCameraVC0706::tStateHalt::Control()
+void tCamera::tStateHalt::Control()
 {
 	if (!m_Halted)
 	{
@@ -82,7 +82,7 @@ void tCameraVC0706::tStateHalt::Control()
 	}
 }
 
-void tCameraVC0706::tStateHalt::Start()
+void tCamera::tStateHalt::Start()
 {
 	ChangeState(tStateStart::Instance(p_obj));
 	return;

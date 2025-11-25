@@ -7,43 +7,43 @@
 namespace dev
 {
 
-tCamera::tModCamera::tModCamera(tCamera* obj)
-	:mod::vc0706::tCameraVC0706(obj->m_pLog), m_pObj(obj), m_BoardCtrl(this, *obj->m_pIO)
+tCam::tModCam::tModCam(tCam* obj)
+	:mod::vc0706::tCamera(obj->m_pLog), m_pObj(obj), m_BoardCtrl(this, *obj->m_pIO)
 {
 	if (!g_Settings.SerialPort.DataID.empty())
 		m_BoardData = new tBoardData(this, *obj->m_pIO);
 }
 
-tCamera::tModCamera::~tModCamera()
+tCam::tModCam::~tModCam()
 {
 	delete m_BoardData;
 }
 
-mod::vc0706::tSettings tCamera::tModCamera::GetSettings()
+mod::vc0706::tSettings tCam::tModCam::GetSettings()
 {
 	return g_Settings.Camera;
 }
 
-void tCamera::tModCamera::OnStart()
+void tCam::tModCam::OnStart()
 {
 	m_pObj->m_pLog->WriteLine(true, "OnStart");
 }
 
-void tCamera::tModCamera::OnReady()
+void tCam::tModCam::OnReady()
 {
 	m_pObj->m_pLog->WriteLine(true, "OnReady");
 
 	//OnModReady();
 }
 
-void tCamera::tModCamera::OnHalt()
+void tCam::tModCam::OnHalt()
 {
 	m_pObj->m_pLog->WriteLine(true, "OnHalt");
 
 	//OnModHalt();
 }
 
-//void tCamera::tModCamera::OnRestart()
+//void tCam::tModCam::OnRestart()
 //{
 //	p_obj->p_log->WriteLine("OnRestart");
 //
@@ -57,14 +57,14 @@ void tCamera::tModCamera::OnHalt()
 //	}
 //}
 //
-//void tCamera::tModCamera::OnFailed(mod::vc0706::tCameraVC0706Error cerr)
+//void tCam::tModCam::OnFailed(mod::vc0706::tCameraVC0706Error cerr)
 //{
 //	p_obj->p_log->WriteLine("OnFailed: 0x" + utils::ToString((unsigned int)cerr, utils::tRadix_16));
 //
 //	OnModFailed();
 //}
 
-void tCamera::tModCamera::OnImageReady()
+void tCam::tModCam::OnImageReady()
 {
 	std::string DTStr = utils::GetDateTime();
 	std::string Path = g_Settings.Picture.Path + "/";
@@ -76,7 +76,7 @@ void tCamera::tModCamera::OnImageReady()
 	m_pObj->m_pLog->WriteLine(true, "Image: Ready", utils::log::tColor::LightBlue);
 }
 
-void tCamera::tModCamera::OnImageChunk(std::vector<std::uint8_t>& data)
+void tCam::tModCam::OnImageChunk(std::vector<std::uint8_t>& data)
 {
 	if (!m_File.is_open())
 		return;
@@ -87,7 +87,7 @@ void tCamera::tModCamera::OnImageChunk(std::vector<std::uint8_t>& data)
 	//m_pObj->m_pLog->WriteHex(true, "Image: Chunk", utils::log::tColor::LightBlue, data);
 }
 
-void tCamera::tModCamera::OnImageComplete()
+void tCam::tModCam::OnImageComplete()
 {
 	m_File.close();
 
@@ -98,26 +98,26 @@ void tCamera::tModCamera::OnImageComplete()
 	m_pObj->m_pLog->WriteLine(true, "Image: Complete", utils::log::tColor::LightBlue);
 }
 
-void tCamera::tModCamera::Board_PowerSupply(bool state)
+void tCam::tModCam::Board_PowerSupply(bool state)
 {
 	std::stringstream SStream;
 	SStream << "Board_PowerSupply: " << state;
 	m_pObj->m_pLog->WriteLine(true, SStream.str(), utils::log::tColor::LightMagenta);
 }
 
-void tCamera::tModCamera::Board_Reset(bool state)
+void tCam::tModCam::Board_Reset(bool state)
 {
 	std::stringstream SStream;
 	SStream << "Board_Reset:       " << state;
 	m_pObj->m_pLog->WriteLine(true, SStream.str(), utils::log::tColor::LightMagenta);
 }
 
-bool tCamera::tModCamera::Board_SendCtrl(const std::vector<std::uint8_t>& data)
+bool tCam::tModCam::Board_SendCtrl(const std::vector<std::uint8_t>& data)
 {
 	return m_BoardCtrl.Send(data);
 }
 
-void tCamera::tModCamera::OnReceivedCtrl(std::vector<std::uint8_t>& data)
+void tCam::tModCam::OnReceivedCtrl(std::vector<std::uint8_t>& data)
 {
 	Board_OnReceivedCtrl(data);
 }

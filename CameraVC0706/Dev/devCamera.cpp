@@ -3,18 +3,18 @@
 namespace dev
 {
 
-tCamera::tCamera(utils::log::tLog* log, boost::asio::io_context& io)
+tCam::tCam(utils::log::tLog* log, boost::asio::io_context& io)
 	:m_pLog(log), m_pIO(&io)
 {
-	m_pMod = new tModCamera(this);
+	m_pMod = new tModCam(this);
 }
 
-tCamera::~tCamera()
+tCam::~tCam()
 {
 	delete m_pMod;
 }
 
-void tCamera::operator()()
+void tCam::operator()()
 {
 	if (m_pMod)
 	{
@@ -29,7 +29,7 @@ void tCamera::operator()()
 	}
 }
 
-void tCamera::Start()
+void tCam::Start()
 {
 	if (m_pMod)
 	{
@@ -37,7 +37,7 @@ void tCamera::Start()
 	}
 }
 
-void tCamera::Restart()
+void tCam::Restart()
 {
 	if (m_pMod)
 	{
@@ -45,7 +45,7 @@ void tCamera::Restart()
 	}
 }
 
-void tCamera::Halt()
+void tCam::Halt()
 {
 	if (m_pMod)
 	{
@@ -53,7 +53,7 @@ void tCamera::Halt()
 	}
 }
 
-void tCamera::Exit()
+void tCam::Exit()
 {
 	if (m_pMod)
 	{
@@ -61,7 +61,7 @@ void tCamera::Exit()
 	}
 }
 
-mod::vc0706::tStatus tCamera::GetStatus() const
+mod::vc0706::tStatus tCam::GetStatus() const
 {
 	if (m_pMod)
 	{
@@ -71,7 +71,7 @@ mod::vc0706::tStatus tCamera::GetStatus() const
 	return mod::vc0706::tStatus::Unknown;
 }
 
-std::string tCamera::GetLastErrorMsg() const
+std::string tCam::GetLastErrorMsg() const
 {
 	if (m_pMod)
 	{

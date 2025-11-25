@@ -20,16 +20,16 @@
 namespace dev
 {
 
-class tCamera
+class tCam
 {
-	class tModCamera : public mod::vc0706::tCameraVC0706
+	class tModCam : public mod::vc0706::tCamera
 	{
 		class tBoardCtrl : public utils::port::serial::tPortSerialAsync<>
 		{
-			tModCamera* m_pObj = nullptr;
+			tModCam* m_pObj = nullptr;
 
 		public:
-			tBoardCtrl(tModCamera* obj, boost::asio::io_context& io);
+			tBoardCtrl(tModCam* obj, boost::asio::io_context& io);
 			virtual ~tBoardCtrl();
 
 		protected:
@@ -38,17 +38,17 @@ class tCamera
 
 		class tBoardData : public utils::port::serial::tPortSerialAsync<4096>
 		{
-			tModCamera* m_pObj = nullptr;
+			tModCam* m_pObj = nullptr;
 
 		public:
-			tBoardData(tModCamera* obj, boost::asio::io_context& io);
+			tBoardData(tModCam* obj, boost::asio::io_context& io);
 			virtual ~tBoardData();
 
 		protected:
 			void OnReceived(std::vector<std::uint8_t>& data) override;
 		};
 
-		tCamera* m_pObj = nullptr;
+		tCam* m_pObj = nullptr;
 
 		tBoardCtrl m_BoardCtrl;
 		tBoardData* m_BoardData = nullptr;
@@ -58,8 +58,8 @@ class tCamera
 		std::string m_FileNameTemp;
 
 	public:
-		explicit tModCamera(tCamera* obj);
-		virtual ~tModCamera();
+		explicit tModCam(tCam* obj);
+		virtual ~tModCam();
 
 	protected:
 		mod::vc0706::tSettings GetSettings() override;
@@ -85,19 +85,19 @@ class tCamera
 
 	boost::asio::io_context* m_pIO = nullptr;
 
-	tModCamera* m_pMod = nullptr;
+	tModCam* m_pMod = nullptr;
 
 	bool m_StartAuto = true;
 
 public:
-	tCamera() = delete;
-	tCamera(utils::log::tLog* log, boost::asio::io_context& io);
-	tCamera(const tCamera&) = delete;
-	tCamera(tCamera&&) = delete;
-	~tCamera();
+	tCam() = delete;
+	tCam(utils::log::tLog* log, boost::asio::io_context& io);
+	tCam(const tCam&) = delete;
+	tCam(tCam&&) = delete;
+	~tCam();
 
-	tCamera& operator=(const tCamera&) = delete;
-	tCamera& operator=(tCamera&&) = delete;
+	tCam& operator=(const tCam&) = delete;
+	tCam& operator=(tCam&&) = delete;
 	void operator()();
 
 	void Start();
