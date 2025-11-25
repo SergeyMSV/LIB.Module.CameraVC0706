@@ -7,14 +7,14 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
+tCamera::tStateStart::tStateStart(tCamera* obj)
 	:tState(obj, "StateStart")
 {
 	if (m_pObj->IsControlRestart())
 		m_pObj->m_Control_Restart = false;
 }
 
-void tCameraVC0706::tStateStart::operator()()
+void tCamera::tStateStart::operator()()
 {
 	if (IsChangeState_ToStop())
 		return;
@@ -82,6 +82,12 @@ void tCameraVC0706::tStateStart::operator()()
 			return;
 		}
 
+		if (!HandleCmd(tPacketCmd::MakeReadDataReg_Resolution(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, Resolution, 100) || MsgStatus != tMsgStatus::None)
+		{
+			ChangeState(new tStateError(m_pObj, "HandleCmd"));
+			return;
+		}
+
 		m_pObj->m_pLog->WriteLine(true, "Set Resolution: " + ToString(Resolution), utils::log::tColor::Green);
 	}
 
@@ -103,7 +109,6 @@ void tCameraVC0706::tStateStart::operator()()
 	const tSettings Settings = m_pObj->GetSettings();
 
 	tUARTHSBaudrate UARTHSBaudrateSet = ToUARTHSBaudrate(Settings.GetPortDataBR());
-
 	if (UARTHSBaudrateSet != tUARTHSBaudrate::BR_ERR && UARTHSBaudrateSet != UARTHSBaudrate)
 	{
 		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, UARTHSBaudrateSet), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)

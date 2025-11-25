@@ -7,13 +7,13 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateOperation::tStateOperation(tCameraVC0706 *obj)
+tCamera::tStateOperation::tStateOperation(tCamera *obj)
 	:tState(obj, "tStateOperation")
 {
 
 }
 
-void tCameraVC0706::tStateOperation::operator()()
+void tCamera::tStateOperation::operator()()
 {
 	if (IsChangeState_ToStop())
 		return;

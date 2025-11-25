@@ -7,19 +7,19 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tStateOperationImage::tStateOperationImage(tCameraVC0706 *obj)
+tCamera::tStateOperationImage::tStateOperationImage(tCamera *obj)
 	:tState(obj, "tStateOperationImage"), m_Settings(m_pObj->GetSettings())
 {
 
 }
 
-tCameraVC0706::tStateOperationImage::~tStateOperationImage()
+tCamera::tStateOperationImage::~tStateOperationImage()
 {
 	if (m_ImageReady)
 		m_pObj->OnImageComplete();
 }
 
-void tCameraVC0706::tStateOperationImage::operator()()
+void tCamera::tStateOperationImage::operator()()
 {
 	if (IsChangeState_ToStop())
 		return;

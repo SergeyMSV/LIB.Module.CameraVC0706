@@ -5,30 +5,30 @@ namespace mod
 namespace vc0706
 {
 
-tCameraVC0706::tState::tState(tCameraVC0706* obj)
+tCamera::tState::tState(tCamera* obj)
 	:m_pObj(obj)
 {
 	m_pObj->ClearReceivedData();
 }
 
-tCameraVC0706::tState::tState(tCameraVC0706* obj, const std::string& strState)
+tCamera::tState::tState(tCamera* obj, const std::string& strState)
 	:tState(obj)
 {
 	m_pObj->m_pLog->WriteLine(true, strState);
 }
 
-tCameraVC0706::tState::~tState()
+tCamera::tState::~tState()
 {
 
 }
 
-bool tCameraVC0706::tState::Halt()
+bool tCamera::tState::Halt()
 {
 	ChangeState(new tStateStop(m_pObj));
 	return true;
 }
 
-bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
+bool tCamera::tState::WaitForReceivedData(std::uint32_t wait_ms)
 {
 	const utils::chrono::tTimePoint TimeStart = utils::chrono::tClock::now();
 
@@ -56,7 +56,7 @@ bool tCameraVC0706::tState::WaitForReceivedData(std::uint32_t wait_ms)
 	return false;
 }
 
-bool tCameraVC0706::tState::HandleCmd(const utils::packet::vc0706::tPacketCmd& packet, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty)
+bool tCamera::tState::HandleCmd(const utils::packet::vc0706::tPacketCmd& packet, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms, int repeatQty)
 {
 	utils::packet::vc0706::tEmpty Empty;
 
@@ -68,13 +68,13 @@ bool tCameraVC0706::tState::HandleCmd(const utils::packet::vc0706::tPacketCmd& p
 	return false;
 }
 
-bool tCameraVC0706::tState::HandleRsp(const utils::packet::vc0706::tMsgId msgId, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
+bool tCamera::tState::HandleRsp(const utils::packet::vc0706::tMsgId msgId, utils::packet::vc0706::tMsgStatus& responseStatus, std::uint32_t wait_ms)
 {
 	utils::packet::vc0706::tEmpty Empty;
 	return HandleRsp(msgId, responseStatus, Empty, wait_ms);
 }
 
-bool tCameraVC0706::tState::IsChangeState_ToStop()
+bool tCamera::tState::IsChangeState_ToStop()
 {
 	if (!m_pObj->IsControlOperation())
 	{
