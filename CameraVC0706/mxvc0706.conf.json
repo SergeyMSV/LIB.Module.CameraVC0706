@@ -11,7 +11,7 @@
 		"data_br": 921600
 	},
 	"camera": {
-		"resolution": "640x480",
+		"resolution": "320x240",
 		"check_presence_period_ms": 1000,
 		"image_period_ms": 5000,
 		"image_chunk_size": 32768,

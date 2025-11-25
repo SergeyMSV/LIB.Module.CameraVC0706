@@ -58,7 +58,7 @@ struct tSettings
 	config::tSerialPort SerialPort;
 	config::tPicture Picture;
 
-	mod::tCameraVC0706Settings Camera;
+	mod::vc0706::tSettings Camera;
 
 private:
 	std::string m_ConfigFileName;

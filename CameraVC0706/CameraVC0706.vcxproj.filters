@@ -50,9 +50,6 @@
     <ClInclude Include="..\LIB.Utils\utilsPacketCameraVC0706.h">
       <Filter>LIB.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\LIB.Utils\utilsSerialPort.h">
-      <Filter>LIB.Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsShell.h">
       <Filter>LIB.Utils</Filter>
     </ClInclude>
@@ -78,6 +75,15 @@
       <Filter>LIB.Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\LIB.Utils\utilsFile.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsException.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsExits.h">
+      <Filter>LIB.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LIB.Utils\utilsPortSerial.h">
       <Filter>LIB.Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -141,6 +147,12 @@
       <Filter>LIB.Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\LIB.Utils\utilsFile.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsException.cpp">
+      <Filter>LIB.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LIB.Utils\utilsPortSerial.cpp">
       <Filter>LIB.Utils</Filter>
     </ClCompile>
   </ItemGroup>

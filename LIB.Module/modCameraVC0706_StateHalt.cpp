@@ -2,6 +2,8 @@
 
 namespace mod
 {
+namespace vc0706
+{
 
 tCameraVC0706::tStateHalt::tStateHalt(tCameraVC0706* obj, const std::string& value)
 	:tStateHalt(obj, value, false)
@@ -49,6 +51,7 @@ void tCameraVC0706::tStateHalt::operator()()
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
+}
 }
 
 /*

@@ -13,9 +13,9 @@
 namespace utils
 {
 
-std::string GetDateTime(tm a_DateTime);
-std::string GetDateTime();
-tm GetDateTime(const std::string& a_value);
+std::string GetDateTime(tm a_DateTime); // DEPRECATED use from utilsTime
+std::string GetDateTime(); // DEPRECATED use from utilsTime
+tm GetDateTime(const std::string& a_value); // DEPRECATED use from utilsTime
 
 namespace path
 {

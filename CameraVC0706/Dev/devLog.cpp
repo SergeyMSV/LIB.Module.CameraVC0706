@@ -8,14 +8,14 @@ namespace dev
 tLog::tSettings tLog::LogSettings;
 
 tLog::tLog(tLog::tID id, const char* sign)
-	:utils::tLog(true), m_ID(id), m_Sign(sign)
+	:m_ID(id), m_Label(sign)
 {
 
 }
 
-const char* tLog::GetSign() const
+std::string tLog::GetLabel() const
 {
-	return m_Sign;
+	return m_Label;
 }
 
 void tLog::WriteLog(const std::string& msg)

@@ -51,7 +51,7 @@ tSettings::tSettings(const std::string& fileName)
 	Picture = config::tPicture(PTree);
 
 	auto Str = PTree.get<std::string>("camera.resolution");
-	Camera.Resolution = utils::packet_CameraVC0706::ToResolution(Str);
+	Camera.Resolution = utils::packet::vc0706::ToResolution(Str);
 	Camera.CheckPresencePeriod_ms = PTree.get<std::uint32_t>("camera.check_presence_period_ms");
 	Camera.ImagePeriod_ms = PTree.get<std::uint32_t>("camera.image_period_ms");
 	Camera.ImageChunkSize = PTree.get<std::uint32_t>("camera.image_chunk_size");

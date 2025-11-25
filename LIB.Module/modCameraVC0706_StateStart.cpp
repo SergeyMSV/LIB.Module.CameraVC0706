@@ -1,17 +1,17 @@
 #include "modCameraVC0706.h"
 
-using namespace utils::packet_CameraVC0706;
+using namespace utils::packet::vc0706;
 
 namespace mod
+{
+namespace vc0706
 {
 
 tCameraVC0706::tStateStart::tStateStart(tCameraVC0706* obj)
 	:tState(obj, "StateStart")
 {
 	if (m_pObj->IsControlRestart())
-	{
 		m_pObj->m_Control_Restart = false;
-	}
 }
 
 void tCameraVC0706::tStateStart::operator()()
@@ -55,7 +55,7 @@ void tCameraVC0706::tStateStart::operator()()
 	if (IsChangeState_ToStop())
 		return;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, Version);//[TBD] makes no sense
+	m_pObj->m_pLog->WriteLine(true, Version, utils::log::tColor::Green); // [TBD] makes no sense
 
 	//[!]Setup: sets port UART
 	//if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, tPort::UART), MsgStatus, 200) || MsgStatus != tMsgStatus::None)
@@ -71,10 +71,9 @@ void tCameraVC0706::tStateStart::operator()()
 	if (IsChangeState_ToStop())
 		return;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Resolution: " + ToString(Resolution));
+	m_pObj->m_pLog->WriteLine(true, "Resolution: " + ToString(Resolution), utils::log::tColor::Green);
 
-	const tResolution SettingsResolution = tResolution::VR640x480;//[TBD] from settings
-
+	const tResolution SettingsResolution = m_pObj->GetSettings().Resolution;
 	if (Resolution != SettingsResolution)
 	{
 		if (!HandleCmd(tPacketCmd::MakeWriteDataReg(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN, SettingsResolution), MsgStatus, 100, 2) || MsgStatus != tMsgStatus::None)
@@ -83,7 +82,7 @@ void tCameraVC0706::tStateStart::operator()()
 			return;
 		}
 
-		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "Set Resolution: " + ToString(Resolution));
+		m_pObj->m_pLog->WriteLine(true, "Set Resolution: " + ToString(Resolution), utils::log::tColor::Green);
 	}
 
 	if (IsChangeState_ToStop())
@@ -99,9 +98,9 @@ void tCameraVC0706::tStateStart::operator()()
 	if (IsChangeState_ToStop())
 		return;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BRHS: " + ToString(UARTHSBaudrate));
+	m_pObj->m_pLog->WriteLine(true, "BRHS: " + ToString(UARTHSBaudrate), utils::log::tColor::Green);
 
-	const tCameraVC0706Settings Settings = m_pObj->GetSettings();
+	const tSettings Settings = m_pObj->GetSettings();
 
 	tUARTHSBaudrate UARTHSBaudrateSet = ToUARTHSBaudrate(Settings.GetPortDataBR());
 
@@ -113,7 +112,7 @@ void tCameraVC0706::tStateStart::operator()()
 		if (!HandleCmd(tPacketCmd::MakeReadDataReg_PortUARTHS(tMemoryDataReg::I2C_EEPROM, m_pObj->m_SN), MsgStatus, UARTHSBaudrate, 100) || MsgStatus != tMsgStatus::None)
 			return;
 
-		m_pObj->m_pLog->WriteLine(true, utils::tLogColour::LightGreen, "BRHS: " + ToString(UARTHSBaudrate));
+		m_pObj->m_pLog->WriteLine(true, "BRHS: " + ToString(UARTHSBaudrate), utils::log::tColor::LightGreen);
 
 		HandleCmd(tPacketCmd::MakeSystemReset(m_pObj->m_SN), MsgStatus, 100, 1);
 
@@ -133,11 +132,12 @@ void tCameraVC0706::tStateStart::operator()()
 	if (IsChangeState_ToStop())
 		return;
 
-	m_pObj->m_pLog->WriteLine(true, utils::tLogColour::Green, "BR: " + ToString(UARTBaudrate));
+	m_pObj->m_pLog->WriteLine(true, "BR: " + ToString(UARTBaudrate), utils::log::tColor::Green);
 
 	m_pObj->OnReady();
 
 	ChangeState(new tStateOperation(m_pObj));
 }
 
+}
 }

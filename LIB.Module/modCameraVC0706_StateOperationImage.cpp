@@ -1,8 +1,10 @@
 #include "modCameraVC0706.h"
 
-using namespace utils::packet_CameraVC0706;
+using namespace utils::packet::vc0706;
 
 namespace mod
+{
+namespace vc0706
 {
 
 tCameraVC0706::tStateOperationImage::tStateOperationImage(tCameraVC0706 *obj)
@@ -73,7 +75,7 @@ void tCameraVC0706::tStateOperationImage::operator()()
 
 			const std::uint32_t ChunkTransferTime = (((ChunkSize * 8 * 1000) / m_Settings.GetImageDataBR()) + ChunkDelay_ms) * 2;//ms, this interval is doubled
 
-			utils::tVectorUInt8 Chunk;
+			std::vector<std::uint8_t> Chunk;
 			Chunk.reserve(ChunkSize);
 			while (Chunk.size() != ChunkSize)
 			{
@@ -127,4 +129,5 @@ void tCameraVC0706::tStateOperationImage::operator()()
 	ChangeState(new tStateOperation(m_pObj));
 }
 
+}
 }

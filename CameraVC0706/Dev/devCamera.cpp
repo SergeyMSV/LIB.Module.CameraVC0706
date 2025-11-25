@@ -3,7 +3,7 @@
 namespace dev
 {
 
-tCamera::tCamera(utils::tLog* log, boost::asio::io_context& io)
+tCamera::tCamera(utils::log::tLog* log, boost::asio::io_context& io)
 	:m_pLog(log), m_pIO(&io)
 {
 	m_pMod = new tModCamera(this);
@@ -61,14 +61,14 @@ void tCamera::Exit()
 	}
 }
 
-utils::tDevStatus tCamera::GetStatus() const
+mod::vc0706::tStatus tCamera::GetStatus() const
 {
 	if (m_pMod)
 	{
 		return m_pMod->GetStatus();
 	}
 
-	return utils::tDevStatus::Unknown;
+	return mod::vc0706::tStatus::Unknown;
 }
 
 std::string tCamera::GetLastErrorMsg() const

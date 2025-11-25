@@ -12,7 +12,7 @@
 namespace dev
 {
 
-class tLog : public utils::tLog
+class tLog : public utils::log::tLog
 {
 public:
 	enum class tID : std::uint32_t
@@ -38,7 +38,7 @@ public:
 
 private:
 	tID m_ID = tID::NoID;
-	const char* m_Sign = nullptr;
+	const std::string m_Label;
 
 	tLog() = delete;
 
@@ -46,7 +46,7 @@ public:
 	tLog(tLog::tID id, const char* sign);
 
 protected:
-	const char* GetSign() const override;
+	std::string GetLabel() const override;
 
 	void WriteLog(const std::string& msg) override;
 };

@@ -1,9 +1,13 @@
 #include "utilsPacketCameraVC0706.h"
 
+#include "utilsBase.h"
+
 namespace utils
 {
-	namespace packet_CameraVC0706
-	{
+namespace packet
+{
+namespace vc0706
+{
 
 tMsgId tPacketCmd::GetMsgId() const
 {
@@ -152,7 +156,7 @@ tPacketCmd tPacketCmd::MakeReadDataReg_Compression(tMemoryDataReg memory, std::u
 	return MakeReadDataReg(memory, sn, DataReg_Compression);
 }
 
-tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const tVectorUInt8& data)
+tPacketCmd tPacketCmd::MakeWriteDataReg(tMemoryDataReg memory, std::uint8_t sn, tDataReg reg, const std::vector<std::uint8_t>& data)
 {
 	assert(reg.Size == data.size());
 
@@ -230,7 +234,7 @@ tPacketCmd tPacketCmd::MakeReadFBufCurrent(tPort portDst, std::uint8_t sn, std::
 	ControlModeRead.Field.NONAME = 1;
 	Cmd.Payload.push_back(ControlModeRead.Value);
 
-	tVectorUInt8 LocalVec = utils::ToVector(address);
+	std::vector<std::uint8_t> LocalVec = utils::ToVector(address);
 	std::reverse(LocalVec.begin(), LocalVec.end());
 	Cmd.Payload.insert(Cmd.Payload.end(), LocalVec.cbegin(), LocalVec.cend());
 
@@ -526,5 +530,6 @@ tUARTHSBaudrate ToUARTHSBaudrate(std::uint32_t value)
 	return tUARTHSBaudrate::BR_ERR;
 }
 
-	}
+}
+}
 }

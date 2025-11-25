@@ -1,172 +1,243 @@
 #include "utilsLog.h"
 
 #include <chrono>
-#include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <time.h>
 
 #ifdef LIB_UTILS_LOG
 
 namespace utils
 {
-
-tLog::tLog(bool colourEnabled)
-	:m_ColourEnabled(colourEnabled)
+namespace log
 {
 
+void tLog::Write(bool timestamp, const std::string& msg, tColor color)
+{
+	WriteLog(timestamp, false, msg, color);
 }
 
-void tLog::ColourEnabled(bool state)
+void tLog::Write(bool timestamp, const std::string& msg)
 {
-	m_ColourEnabled = state;
+	Write(timestamp, msg, tColor::Default);
 }
 
-void tLog::Write(bool timestamp, tLogColour textColour, const std::string& msg)
+#ifdef LIB_UTILS_LOG_DEPRECATED
+void tLog::Write(bool timestamp, tColor colorText, const std::string& msg)
 {
-	WriteLog(timestamp, false, textColour, msg);
+	Write(timestamp, msg, colorText);
 }
+#endif // LIB_UTILS_LOG_DEPRECATED
 
 void tLog::WriteLine()
 {
-	WriteLog(false, true, tLogColour::Default, "");
+	WriteLog(false, true, "", tColor::Default);
 }
 
-void tLog::WriteLine(bool timestamp, tLogColour textColour, const std::string& msg)
+void tLog::WriteLine(bool timestamp, const std::string& msg, tColor color)
 {
-	WriteLog(timestamp, true, textColour, msg);
+	WriteLog(timestamp, true, msg, color);
 }
 
-void tLog::WriteHex(bool timestamp, tLogColour textColour, const std::string& msg, const tVectorUInt8& data)
+void tLog::WriteLine(bool timestamp, const std::string& msg)
 {
+	WriteLine(timestamp, msg, tColor::Default);
+}
+
+#ifdef LIB_UTILS_LOG_DEPRECATED
+void tLog::WriteLine(bool timestamp, tColor colorText, const std::string& msg)
+{
+	WriteLine(timestamp, msg, colorText);
+}
+#endif // LIB_UTILS_LOG_DEPRECATED
+
+static bool IsSymbol(char value)
+{
+	return value > 0x20 && value != 0x25 && value != 0x7F;
+}
+
+template <typename T>
+static std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value, std::string>::type MakeStringHex(const std::vector<T>& data, int dataLinesBegin, int dataLinesEnd)
+{
+	const int LinesQty = static_cast<int>((data.size() / 16) + (data.size() % 16 ? 1 : 0));
+	const int LinesToSkip = dataLinesBegin && dataLinesEnd ? static_cast<int>(LinesQty - dataLinesBegin - dataLinesEnd) : 0;
+	if (LinesToSkip > 0)
+	{
+		--dataLinesBegin; // transform to index
+		dataLinesEnd = LinesQty - dataLinesEnd;
+	}
+
+	const auto IsLineSkipped = [&dataLinesBegin, &dataLinesEnd, &LinesToSkip](int linesCounter)->bool { return LinesToSkip > 0 && linesCounter > dataLinesBegin && linesCounter < dataLinesEnd; };
+
 	std::stringstream Stream;
-
-	Stream << msg + '\n';
-
-	std::string Substr;
-
-	for (std::size_t i = 0; i < data.size(); ++i)
+	bool SkipMsgInserted = false;
+	for (int i = 0; i < LinesQty; ++i)
 	{
-		Stream << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(data[i]) << ' ';
-
-		if (data[i] <= 0x20 || data[i] == 0x25)
+		if (IsLineSkipped(i))
 		{
-			Substr += '.';
-		}
-		else
-		{
-			Substr += data[i];
-		}
-
-		if (((i + 1) % 16) == 0)
-		{
-			Stream << "  " + Substr;
-
-			Substr.clear();
-
-			if (i < data.size() - 1)//It's not needed for the last string
+			if (!SkipMsgInserted)
 			{
-				Stream << '\n';
+				SkipMsgInserted = true;
+				Stream << "< " + std::to_string(LinesToSkip) + " lines are skipped >\n";
 			}
+			continue;
 		}
-		else if (((i + 1) % 8) == 0)
+
+		Stream << std::setfill('0') << std::setw(4) << std::hex << (16 * i) << "   ";
+
+		std::string Substr;
+		std::size_t byteCount = 0;
+		for (std::size_t k = (16 * i); byteCount < 16 && k < data.size(); ++byteCount, ++k)
 		{
-			Stream << "  ";
+			if (byteCount == 8)
+				Stream << "  ";
+
+			Stream << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(data[k]) << ' ';
+
+			Substr += IsSymbol(data[k]) ? data[k] : '.';
 		}
+		for (; byteCount < 16; ++byteCount)
+		{
+			if (byteCount == 8)
+				Stream << "  ";
+			Stream << "   ";
+		}
+		Stream << "  " + Substr;
+		
+
+		if (i < LinesQty - 1) // It's not needed for the last string
+			Stream << '\n';
 	}
 
-	const std::size_t Remains = data.size() % 16;
-
-	if (Remains)
-	{
-		std::size_t Empty = (16 - Remains) * 3 + (Remains > 8 ? 2 : 4);
-
-		for (std::size_t i = 0; i < Empty; ++i)
-		{
-			Stream << ' ';
-		}
-
-		Stream << Substr;
-	}
-
-	WriteLog(timestamp, true, textColour, Stream.str().c_str());
+	return Stream.str();
 }
 
-void tLog::WriteLog(bool timestamp, bool endl, tLogColour textColour, const std::string& msg)
+#ifdef LIB_UTILS_LOG_DEPRECATED
+void tLog::WriteHex(bool timestamp, tColor colorText, const std::string& msg, const std::vector<std::uint8_t>& data)
+{
+	WriteHex(timestamp, msg, colorText, data, colorText);
+}
+#endif // LIB_UTILS_LOG_DEPRECATED
+
+void tLog::WriteHex(const std::vector<std::uint8_t>& data, tColor dataColor, int dataLinesBegin, int dataLinesEnd)
+{
+	WriteLog(false, true, MakeStringHex(data, dataLinesBegin, dataLinesEnd), dataColor);
+}
+
+void tLog::WriteHex(const std::vector<std::uint8_t>& data, tColor dataColor)
+{
+	WriteHex(data, dataColor, 0, 0);
+}
+
+void tLog::WriteHex(const std::vector<std::uint8_t>& data)
+{
+	WriteHex(data, tColor::Default, 0, 0);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, tColor msgColor, const std::vector<std::uint8_t>& data, tColor dataColor, int dataLinesBegin, int dataLinesEnd)
+{
+	WriteLog(timestamp, true, msg, msgColor);
+	WriteHex(data, dataColor, dataLinesBegin, dataLinesEnd);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, tColor msgColor, const std::vector<std::uint8_t>& data, tColor dataColor)
+{
+	WriteHex(timestamp, msg, msgColor, data, dataColor, 0, 0);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, const std::vector<std::uint8_t>& data, tColor color, int dataLinesBegin, int dataLinesEnd)
+{
+	WriteHex(timestamp, msg, color, data, color, dataLinesBegin, dataLinesEnd);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, const std::vector<std::uint8_t>& data, tColor color)
+{
+	WriteHex(timestamp, msg, color, data, color);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, const std::vector<std::uint8_t>& data, int dataLinesBegin, int dataLinesEnd)
+{
+	WriteHex(timestamp, msg, tColor::Default, data, tColor::Default, dataLinesBegin, dataLinesEnd);
+}
+
+void tLog::WriteHex(bool timestamp, const std::string& msg, const std::vector<std::uint8_t>& data)
+{
+	WriteHex(timestamp, msg, tColor::Default, data, tColor::Default);
+}
+
+void tLog::WriteLog(bool timestamp, bool endl, const std::string& text, tColor textColor)
 {
 	std::lock_guard<std::mutex> Lock(m_Mtx);
 
-	std::stringstream Stream;
+	std::string Str;
+	Str.reserve(80); // [#]
 
 	if (timestamp)
 	{
 		const auto TimeNow = std::chrono::system_clock::now();
+#ifdef LIB_UTILS_LOG_TIMESTAMP_MICROSECONDS
 		const auto Time_us = std::chrono::time_point_cast<std::chrono::microseconds>(TimeNow);
 		const auto TimeFract = static_cast<unsigned int>(Time_us.time_since_epoch().count() % 1000000);
+		const int Digits = 6;
+#else // LIB_UTILS_LOG_TIMESTAMP_MICROSECONDS
+		const auto Time_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(TimeNow);
+		const auto TimeFract = static_cast<unsigned int>(Time_ms.time_since_epoch().count() % 1000);
+		const int Digits = 3;
+#endif // LIB_UTILS_LOG_TIMESTAMP_MICROSECONDS
+		time_t Time = std::chrono::system_clock::to_time_t(TimeNow);
 
-		const std::time_t Time = std::chrono::system_clock::to_time_t(TimeNow);
+		tm TmBuf;
+#ifdef _WIN32
+		localtime_s(&TmBuf, &Time);
+#else // _WIN32
+		localtime_r(&Time, &TmBuf);
+#endif // _WIN32
+		std::stringstream SStr;
+		SStr << std::put_time(&TmBuf, "%T") << '.';
+		SStr << std::setfill('0') << std::setw(Digits) << TimeFract << ' ';
 
-		Stream << '[';
-		Stream << std::put_time(std::localtime(&Time), "%T") << '.';
-		Stream << std::setfill('0');
-		Stream << std::setw(6) << TimeFract;
-
-		const char* Sign = GetSign();
-		if (Sign)
-		{
-			Stream << ' ';
-			Stream << std::setfill(' ');
-			Stream << std::setw(4) << Sign;
-		}
-
-		Stream << ']';
+		const std::string Label = GetLabel();
+		if (!Label.empty())
+			SStr << std::setfill(' ') << std::setw(4) << Label << ' ';
+		Str = SStr.str();
 	}
 
-	if (m_ColourEnabled)
+	std::string StrNoColor = Str + text + (endl ? "\n" : "");
+	WriteLogFile(StrNoColor);
+
+#ifndef LIB_UTILS_LOG_COLOR
+	WriteLog(StrNoColor);
+#else
+	Str += "\x1b[";
+
+	switch (textColor)
 	{
-		Stream << "\x1b[";
-
-		switch (textColour)
-		{
-		case tLogColour::Black: Stream << "30"; break;
-		case tLogColour::Red: Stream << "31"; break;
-		case tLogColour::Green: Stream << "32"; break;
-		case tLogColour::Yellow: Stream << "33"; break;
-		case tLogColour::Blue: Stream << "34"; break;
-		case tLogColour::Magenta: Stream << "35"; break;
-		case tLogColour::Cyan: Stream << "36"; break;
-		case tLogColour::White: Stream << "37"; break;
-		case tLogColour::Default: Stream << "39"; break;
-		case tLogColour::LightGray: Stream << "90"; break;
-		case tLogColour::LightRed: Stream << "91"; break;
-		case tLogColour::LightGreen: Stream << "92"; break;
-		case tLogColour::LightYellow: Stream << "93"; break;
-		case tLogColour::LightBlue: Stream << "94"; break;
-		case tLogColour::LightMagenta: Stream << "95"; break;
-		case tLogColour::LightCyan: Stream << "96"; break;
-		case tLogColour::LightWhite: Stream << "97"; break;
-		default: Stream << "39"; break;
-		}
-
-		Stream << "m" + msg + "\x1b[0m";
-
-		if (endl)
-		{
-			Stream << '\n';
-		}	
-	}
-	else
-	{
-		Stream << msg;
-
-		if (endl)
-		{
-			Stream << '\n';
-		}
+	case tColor::Black:        Str += "30"; break;
+	case tColor::Red:          Str += "31"; break;
+	case tColor::Green:        Str += "32"; break;
+	case tColor::Yellow:       Str += "33"; break;
+	case tColor::Blue:         Str += "34"; break;
+	case tColor::Magenta:      Str += "35"; break;
+	case tColor::Cyan:         Str += "36"; break;
+	case tColor::White:        Str += "37"; break;
+	case tColor::Default:      Str += "39"; break;
+	case tColor::LightGray:    Str += "90"; break;
+	case tColor::LightRed:     Str += "91"; break;
+	case tColor::LightGreen:   Str += "92"; break;
+	case tColor::LightYellow:  Str += "93"; break;
+	case tColor::LightBlue:    Str += "94"; break;
+	case tColor::LightMagenta: Str += "95"; break;
+	case tColor::LightCyan:    Str += "96"; break;
+	case tColor::LightWhite:   Str += "97"; break;
+	default:                   Str += "39"; break;
 	}
 
-	WriteLog(Stream.str().c_str());
+	Str += "m" + text + "\x1b[0m" + (endl ? "\n" : "");
+	WriteLog(Str);
+#endif // LIB_UTILS_LOG_COLOR
 }
 
 }
+}
 
-#endif//LIB_UTILS_LOG
+#endif // LIB_UTILS_LOG
